@@ -10,7 +10,7 @@ class SilSpiderSpider(scrapy.Spider):
 	name = 'sil_spider'
 	allowed_domains = ["manhua.fzdm.com/"]
 
-	manga      = int(raw_input("食戟之靈 - 58\t七原罪 - 56\n猎人 - 10\t东京RE - 117\n进击 - 39\t英雄学院 - 131\nInput Manga code: "))
+	manga      = int(raw_input("食戟之靈 - 58\t七原罪 - 56\t辛巴达 - 119\n猎人 - 10\t东京RE - 117\n进击 - 39\t英雄学院 - 131\nInput Manga code: "))
 	targetChap = int(raw_input("Input start downloading chapter: "))
 	numChap    = int(raw_input("How many chapters you want to download: "))
 
