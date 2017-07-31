@@ -21,7 +21,7 @@ class FzdmCrawlSpider(CrawlSpider):
         callback 
             是一个callable或string(该spider中同名的函数将会被调用)。
             从link_extractor中每获取到链接时将会调用该函数。
-            该回调函数接受一个response作为其第一个参数，并返回一个包含 Item 以及(或) 
+            该回调函数接受一个response作为其第一个参数，并返回ng一个包含 Item 以及(或) 
             Request 对象(或者这两者的子类)的列表(list)。
     
         !警告!
