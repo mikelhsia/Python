@@ -25,9 +25,7 @@ start_requests() 读取 start_urls 中的URL， 并以 parse 为回调函数生�
 '''
 import scrapy
 import os
-import sys
 import urllib
-import time
 
 from fzdm.items import FzdmItem
 # from scrapy.http import Request
