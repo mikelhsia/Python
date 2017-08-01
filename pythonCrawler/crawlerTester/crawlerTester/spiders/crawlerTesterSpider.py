@@ -1,36 +1,27 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from scrapy.linkextractors import LinkExtractor
+from scrapy.spiders import CrawlSpider, Rule
 
-class CrawlertesterspiderSpider(scrapy.Spider):
+
+class CrawlertesterspiderSpider(CrawlSpider):
 	name = 'crawlerTesterSpider'
-	allowed_domains = ['https://meitaichina.alpha.tmogroup.asia']
-	start_urls = ['https://meitaichina.alpha.tmogroup.asia/index.php/customer/account/login/']
+	allowed_domains = ['comic.kukudm.com']
+	start_urls = ['http://comic.kukudm.com/']
 
-	# rules = (Rule(LinkExtractor(allow=r'*'), callback='parse_item', follow=True), )
+	rules = (
+		Rule(LinkExtractor(allow=r'com'), callback='parse_item', follow=True, ),
+	)
 
-	def parse(self, response):
-		# self.logger.debug("First time in the url", response.url)
-		# TODO: Add User-agent...
-		# FIXME: User-agent is taken cared in the middleware level already
-		print "First time in the url: ", response.url
-		# When working with forms that are filled and / or submitted using javascript, the default
-		# from_response() behaviour may not be the most appropriate.To disable this behaviour
-		# you can set the dont_click argument to True
-		return scrapy.FormRequest.from_response(
-			response,
-			formdata={'username': '13817405123', 'password': '123123q'},
-			callback=self.after_login,
-			dont_filter=True
-		)
+	def parse_item(self, response):
+		i = {}
+		print "[Parse_item]: ", response.url
+		# i['domain_id'] = response.xpath('//input[@id="sid"]/@value').extract()
+		# i['name'] = response.xpath('//div[@id="name"]').extract()
+		# i['description'] = response.xpath('//div[@id="description"]').extract()
+		return i
 
-	def after_login(self, response):
-		# check login succeed before going on
-		print "Start parsing login"
-		if "authentication failed" in response.body:
-			# self.logger.error("Login failed")
-			print "Login failed"
-			return
-		else:
-			print "Login successfully"
-			print "body %s" % response.body
-		# continue scraping with authenticated session...
+	# If the parse function is enabled, then it would replace "parse_item" function and "parse_item" won't run
+	###################################
+	# def parse(self, response):
+	# 	print "[Parse]: ", response.url

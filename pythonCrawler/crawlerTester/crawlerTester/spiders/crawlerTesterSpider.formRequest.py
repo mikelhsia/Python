@@ -3,7 +3,7 @@ import scrapy
 
 class CrawlertesterspiderSpider(scrapy.Spider):
 	name = 'crawlerTesterSpider'
-	allowed_domains = ['https://meitaichina.alpha.tmogroup.asia']
+	allowed_domains = ['meitaichina.alpha.tmogroup.asia']
 	start_urls = ['https://meitaichina.alpha.tmogroup.asia/index.php/customer/account/login/']
 
 	# rules = (Rule(LinkExtractor(allow=r'*'), callback='parse_item', follow=True), )
