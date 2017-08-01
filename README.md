@@ -1,3 +1,28 @@
 #python
 
 I'm working on the first prototype of my crawler, so I'll do the explanation later
+
+In fzdm folder
+  1 安装 homebrew:
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+  2. 执行以下指令
+  brew install python
+  pip install scrapy
+
+  3. 解压缩package到桌面
+
+  4. 进入 Mac 的terminal
+
+  5. 打 cd ~/Desktop/fzdm
+
+  6. 执行 scrapy crawl fzdm
+
+  7. 会问你三个问题
+	  a. Input Manga code: 漫画的代码
+		  在风之动漫网站上，点击你想要看的漫画，看到URL
+		  http://manhua.fzdm.com/56/100/index.html
+		  56 = 漫画代码
+		  100 = 第100话
+	  b. Input start downloading chapter: 从第几话开始下载
+	  c. How many chapters you want to download: 要下载几话
