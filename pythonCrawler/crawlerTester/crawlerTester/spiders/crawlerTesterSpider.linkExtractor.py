@@ -2,26 +2,23 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
+from scrapy.http import Request
 
 # from scrapy.exceptions import DropItem, CloseSpider, DontCloseSpider, IgnoreRequest, NotConfigured, NotSupported
-
-
 
 class CrawlertesterspiderSpider(CrawlSpider):
 	name = 'crawlerTesterSpider'
 	allowed_domains = ['comic.kukudm.com']
 	start_urls = ['http://comic.kukudm.com/']
 
-	"""
-		- Populating the settings -
-		Settings can be populated using different mechanisms, each of which having a different precedence.Here is the
-		list of them in decreasing order of precedence:
-			- Command line options(most precedence)
-			- Settings per-spider
-			- Project settings module
-			- Default settings per-command
-			- Default global settings (less precedence)
-	"""
+	# - Populating the settings -
+	# Settings can be populated using different mechanisms, each of which having a different precedence.Here is the
+	# list of them in decreasing order of precedence:
+	# 	- Command line options(most precedence)
+	# 	- Settings per-spider
+	# 	- Project settings module
+	# 	- Default settings per-command
+	# 	- Default global settings (less precedence)
 
 	# Setting log file while running spider
 	# scrapy crawl myspider - s LOG_FILE = scrapy.log
@@ -32,7 +29,7 @@ class CrawlertesterspiderSpider(CrawlSpider):
 	# }
 
 	rules = (
-		Rule(LinkExtractor(allow=r'com'), callback='parse_item', follow=True, ),
+		Rule(LinkExtractor(allow=r'2049/index.htm'), callback='parse_item', follow=True, ),
 		# Rule(LinkExtractor(allow=r'com', tags=['img', 'a'], attrs='src', process_value=process_url), callback='parse_item', follow=True, ),
 
 		# Extract links matching 'category.php' (but not matching 'subsection.php')
