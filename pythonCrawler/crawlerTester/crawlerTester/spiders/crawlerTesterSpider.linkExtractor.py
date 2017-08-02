@@ -63,6 +63,7 @@ class CrawlertesterspiderSpider(CrawlSpider):
 	# def parse(self, response):
 	# 	print "[Parse]: ", response.url
 
+	# function for processing the url got from using tags and attributes
 	def process_url(self):
 		pass
 
