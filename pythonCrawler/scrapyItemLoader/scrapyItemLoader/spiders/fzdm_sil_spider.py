@@ -20,6 +20,48 @@ class SilSpiderSpider(scrapy.Spider):
 	start_urls = ["http://manhua.fzdm.com/%d/%d/" % (manga, chap) for chap in xrange(targetChap, targetChap+numChap)]
 
 	def parse(self, response):
+		# This is a contract for us
+		""" This function parses a sample response. Some contracts are mingled with this docstring.
+
+		@url http://manhua.fzdm.com/56/130/
+		@returns requests 0 1
+		"""
+		###########################################################################
+		# @url http://manhua.fzdm.com/56/130/     # 合同书，没有这个凭据就不会开始测试
+		# @returns items 0 1                      # 最多或最少返回几个item
+		# @returns requests 0 2                   # 最多或最少返回几个request
+		# @scrapes imgSrc imgDst acbd             # 检查返回的Item里是否有定义的字段
+		###########################################################################
+		# Contracts Class
+		# adjust_request_args(args)
+		# This receives a dict as an argument containing default arguments
+		# for Request object.Must return the same or a modified version of it.
+		#
+		# pre_process(response)
+		# This allows hooking in various checks on the response received from the sample request,
+		# before it’s being passed to the callback.
+		#
+		# post_process(output)
+		# This allows processing the output of the callback.
+		# Iterators are converted listified before being passed to this hook.
+		###########################################################################
+		# Example:
+		# from scrapy.contracts import Contract
+		# from scrapy.exceptions import ContractFail
+		#
+		# class HasHeaderContract(Contract):
+		# 	""" Demo contract which checks the presence of a custom header
+		# 		@has_header X-CustomHeader
+		# 	"""
+		#
+		# 	name = 'has_header'
+		#
+		# 	def pre_process(self, response):
+		# 		for header in self.args:
+		# 			if header not in response.headers:
+		# 				raise ContractFail('X-CustomHeader not present')
+		###########################################################################
+
 		# meta字段是传递值的方法。在调试时返回的response中会出现meta的内容，它是一个字典，
 		# 故在传递时可以直接通过 response.meta['front_image_url']进行引用
 		# (也可以使用get的方法，附默认值防止出现异常）
@@ -51,6 +93,12 @@ class SilSpiderSpider(scrapy.Spider):
 			pass
 
 	def parse_detail(self, response):
+		""" This function parses a sample response. Some contracts are mingled with this docstring.
+
+		@url http://manhua.fzdm.com/56/130/
+		@returns items 0 16
+		@scrapes imgSrc imgDst acbd
+		"""
 		item = ScrapyitemloaderItem()
 
 		infoScript = response.xpath('//script[@type="text/javascript"]/text()').extract()
