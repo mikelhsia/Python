@@ -183,3 +183,10 @@ DEPTH_LIMIT = 2
 # Whether to enable memory debugging.
 ##########################################################################
 MEMDEBUG_ENABLED = False
+
+
+##########################################################################
+# Default: 'scrapy.statscollectors.MemoryStatsCollector'
+# The class to use for collecting stats, who must implement the Stats Collector API.
+##########################################################################
+# STATS_CLASS = 'scrapy.statscollectors.MemoryStatsCollector'
