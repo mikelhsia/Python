@@ -46,6 +46,8 @@ class SilSpiderSpider(scrapy.Spider):
 		# Iterators are converted listified before being passed to this hook.
 		###########################################################################
 		# Example:
+		# /usr/local/lib/python2.7/site-packages/scrapy/contracts/default.py
+		# ------
 		# from scrapy.contracts import Contract
 		# from scrapy.exceptions import ContractFail
 		#
