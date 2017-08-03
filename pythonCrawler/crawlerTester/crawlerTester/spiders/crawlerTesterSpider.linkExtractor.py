@@ -114,6 +114,13 @@ class CrawlertesterspiderSpider(CrawlSpider):
 	# 	print "[Parse]: ", response.url
 
 	# function for processing the url got from using tags and attributes
-	def process_url(self):
+	def process_url(self, response):
+		######################################################################################
+		# Sometimes you just want to see how a certain response looks in a browser,
+		# you can use the open_in_browser function for that.
+		######################################################################################
+		# from scrapy.utils.response import open_in_browser
+		# open_in_browser(response)
+
 		pass
 
