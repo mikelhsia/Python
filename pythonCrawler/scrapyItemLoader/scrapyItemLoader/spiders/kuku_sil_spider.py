@@ -20,6 +20,7 @@ class SilSpiderSpider(scrapy.Spider):
 
 	def __init__(self, manga=1, targetChap=1, numChap=1, *args, **kwargs):
 		super(SilSpiderSpider, self).__init__(*args, **kwargs)
+
 		self.start_urls = ["http://comic.kukudm.com/comiclist/2049/index.htm"]
 		self.log("[%s, %s, %s]" % (manga, targetChap, numChap))
 
@@ -27,6 +28,9 @@ class SilSpiderSpider(scrapy.Spider):
 
 		# self.log("1. [URL Parsing and Downloading Image]: %s" % response.url)
 		yield Request(url=response.url, callback=self.parse_detail, dont_filter=True)
+
+		##### Valid xpath to find the right link
+		# response.xpath("//a[contains(text(), 147) and @target]/@href").extract()
 
 		try:
 			next_link = response.xpath(u'//a[contains(text(),"下一页")]/@href').extract().pop()
