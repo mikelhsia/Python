@@ -3,7 +3,6 @@ import scrapy
 import urlparse
 import os
 
-from scrapyItemLoader.items import ScrapyitemloaderItem
 from scrapy.http import Request
 
 class SilSpiderSpider(scrapy.Spider):
@@ -17,14 +16,17 @@ class SilSpiderSpider(scrapy.Spider):
 	# targetChap = int(raw_input("Input start downloading chapter: "))
 	# numChap    = int(raw_input("How many chapters you want to download: "))
 
-	start_urls = ['http://comic.kukudm.com/comiclist/2049/index.htm']
+	start_urls = []
+
+	def __init__(self, manga=1, targetChap=1, numChap=1, *args, **kwargs):
+		super(SilSpiderSpider, self).__init__(*args, **kwargs)
+		self.start_urls = ["http://comic.kukudm.com/comiclist/2049/index.htm"]
+		self.log("[%s, %s, %s]" % (manga, targetChap, numChap))
 
 	def parse(self, response):
 
 		# self.log("1. [URL Parsing and Downloading Image]: %s" % response.url)
-		yield Request(url=response.url,
-		              callback=self.parse_detail,
-		              dont_filter=True)
+		yield Request(url=response.url, callback=self.parse_detail, dont_filter=True)
 
 		try:
 			next_link = response.xpath(u'//a[contains(text(),"下一页")]/@href').extract().pop()
@@ -32,9 +34,7 @@ class SilSpiderSpider(scrapy.Spider):
 
 			if next_link:
 				# self.log("3. [URL Parsing - Goes to next link]: %s" % next_link)
-				yield Request(url=urlparse.urljoin(response.url, next_link),
-				              callback=self.parse,
-				              dont_filter=True)
+				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse, dont_filter=True)
 		except:
 			# self.log("4. [URL Parsing]: Nothing to be poped")
 			pass

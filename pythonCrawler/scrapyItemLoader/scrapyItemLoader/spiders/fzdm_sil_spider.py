@@ -14,7 +14,7 @@ class SilSpiderSpider(scrapy.Spider):
 	start_urls = []
 
 	def __init__(self, manga = 1, targetChap = 1, numChap = 1, *args, **kwargs):
-		super(scrapy.Spider, self).__init__(*args, **kwargs)
+		super(SilSpiderSpider, self).__init__(*args, **kwargs)
 
 		self.start_urls = ["http://manhua.fzdm.com/%s/%s/" % (int(manga), chap) for chap in xrange(int(targetChap), int(targetChap)+int(numChap))]
 		# self.log(logging.INFO, "[%s, %s, %s]" % (manga, targetChap, numChap))
