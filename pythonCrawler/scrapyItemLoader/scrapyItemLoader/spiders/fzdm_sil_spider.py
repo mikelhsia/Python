@@ -2,22 +2,22 @@
 import scrapy
 import urlparse
 import os
+import logging
 
 from scrapyItemLoader.items import ScrapyitemloaderItem
 from scrapy.http import Request
 
+
 class SilSpiderSpider(scrapy.Spider):
 	name = 'sil_spider'
 	allowed_domains = ["manhua.fzdm.com/"]
+	start_urls = []
 
-	manga      = int(raw_input("食戟之靈 - 58\t七原罪 - 56\t辛巴达 - 119\n"
-	                           "猎人 - 10\t东京RE - 117\n"
-	                           "进击 - 39\t英雄学院 - 131"
-	                           "\nInput Manga code: "))
-	targetChap = int(raw_input("Input start downloading chapter: "))
-	numChap    = int(raw_input("How many chapters you want to download: "))
+	def __init__(self, manga = 1, targetChap = 1, numChap = 1, *args, **kwargs):
+		super(scrapy.Spider, self).__init__(*args, **kwargs)
 
-	start_urls = ["http://manhua.fzdm.com/%d/%d/" % (manga, chap) for chap in xrange(targetChap, targetChap+numChap)]
+		self.start_urls = ["http://manhua.fzdm.com/%s/%s/" % (int(manga), chap) for chap in xrange(int(targetChap), int(targetChap)+int(numChap))]
+		# self.log(logging.INFO, "[%s, %s, %s]" % (manga, targetChap, numChap))
 
 	def parse(self, response):
 		# This is a contract for us
