@@ -16,8 +16,12 @@ class SilSpiderSpider(scrapy.Spider):
 	def __init__(self, manga = 1, targetChap = 1, numChap = 1, *args, **kwargs):
 		super(SilSpiderSpider, self).__init__(*args, **kwargs)
 
-		self.start_urls = ["http://manhua.fzdm.com/%s/%s/" % (int(manga), chap) for chap in xrange(int(targetChap), int(targetChap)+int(numChap))]
-		# self.log(logging.INFO, "[%s, %s, %s]" % (manga, targetChap, numChap))
+		if int(numChap) >= 0:
+			# self.log("Positive[%d, %d - %d]" % (int(manga), int(targetChap), int(targetChap)+int(numChap)))
+			self.start_urls = ["http://manhua.fzdm.com/%s/%s/" % (int(manga), chap) for chap in xrange(int(targetChap), int(targetChap)+int(numChap))]
+		else:
+			# self.log("Positive[%d, %d - %d]" % (int(manga), int(targetChap)+int(numChap), int(targetChap)))
+			self.start_urls = ["http://manhua.fzdm.com/%s/%s/" % (int(manga), chap) for chap in xrange(int(targetChap)+int(numChap)+1, int(targetChap)+1)]
 
 	def parse(self, response):
 		# This is a contract for us
