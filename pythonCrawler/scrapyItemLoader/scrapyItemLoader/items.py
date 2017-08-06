@@ -19,7 +19,7 @@ class ScrapyitemloaderItem(scrapy.Item):
 	imgDst = scrapy.Field()
 	pass
 
-class kukuComicItem(scrapy.Item):
+class KukuComicItem(scrapy.Item):
 	imgFileName = scrapy.Field()
 	imgSrc = scrapy.Field()
 	imgDst = scrapy.Field()

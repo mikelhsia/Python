@@ -4,47 +4,42 @@ import urlparse
 import os
 
 from scrapy.http import Request
+from scrapyItemLoader.items import KukuComicItem
 
 class SilSpiderSpider(scrapy.Spider):
 	name = 'kuku_sil_spider'
 	allowed_domains = ['comic.kukudm.com']
-
-	# manga      = int(raw_input("食戟之靈 - 58\t七原罪 - 56\t辛巴达 - 119\n"
-	#                            "猎人 - 10\t东京RE - 117\n"
-	#                            "进击 - 39\t英雄学院 - 131"
-	#                            "\nInput Manga code: "))
-	# targetChap = int(raw_input("Input start downloading chapter: "))
-	# numChap    = int(raw_input("How many chapters you want to download: "))
-
 	start_urls = []
+
+	# serverList
+	# - m200911d = 'http://n.1whour.com/'
+	# - m201001d = 'http://n.1whour.com/'
+	# - m201304d = 'http://n.1whour.com/'
+	comicServer = 'http://n.1whour.com/'
+
+	_manga = 1
+	_targetChap = 1
+	_numChap = 1
 
 	def __init__(self, manga=1, targetChap=1, numChap=1, *args, **kwargs):
 		super(SilSpiderSpider, self).__init__(*args, **kwargs)
-
-		self.start_urls = ["http://comic.kukudm.com/comiclist/2049/index.htm"]
-		self.log("[%s, %s, %s]" % (manga, targetChap, numChap))
+		self._manga = manga
+		self._targetChap = targetChap
+		self._numChap = numChap
+		# self.log("[%s, %s, %s]" % (manga, targetChap, numChap))
+		self.start_urls = ["http://comic.kukudm.com/comiclist/%s/index.htm" % self._manga]
 
 	def parse(self, response):
+		# TODO: 除了用链接title之外，还可以用其他方法，例如去list里的第几个等等...
+		# Use the text to find the right chapter
+		_xpathStr = "//a[contains(text(), \' %s%s\') and @target]/@href" % (self._targetChap, u'\u8bdd')
+		x = response.xpath(_xpathStr).extract()
+		self.logger.info("[TESTING]: %s", x)
 
-		# self.log("1. [URL Parsing and Downloading Image]: %s" % response.url)
 		yield Request(url=response.url, callback=self.parse_detail, dont_filter=True)
 
-		##### Valid xpath to find the right link
-		# response.xpath("//a[contains(text(), 147) and @target]/@href").extract()
-
-		try:
-			next_link = response.xpath(u'//a[contains(text(),"下一页")]/@href').extract().pop()
-			# self.log("2. [URL Parsing - Next link]: %s" % next_link)
-
-			if next_link:
-				# self.log("3. [URL Parsing - Goes to next link]: %s" % next_link)
-				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse, dont_filter=True)
-		except:
-			# self.log("4. [URL Parsing]: Nothing to be poped")
-			pass
-
 	def parse_detail(self, response):
-		item = ScrapyitemloaderItem()
+		item = KukuComicItem()
 
 		infoScript = response.xpath('//script[@type="text/javascript"]/text()').extract()
 		for line in infoScript:
@@ -64,5 +59,13 @@ class SilSpiderSpider(scrapy.Spider):
 		item['imgFileName'] = item['imgFileName'].replace('/','-')
 		item['imgDst'] = "%s/%s" % (os.getcwd(), response.url.split("/")[-2])
 
-		yield item
+		try:
+			next_link = response.xpath(u'//a[contains(text(),"下一页")]/@href').extract().pop()
+			#  /exit/exit.htm
+			# / html / body / table[2] / tbody / tr / td / a[4]
+
+			if next_link:
+				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse, dont_filter=True)
+		except:
+			pass
 
