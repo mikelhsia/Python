@@ -2,6 +2,7 @@
 import scrapy
 import urlparse
 import os
+import urllib
 
 from scrapy.http import Request
 from scrapyItemLoader.items import KukuComicItem
@@ -15,7 +16,7 @@ class SilSpiderSpider(scrapy.Spider):
 	# - m200911d = 'http://n.1whour.com/'
 	# - m201001d = 'http://n.1whour.com/'
 	# - m201304d = 'http://n.1whour.com/'
-	comicServer = 'http://n.1whour.com/'
+	_comicServer = 'http://n.1whour.com/'
 
 	_manga = 1
 	_targetChap = 1
@@ -41,31 +42,38 @@ class SilSpiderSpider(scrapy.Spider):
 	def parse_detail(self, response):
 		item = KukuComicItem()
 
-		infoScript = response.xpath('//script[@type="text/javascript"]/text()').extract()
+		infoScript = response.xpath('//script/text()').extract()
+		self.logger.info("[TESTING]: %s", infoScript)
 		for line in infoScript:
-			startStr = 'var mhurl = "'
+			startStr = 'd+"'
 			endStr = 'jpg'
 			startIdx = line.find(startStr)
 			endIdx = line.find(endStr)
 			if startIdx > 0:
-				item['imgFileName'] = line[startIdx+13:endIdx+3]
+				item['imgSrc'] = self._comicServer + urllib.quote(line[startIdx+3:endIdx+3].encode("utf-8"))
+				item['imgFileName'] = item['imgSrc'].split("/")[-1]
+				# FIXME: File Directory
+				item['imgDst'] = "%s/%s" % (os.getcwd(), '123')
 				break
 
-		if (item['imgFileName'].find('2015') != -1 or item['imgFileName'].find('2016') != -1 or item['imgFileName'].find('2017') != -1):
-			item['imgSrc'] = "http://%s/%s" % (u"p1.xiaoshidi.net", item['imgFileName'])
-		else:
-			item['imgSrc'] = "http://%s/%s" % (u"s1.nb-pintai.com", item['imgFileName'])
-
-		item['imgFileName'] = item['imgFileName'].replace('/','-')
-		item['imgDst'] = "%s/%s" % (os.getcwd(), response.url.split("/")[-2])
-
+		############################################################
+		# 第一页的漫画只有一个list item，所以这个是nextlink
+		# response.xpath("/html/body/table[2]/tr/td/a[1]/@href").extract()
+		# 但是第二页之后的页面有两个link，所以第二个才是nextlink；有可能包含最后一页的链接
+		# response.xpath("/html/body/table[2]/tr/td/a[2]/@href").extract()
+		# 最后一页是这个链接: '/exit/exit.htm'
+		############################################################
 		try:
-			next_link = response.xpath(u'//a[contains(text(),"下一页")]/@href').extract().pop()
-			#  /exit/exit.htm
-			# / html / body / table[2] / tbody / tr / td / a[4]
+			next_link = response.xpath("/html/body/table[2]/tr/td/a[2]/@href").extract()
+			if '/exit/exit.htm' not in next_link:
+				# Meaning this is not the last page
+				if not next_link:
+					# Meaning this is the first page, so using the first link xpath instead of the second one
+					next_link = response.xpath("/html/body/table[2]/tr/td/a[1]/@href").extract()
+				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse_detail, dont_filter=True)
+			else:
+				pass
 
-			if next_link:
-				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse, dont_filter=True)
 		except:
-			pass
+			self.logger.info("[TESTING]: Something went wrong")
 
