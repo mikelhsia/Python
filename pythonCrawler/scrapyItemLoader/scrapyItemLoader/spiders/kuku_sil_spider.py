@@ -52,9 +52,13 @@ class SilSpiderSpider(scrapy.Spider):
 			if startIdx > 0:
 				item['imgSrc'] = self._comicServer + urllib.quote(line[startIdx+3:endIdx+3].encode("utf-8"))
 				item['imgFileName'] = item['imgSrc'].split("/")[-1]
-				# FIXME: File Directory
-				item['imgDst'] = "%s/%s" % (os.getcwd(), '123')
 				break
+
+		# FIXME: File Directory
+		dir = response.xpath("/html/body/table[2]/tr/td[1]/text()").extract()
+		deliIdx = dir[0].find(' ')
+		deliEndIdx = dir[0].find(u'\u8bdd')
+		item['imgDst'] = "%s/%s" % (os.getcwd(), dir[0][deliIdx+1:deliEndIdx])
 
 		############################################################
 		# 第一页的漫画只有一个list item，所以这个是nextlink
