@@ -34,12 +34,14 @@ class SilSpiderSpider(scrapy.Spider):
 		# Use the text to find the right chapter
 		print "Start Parsing"
 		_xpathStr = "//a[contains(text(), \' %s%s\') and @target]/@href" % (self._targetChap, u'\u8bdd')
-		x = response.xpath(_xpathStr).extract()
-		self.logger.debug("[DEBUG] Inner url = %s", x)
-		# TODO: Change the response.rul to the new url
+		_currentChap = response.xpath(_xpathStr).extract()
+		self.logger.debug("[DEBUG] Inner url = %s", _currentChap)
 		# TODO: 除了用链接title之外，还可以用其他方法，例如去list里的第几个等等...
 		# TODO: Loop the 'targetChap' for 'numChap' times
-		yield Request(url=response.url, callback=self.parse_item, dont_filter=True)
+		# TODO: Change the response.rul to the new url
+		itemUrl = u"http://comic.kukudm.com/%s" % _currentChap[0]
+		self.logger.debug("[DEBUG] itemUrl = %s", itemUrl)
+		yield Request(url=itemUrl, callback=self.parse_item, dont_filter=True)
 
 	def parse_item(self, response):
 		item = KukuComicItem()
@@ -59,10 +61,10 @@ class SilSpiderSpider(scrapy.Spider):
 
 		# FIXME: File Directory
 		dirName = response.xpath("/html/body/table[2]/tr/td[1]/text()").extract()
-		self.logger.debug("[DEBUG] DIR = %s", dir)
+		self.logger.debug("[DEBUG] DIR = %s", dirName)
 		deliIdx = dirName[0].find(' ')
 		deliEndIdx = dirName[0].find(u'\u8bdd')
-		item['imgDst'] = "%s/%s" % (os.getcwd(), dir[0][deliIdx+1:deliEndIdx])
+		item['imgDst'] = "%s/%s" % (os.getcwd(), dirName[0][deliIdx+1:deliEndIdx])
 
 		############################################################
 		# 第一页的漫画只有一个list item，所以这个是nextlink
@@ -78,10 +80,12 @@ class SilSpiderSpider(scrapy.Spider):
 				if not next_link:
 					# Meaning this is the first page, so using the first link xpath instead of the second one
 					next_link = response.xpath("/html/body/table[2]/tr/td/a[1]/@href").extract()
-				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse_detail, dont_filter=True)
+					self.logger.debug("[TESTING]: Next link url - %s", next_link)
+				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse_item, dont_filter=True)
 			else:
+				self.logger.debug("[TESTING]: Else")
 				pass
 
 		except:
-			self.logger.info("[TESTING]: Something went wrong")
+			self.logger.debug("[TESTING]: Something went wrong")
 
