@@ -11,7 +11,7 @@ import urllib
 class ScrapyitemloaderPipeline(object):
 
 	def open_spider(self, spider):
-		print """######################\n# Now we're about to awake the spider\n######################"""
+		print """######################\n# Now we're about to awake the spider\n######################\n"""
 
 	def process_item(self, item, spider):
 
@@ -39,4 +39,4 @@ class ScrapyitemloaderPipeline(object):
 		# self.file.write(line)
 
 	def close_spider(self, spider):
-		print """######################\n# Now we're about to put the spider to sleep\n ######################"""
+		print """######################\n# Now we're about to put the spider to sleep\n######################\n"""

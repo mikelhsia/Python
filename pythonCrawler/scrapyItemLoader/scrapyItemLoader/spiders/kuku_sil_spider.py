@@ -31,19 +31,21 @@ class SilSpiderSpider(scrapy.Spider):
 		self.start_urls = ["http://comic.kukudm.com/comiclist/%s/index.htm" % self._manga]
 
 	def parse(self, response):
-		# TODO: 除了用链接title之外，还可以用其他方法，例如去list里的第几个等等...
 		# Use the text to find the right chapter
+		print "Start Parsing"
 		_xpathStr = "//a[contains(text(), \' %s%s\') and @target]/@href" % (self._targetChap, u'\u8bdd')
 		x = response.xpath(_xpathStr).extract()
-		self.logger.info("[TESTING]: %s", x)
+		self.logger.debug("[DEBUG] Inner url = %s", x)
+		# TODO: Change the response.rul to the new url
+		# TODO: 除了用链接title之外，还可以用其他方法，例如去list里的第几个等等...
+		# TODO: Loop the 'targetChap' for 'numChap' times
+		yield Request(url=response.url, callback=self.parse_item, dont_filter=True)
 
-		yield Request(url=response.url, callback=self.parse_detail, dont_filter=True)
-
-	def parse_detail(self, response):
+	def parse_item(self, response):
 		item = KukuComicItem()
 
 		infoScript = response.xpath('//script/text()').extract()
-		self.logger.info("[TESTING]: %s", infoScript)
+		self.logger.debug("[DEBUG] Script = %s", infoScript)
 		for line in infoScript:
 			startStr = 'd+"'
 			endStr = 'jpg'
@@ -52,12 +54,14 @@ class SilSpiderSpider(scrapy.Spider):
 			if startIdx > 0:
 				item['imgSrc'] = self._comicServer + urllib.quote(line[startIdx+3:endIdx+3].encode("utf-8"))
 				item['imgFileName'] = item['imgSrc'].split("/")[-1]
+				self.logger.debug('[DEBUG] Source = %s', item['imgSrc'])
 				break
 
 		# FIXME: File Directory
-		dir = response.xpath("/html/body/table[2]/tr/td[1]/text()").extract()
-		deliIdx = dir[0].find(' ')
-		deliEndIdx = dir[0].find(u'\u8bdd')
+		dirName = response.xpath("/html/body/table[2]/tr/td[1]/text()").extract()
+		self.logger.debug("[DEBUG] DIR = %s", dir)
+		deliIdx = dirName[0].find(' ')
+		deliEndIdx = dirName[0].find(u'\u8bdd')
 		item['imgDst'] = "%s/%s" % (os.getcwd(), dir[0][deliIdx+1:deliEndIdx])
 
 		############################################################
