@@ -31,26 +31,25 @@ class SilSpiderSpider(scrapy.Spider):
 		self.start_urls = ["http://comic.kukudm.com/comiclist/%s/index.htm" % self._manga]
 
 	def parse(self, response):
-		# Use the text to find the right chapter
-		print "Start Parsing"
-		_xpathStr = "//a[contains(text(), \' %s%s\') and @target]/@href" % (self._targetChap, u'\u8bdd')
-		_currentChap = response.xpath(_xpathStr).extract()
-		self.logger.debug("[DEBUG] Inner url = %s", _currentChap)
+		for num in range(0, int(self._numChap)):
+			# Use the text to find the right chapter
+			_xpathStr = "//a[contains(text(), \' %s%s\') and @target]/@href" % (str(int(self._targetChap)+num), u'\u8bdd')
+			# self.logger.debug("[DEBUG] xpath = %s", _xpathStr)
+			_currentChap = response.xpath(_xpathStr).extract()
+			if not _currentChap:
+				self.logger.info("[INFO] No further comic")
+				break
+			itemUrl = u"http://comic.kukudm.com%s" % _currentChap[0]
 
-		# TODO: Parse the entire URL to loop through those URL in different chapters
-
-		itemUrl = u"http://comic.kukudm.com%s" % _currentChap[0]
-		self.logger.debug("[DEBUG] itemUrl = %s", itemUrl)
-
-		# TODO: Loop the 'targetChap' for 'numChap' times
-		yield Request(url=itemUrl, callback=self.parse_item, dont_filter=True)
+			# self.logger.debug("[DEBUG] itemUrl = %s", itemUrl)
+			yield Request(url=itemUrl, callback=self.parse_item, dont_filter=True)
 
 	def parse_item(self, response):
 		item = KukuComicItem()
 
-		# Parse filename and file source
+		# parse filename and file source
 		infoScript = response.xpath('//script/text()').extract()
-		self.logger.debug("[DEBUG] Script = %s", infoScript)
+		# self.logger.debug("[DEBUG] Script = %s", infoScript)
 		for line in infoScript:
 			startStr = 'd+"'
 			endStr = 'jpg'
@@ -59,16 +58,12 @@ class SilSpiderSpider(scrapy.Spider):
 			if startIdx > 0:
 				item['imgSrc'] = self._comicServer + urllib.quote(line[startIdx+3:endIdx+3].encode("utf-8"))
 				item['imgFileName'] = item['imgSrc'].split("/")[-1]
-				self.logger.debug('[DEBUG] Source = %s', item['imgSrc'])
+				# self.logger.debug('[DEBUG] Source = %s', item['imgSrc'])
 				break
 
 		# TODO: Rename the folder name and downloaded filename
-		dirName = response.xpath("/html/body/table[2]/tr/td[1]/text()").extract()
-		for line in dirName:
-			# self.logger.debug("[DEBUG] DIR = %s", line)
-			deliIdx = line.find(' ')
-			deliEndIdx = line.find(u'\u8bdd')
-			item['imgDst'] = "%s/%s" % (os.getcwd(), self._targetChap)
+		item['imgDst'] = "%s/%s" % (os.getcwd(), response.url.split('/')[-2])
+		self.logger.debug("[DEBUG] Dst folder = %s", item['imgDst'])
 
 		############################################################
 		# 第一页的漫画只有一个list item，所以这个是nextlink
@@ -79,30 +74,21 @@ class SilSpiderSpider(scrapy.Spider):
 		############################################################
 		try:
 			next_link = response.xpath("/html/body/table[2]/tr/td/a[2]/@href").extract()
-			self.logger.debug("[TESTING]: Next link - %s", next_link)
 			if '/exit/exit.htm' not in next_link:
-				self.logger.debug("[TESTING]: not exit.htm")
 				# Meaning this is not the last page
 				if not next_link:
 					# Meaning this is the first page, so using the first link xpath instead of the second one
 					next_link = response.xpath("/html/body/table[2]/tr/td/a[1]/@href").extract()[0]
-					# self.logger.debug("[TESTING]: Next link url - %s", next_link)
-					# self.logger.debug("[TESTING]: Response url - %s", response.url)
-					# self.logger.debug("[TESTING]: Final url - %s", urlparse.urljoin(response.url, next_link))
 				else:
 					next_link = next_link[0]
-					# self.logger.debug("[TESTING]: Next Link is not empty")
-					# self.logger.debug("[TESTING]: Next link url - %s", next_link)
-					# self.logger.debug("[TESTING]: Response url - %s", response.url)
-					# self.logger.debug("[TESTING]: Final url - %s", urlparse.urljoin(response.url, next_link))
 					pass
 				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse_item, dont_filter=True)
 			else:
-				self.logger.debug("[TESTING]:exit.htm")
+				# self.logger.debug("Hit /exit.htm")
 				pass
 
 		except:
-			self.logger.error("[TESTING]: Something went wrong")
+			self.logger.error("Something went wrong")
 			pass
 
 		yield item
