@@ -16,15 +16,15 @@ class ScrapyitemloaderPipeline(object):
 	def process_item(self, item, spider):
 
 		# Creating all the folder and file necessary
-		dst = os.path.join(item['imgDst'], item['imgFileName'])
+		# dst = os.path.join(item['imgDst'], item['imgFileName'])
 
 		try:
-			os.mkdir(item['imgDst'])
+			os.mkdir(os.path.split(item['imgDst'])[0])
 		except:
-			# self.log("[IOError]: folder is already exist!")
+			# self.logger.info("[INFO]: folder is already exist!")
 			pass
 
-		urllib.urlretrieve(item['imgSrc'], dst)
+		urllib.urlretrieve(item['imgSrc'], item['imgDst'])
 		return item
 
 		# Option 2: you can Drop the item if you think the data in this item is incorrect

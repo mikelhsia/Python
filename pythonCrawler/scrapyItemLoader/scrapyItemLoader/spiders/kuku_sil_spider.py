@@ -61,10 +61,10 @@ class SilSpiderSpider(scrapy.Spider):
 				# self.logger.debug('[DEBUG] Source = %s', item['imgSrc'])
 				break
 
-		# TODO: Rename the folder name and downloaded filename
-		item['imgDst'] = "%s/%s" % (os.getcwd(), response.url.split('/')[-2])
-		self.logger.debug("[DEBUG] Dst folder = %s", item['imgDst'])
-
+		# Rename the folder name and downloaded filename
+		item['imgDst'] = "%s/%s/%s" % (os.getcwd(), response.url.split('/')[-2], response.url.split('/')[-1].replace('htm', 'jpg')
+)
+		# self.logger.debug("[DEBUG] Dst folder = %s", item['imgDst'])
 		############################################################
 		# 第一页的漫画只有一个list item，所以这个是nextlink
 		# response.xpath("/html/body/table[2]/tr/td/a[1]/@href").extract()
@@ -84,7 +84,7 @@ class SilSpiderSpider(scrapy.Spider):
 					pass
 				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse_item, dont_filter=True)
 			else:
-				# self.logger.debug("Hit /exit.htm")
+				self.logger.debug("Hit /exit.htm")
 				pass
 
 		except:

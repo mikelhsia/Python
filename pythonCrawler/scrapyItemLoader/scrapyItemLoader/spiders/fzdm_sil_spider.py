@@ -123,7 +123,7 @@ class SilSpiderSpider(scrapy.Spider):
 			item['imgSrc'] = "http://%s/%s" % (u"s1.nb-pintai.com", item['imgFileName'])
 
 		item['imgFileName'] = item['imgFileName'].replace('/','-')
-		item['imgDst'] = "%s/%s" % (os.getcwd(), response.url.split("/")[-2])
+		item['imgDst'] = "%s/%s/%s" % (os.getcwd(), response.url.split("/")[-2], item['imgFileName'])
 
 		yield item
 
