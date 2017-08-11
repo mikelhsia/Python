@@ -133,3 +133,89 @@
 # process.crawl(MySpider)
 # process.start() # the script will block here until the crawling is finished
 ###################################################################################
+
+###################################################################################
+# Debugging memory leaks with "prefs()" in telnet
+###################################################################################
+# telnet localhost 6023
+#
+# >>> prefs()
+# Live References
+#
+# ExampleSpider                       1   oldest: 15s ago
+# HtmlResponse                       10   oldest: 1s ago
+# Selector                            2   oldest: 0s ago
+# FormRequest                       878   oldest: 7s ago
+#
+# or
+# >>> from scrapy.spiders import Spider
+# >>> prefs(ignore=Spider)
+###################################################################################
+# Debugging memory leaks with "trackref"
+###################################################################################
+# - scrapy.utils.trackref module
+# Here are the functions available in the trackref module.
+#
+# - class scrapy.utils.trackref.object_ref
+# Inherit from this class (instead of object) if you want to track live instances with the trackref module.
+#
+# - scrapy.utils.trackref.print_live_refs(class_name, ignore=NoneType)
+# Print a report of live references, grouped by class name.
+#  Parameters:
+#    ignore (class or classes tuple) – if given, all objects from the specified class (or tuple of classes) will be ignored.
+#
+# scrapy.utils.trackref.get_oldest(class_name)
+# Return the oldest object alive with the given class name, or None if none is found.
+# Use print_live_refs() first to get a list of all tracked live objects per class name.
+#
+# scrapy.utils.trackref.iter_all(class_name)
+# Return an iterator over all objects alive with the given class name, or None if none is found.
+# Use print_live_refs() first to get a list of all tracked live objects per class name.
+###################################################################################
+# Debugging memory leaks with Guppy
+###################################################################################
+# The telnet console also comes with a built-in shortcut (hpy) for accessing Guppy heap objects.
+# Here’s an example to view all Python objects available in the heap using Guppy:
+#
+# >>> x = hpy.heap()
+# >>> x.bytype
+# Partition of a set of 297033 objects. Total size = 52587824 bytes.
+#  Index  Count   %     Size   % Cumulative  % Type
+#      0  22307   8 16423880  31  16423880  31 dict
+#      1 122285  41 12441544  24  28865424  55 str
+#      2  68346  23  5966696  11  34832120  66 tuple
+#      3    227   0  5836528  11  40668648  77 unicode
+#      4   2461   1  2222272   4  42890920  82 type
+#      5  16870   6  2024400   4  44915320  85 function
+#      6  13949   5  1673880   3  46589200  89 types.CodeType
+#      7  13422   5  1653104   3  48242304  92 list
+#      8   3735   1  1173680   2  49415984  94 _sre.SRE_Pattern
+#      9   1209   0   456936   1  49872920  95 scrapy.http.headers.Headers
+# <1676 more rows. Type e.g. '_.more' to view.>
+###################################################################################
+# You can see that most space is used by dicts. Then, if you want to see from which
+# attribute those dicts are referenced, you could do:
+#
+# >>> x.bytype[0].byvia
+# Partition of a set of 22307 objects. Total size = 16423880 bytes.
+#  Index  Count   %     Size   % Cumulative  % Referred Via:
+#      0  10982  49  9416336  57   9416336  57 '.__dict__'
+#      1   1820   8  2681504  16  12097840  74 '.__dict__', '.func_globals'
+#      2   3097  14  1122904   7  13220744  80
+#      3    990   4   277200   2  13497944  82 "['cookies']"
+#      4    987   4   276360   2  13774304  84 "['cache']"
+#      5    985   4   275800   2  14050104  86 "['meta']"
+#      6    897   4   251160   2  14301264  87 '[2]'
+#      7      1   0   196888   1  14498152  88 "['moduleDict']", "['modules']"
+#      8    672   3   188160   1  14686312  89 "['cb_kwargs']"
+#      9     27   0   155016   1  14841328  90 '[1]'
+# <333 more rows. Type e.g. '_.more' to view.>
+###################################################################################
+# Sometimes, you may notice that the memory usage of your Scrapy process will only increase,
+# but never decrease. Unfortunately, this could happen even though neither Scrapy nor your project
+# are leaking memory. This is due to a (not so well) known problem of Python, which may not return
+# released memory to the operating system in some cases.
+# - http://www.evanjones.ca/python-memory.html
+# - http://www.evanjones.ca/python-memory-part2.html
+# - http://www.evanjones.ca/python-memory-part3.html
+###################################################################################

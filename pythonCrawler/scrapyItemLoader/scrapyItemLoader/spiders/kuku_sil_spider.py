@@ -32,6 +32,12 @@ class SilSpiderSpider(scrapy.Spider):
 
 	def parse(self, response):
 		for num in range(0, int(self._numChap)):
+			# Notes regarding Xpath:
+			#  - Disable Firefox Javascript while inspecting the DOM looking for XPaths to be used in Scrapy
+			#  - Never use full XPath paths, use relative and clever ones based on attributes (such as id, class,
+			# width, etc) or any identifying features like contains(@href, 'image').
+			#  - Never include <tbody> elements in your XPath expressions unless you really know what you’re doing
+
 			# Use the text to find the right chapter
 			_xpathStr = "//a[contains(text(), \' %s%s\') and @target]/@href" % (str(int(self._targetChap)+num), u'\u8bdd')
 			# self.logger.debug("[DEBUG] xpath = %s", _xpathStr)

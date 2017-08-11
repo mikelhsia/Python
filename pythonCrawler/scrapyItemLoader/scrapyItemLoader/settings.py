@@ -68,10 +68,43 @@ DEPTH_LIMIT = 20
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   # 后面的数字代表执行优先级 ，当执行pipeine的时候会按照数字由小到大执行
-   # 通常将这些数字定义在0-1000范围内。
-   'scrapyItemLoader.pipelines.ScrapyitemloaderPipeline': 300, 
+	# 后面的数字代表执行优先级 ，当执行pipeine的时候会按照数字由小到大执行
+	# 通常将这些数字定义在0-1000范围内。
+	'scrapyItemLoader.pipelines.ScrapyitemloaderPipeline': 300,
+	# 'scrapy.pipelines.images.ImagesPipeline': 400,
+	# 'scrapy.pipelines.files.FilesPipeline': 500,
 }
+# Then, configure the target storage setting to a valid value that will be used for storing the downloaded images.
+# Otherwise the pipeline will remain disabled, even if you include it in the ITEM_PIPELINES setting.
+# The files are stored using a SHA1 hash of their URLs for the file names.
+# For the Files Pipeline, set the FILES_STORE setting:
+# FILES_STORE = '/Users/tsuyuhsia/Desktop/Python'
+# # For the Images Pipeline, set the IMAGES_STORE setting:
+# IMAGES_STORE = '/Users/tsuyuhsia/Desktop/Python'
+
+# # For the Files Pipeline, set FILES_URLS_FIELD and/or FILES_RESULT_FIELD settings:
+# FILES_URLS_FIELD = 'imgSrc'
+# FILES_RESULT_FIELD = 'imgDst'
+# # For the Images Pipeline, set IMAGES_URLS_FIELD and/or IMAGES_RESULT_FIELD settings:
+# IMAGES_URLS_FIELD = 'imgSrc'
+# IMAGES_RESULT_FIELD = 'imgDst'
+
+# # 120 days of delay for files expiration. Default is 90
+# FILES_EXPIRES = 120
+# # 30 days of delay for images expiration. Default is 90
+# IMAGES_EXPIRES = 30
+
+# # Generating thumbnail
+# IMAGES_THUMBS = {
+#     'small': (50, 50),
+#     'big': (270, 270),
+# }
+
+# # Filtering out small images
+# IMAGES_MIN_HEIGHT = 110
+# IMAGES_MIN_WIDTH = 110
+
+
 ##############################################################################
 # IMAGES_URLS_FIELD ="image_url"  #image_url是在items.py中配置的网络爬取得图片地址 
 # - 配置保存本地的地址
