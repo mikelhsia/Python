@@ -219,3 +219,20 @@
 # - http://www.evanjones.ca/python-memory-part2.html
 # - http://www.evanjones.ca/python-memory-part3.html
 ###################################################################################
+
+
+
+###################################################################################
+# AutoThrottle extension
+###################################################################################
+# URL: https://doc.scrapy.org/en/latest/topics/autothrottle.html
+#
+# This is an extension for automatically throttling crawling speed based on load of
+# both the Scrapy server and the website you are crawling.
+#
+# Design goals
+# Be nicer to sites instead of using default download delay of zero
+# automatically adjust scrapy to the optimum crawling speed, so the user doesn’t
+# have to tune the download delays to find the optimum one. The user only needs to
+# specify the maximum concurrent requests it allows, and the extension does the rest.
+###################################################################################

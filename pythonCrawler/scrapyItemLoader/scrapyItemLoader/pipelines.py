@@ -12,9 +12,9 @@ from scrapy.utils.trackref import get_oldest
 class ScrapyitemloaderPipeline(object):
 
 	def open_spider(self, spider):
-		print """######################\n"
-		"# Now we're about to awake the spider\n"
-		"######################\n"""
+		print """######################"
+		"# Now we're about to awake the spider\
+		"######################"""
 
 	def process_item(self, item, spider):
 
@@ -67,6 +67,6 @@ class ScrapyitemloaderPipeline(object):
 		# self.file.write(line)
 
 	def close_spider(self, spider):
-		print """######################\n"
-		"# Now we're about to put the spider to sleep\n"
-		"######################\n"""
+		print """######################"
+		"# Now we're about to put the spider to sleep"
+		"######################"""
