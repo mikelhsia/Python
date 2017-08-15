@@ -236,3 +236,26 @@
 # have to tune the download delays to find the optimum one. The user only needs to
 # specify the maximum concurrent requests it allows, and the extension does the rest.
 ###################################################################################
+
+
+###################################################################################
+# Multiple cookie sessions per spider
+# New in version 0.15.
+###################################################################################
+# There is support for keeping multiple cookie sessions per spider by using the cookiejar
+# Request meta key. By default it uses a single cookie jar (session), but you can pass an identifier
+# to use different ones.
+#
+# For example:
+# for i, url in enumerate(urls):
+#     yield scrapy.Request(url, meta={'cookiejar': i},
+#         callback=self.parse_page)
+#
+# Keep in mind that the cookiejar meta key is not “sticky”. You need to keep passing it along on subsequent requests.
+# For example:
+# def parse_page(self, response):
+#     # do some processing
+#     return scrapy.Request("http://www.example.com/otherpage",
+#         meta={'cookiejar': response.meta['cookiejar']},
+#         callback=self.parse_other_page)
+###################################################################################

@@ -16,6 +16,33 @@ class ScrapyitemloaderPipeline(object):
 		"# Now we're about to awake the spider\
 		"######################"""
 
+	##############################################################################################################
+	# process_request(request, spider)
+	# This method is called for each request that goes through the download middleware.
+	##############################################################################################################
+	# process_request()
+	# should either: return None, return a Response object, return a Request object, or raise IgnoreRequest.
+	#
+	# If it returns None, Scrapy will continue processing this request, executing all other middlewares until,
+	# finally, the appropriate downloader handler is called the request performed( and its response downloaded).
+	#
+	# If it returns a Response object, Scrapy won’t bother calling any other process_request() or process_exception()
+	# methods, or the appropriate download function; it’ll return that response.The process_response() methods of
+	# installed middleware is always called on every response.
+	#
+	# If it returns a Request object, Scrapy will stop calling process_request methods and reschedule the returned
+	# request.Once the newly returned request is performed, the appropriate middleware chain will be called on the
+	# downloaded response.
+	#
+	# If it raises an IgnoreRequest exception, the process_exception() methods of installed downloader middleware will
+	# be called.If none of them handle the exception, the errback function of the request(Request.errback) is called.
+	# If no code handles the raised exception, it is ignored and not logged(unlike other exceptions).
+	#
+	# Parameters:
+	# request(Request object) – the request being processed spider(Spider object) – the spider for which this request
+	# is intended
+	##############################################################################################################
+
 	def process_item(self, item, spider):
 
 		# Creating all the folder and file necessary
