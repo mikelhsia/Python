@@ -136,5 +136,8 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-MYEXT_ENABLED = True
-MYEXT_ITEMCOUNT = 10
+##############################################################################
+# Configuration for the Customized Extension
+##############################################################################
+# MYEXT_ENABLED = True
+# MYEXT_ITEMCOUNT = 10
