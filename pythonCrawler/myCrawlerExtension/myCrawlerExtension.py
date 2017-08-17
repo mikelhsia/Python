@@ -1,4 +1,3 @@
-1
 """
 This extension is a simple extension to illustrate the concepts described in the previous section. 
 This extension will log a message every time:
