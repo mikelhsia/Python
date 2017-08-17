@@ -129,6 +129,7 @@ EXTENSIONS_BASE = {
     'scrapy.extensions.logstats.LogStats': 0,
     'scrapy.extensions.spiderstate.SpiderState': 0,
     'scrapy.extensions.throttle.AutoThrottle': 0,
+    'scrapy.extensions.myCrawlerExtension.SpiderOpenCloseLogging': 100,
 }
 
 FEED_TEMPDIR = None

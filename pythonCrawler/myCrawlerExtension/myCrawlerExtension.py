@@ -20,10 +20,11 @@ from scrapy.exceptions import NotConfigured
 
 logger = logging.getLogger(__name__)
 
+
 class SpiderOpenCloseLogging(object):
 	def __init__(self, item_count):
 		self.item_count = item_count
-		self.item_scraped = 0
+		self.items_scraped = 0
 
 	@classmethod
 	def from_crawler(cls, crawler):
