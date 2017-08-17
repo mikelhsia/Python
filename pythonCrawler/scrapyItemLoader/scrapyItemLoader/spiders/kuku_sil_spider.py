@@ -48,6 +48,15 @@ class SilSpiderSpider(scrapy.Spider):
 			itemUrl = u"http://comic.kukudm.com%s" % _currentChap[0]
 
 			# self.logger.debug("[DEBUG] itemUrl = %s", itemUrl)
+			#################################################################################
+			# The return of parse function link to pipeline - process_request() function which
+			# - If None
+			#       Do nothing
+			# - If Response
+			#       Put the response to scheduler and parse it again
+			# - If Item
+			#       parse the item
+			#################################################################################
 			yield Request(url=itemUrl, callback=self.parse_item, dont_filter=True)
 
 	def parse_item(self, response):
