@@ -1,6 +1,8 @@
 #!/usr/local/bin/python
 # -*- coding: UTF-8 -*-
 
+def print_breakline():
+	print "---------------------"
 
 ########################################################################################
 # 不定函数 -
@@ -30,7 +32,7 @@ def test_var_key_args(f_arg, *args, **kwargs):
 		print "[%s] = \'%s\'" % (key, kwargs[key])
 
 test_var_args('yasoob', 'python', 'eggs', 'test')
-print "---------------------"
+print_breakline()
 test_var_key_args('first', name='yasoob', lang='python', food='eggs', func='test')
 
 
@@ -233,3 +235,408 @@ test_var_key_args('first', name='yasoob', lang='python', food='eggs', func='test
 # q(uit)
 # Quit from the debugger. The program being executed is aborted.
 ########################################################################################
+
+print_breakline()
+my_string = "Yasoob"
+my_iter = iter(my_string)
+print next(my_iter)
+print next(my_iter)
+print next(my_iter)
+print next(my_iter)
+# Output: 'Y'
+
+
+print_breakline()
+items = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x**2, items))
+print squared
+
+def multiply(x):
+	return (x*x)
+
+def add(x):
+	return (x+x)
+
+funcs = [multiply, add]
+
+for i in range(5):
+	value = map(lambda x: x(i), funcs)
+	print(list(value))
+	# 译者注：上面print时，加了list转换，是为了python2/3的兼容性
+	#        在python2中map直接返回列表，但在python3中返回迭代器
+	#        因此为了兼容python3, 需要list转换一下
+
+
+print_breakline()
+number_list = range(-5, 5)
+# 这个filter类似于一个for循环，但它是一个内置函数，并且更快
+less_than_zero = filter(lambda x: x < 0, number_list)
+print less_than_zero
+# 译者注：上面print时，加了list转换，是为了python2/3的兼容性
+#        在python2中filter直接返回列表，但在python3中返回迭代器
+#        因此为了兼容python3, 需要list转换一下
+# Output: [-5, -4, -3, -2, -1]
+
+
+from functools import reduce
+# 当需要对一个列表进行一些计算并返回结果时，Reduce 是个非常有用的函数
+product = reduce( (lambda x, y: x * y), [1, 2, 3, 4] )
+# Output: 24
+
+print_breakline()
+# set(集合)数据结构
+# 它与列表(list)的行为类似，区别在于set不能包含重复的值。
+# 这在很多情况下非常有用。例如你可能想检查列表中是否包含重复的元素，你有两个选择，第一个需要使用for循环
+# 但还有一种更简单更优雅的解决方案，那就是使用集合(sets)
+
+some_list = ['a', 'b', 'c', 'b', 'd', 'm', 'n', 'n']
+duplicates = set([x for x in some_list if some_list.count(x) > 1])
+print(duplicates)
+# 重复
+# 输出: set(['b', 'n'])
+
+valid = set(['yellow', 'red', 'blue', 'green', 'black'])
+input_set = set(['red', 'brown'])
+print(input_set.intersection(valid))
+# 交集
+# 输出: set(['red'])
+
+valid = set(['yellow', 'red', 'blue', 'green', 'black'])
+input_set = set(['red', 'brown'])
+print(input_set.difference(valid))
+# 差集
+# 输出: set(['brown'])
+
+
+# 伪代码:
+# 如果条件为真，返回真 否则返回假
+#   condition_is_true if condition else condition_is_false
+# 例子:
+is_fat = True
+state = "fat" if is_fat else "not fat"
+print state
+
+# 伪代码:
+# (返回假，返回真)[真或假]
+#   (if_test_is_false, if_test_is_true)[test]
+# 例子:
+fat = True
+fitness = ("skinny", "fat")[fat]
+print("Ali is ", fitness)
+#输出: Ali is fat
+
+print_breakline()
+# 装饰器
+# Decorator
+##############################################
+# Step 1: 一切皆对象
+##############################################
+def hi(name="yasoob"):
+	return "hi " + name
+
+print(hi())
+# output: 'hi yasoob'
+
+# 我们甚至可以将一个函数赋值给一个变量，比如
+greet = hi
+# 我们这里没有在使用小括号，因为我们并不是在调用hi函数
+# 而是在将它放在greet变量里头。我们尝试运行下这个
+
+print(greet())
+# output: 'hi yasoob'
+
+# 如果我们删掉旧的hi函数，看看会发生什么！
+# del hi
+# print(hi())
+#outputs: NameError
+
+print(greet())
+#outputs: 'hi yasoob'
+
+
+print_breakline()
+##############################################
+# Step 2 在函数中定义函数
+##############################################
+def hi(name="yasoob"):
+	print("now you are inside the hi() function")
+
+	def greet():
+		return "now you are in the greet() function"
+
+	def welcome():
+		return "now you are in the welcome() function"
+
+	print(greet())
+	print(welcome())
+	print("now you are back in the hi() function")
+
+hi()
+#output:now you are inside the hi() function
+#       now you are in the greet() function
+#       now you are in the welcome() function
+#       now you are back in the hi() function
+
+# 上面展示了无论何时你调用hi(), greet()和welcome()将会同时被调用。
+# 然后greet()和welcome()函数在hi()函数之外是不能访问的，比如：
+
+greet()
+#outputs: NameError: name 'greet' is not defined
+
+print_breakline()
+##############################################
+# Step 3 从函数中返回函数
+##############################################
+def hi(name="yasoob"):
+	def greet():
+		return "now you are in the greet() function"
+
+	def welcome():
+		return "now you are in the welcome() function"
+
+	if name == "yasoob":
+		return greet
+	else:
+		return welcome
+
+a = hi()
+print(a)
+#outputs: <function greet at 0x7f2143c01500>
+#上面清晰地展示了`a`现在指向到hi()函数中的greet()函数
+
+#现在试试这个
+print(a())
+#outputs: now you are in the greet() function
+
+
+print_breakline()
+##############################################
+# Step 4 将函数作为参数传给另一个函数
+##############################################
+def hi():
+	return "hi yasoob!"
+
+def doSomethingBeforeHi(func):
+	print("I am doing some boring work before executing hi()")
+	print(func())
+
+doSomethingBeforeHi(hi)
+# outputs:
+# I am doing some boring work before executing hi()
+# hi yasoob!
+
+print_breakline()
+##############################################
+# Step 5 你的第一个装饰器
+##############################################
+def a_new_decorator(a_func):
+
+	"""This is newDecorator"""
+	def wrapTheFunction():
+		"""This is wrapTheFunction"""
+		print("I am doing some boring work before executing a_func()")
+		a_func()
+		print("I am doing some boring work after executing a_func()")
+
+	return wrapTheFunction
+
+def a_function_requiring_decoration():
+	print("I am the function which needs some decoration to remove my foul smell")
+
+a_function_requiring_decoration()
+#outputs: "I am the function which needs some decoration to remove my foul smell"
+
+a_function_requiring_decoration = a_new_decorator(a_function_requiring_decoration)
+#now a_function_requiring_decoration is wrapped by wrapTheFunction()
+
+a_function_requiring_decoration()
+#outputs:I am doing some boring work before executing a_func()
+#        I am the function which needs some decoration to remove my foul smell
+#        I am doing some boring work after executing a_func()
+
+
+print_breakline()
+##############################################
+@a_new_decorator
+def a_function_requiring_decoration():
+	"""Hey you! Decorate me!"""
+	print("I am the function which needs some decoration to "
+		"remove my foul smell")
+
+a_function_requiring_decoration()
+#outputs: I am doing some boring work before executing a_func()
+#         I am the function which needs some decoration to remove my foul smell
+#         I am doing some boring work after executing a_func()
+
+#the @a_new_decorator is just a short way of saying:
+# a_function_requiring_decoration = a_new_decorator(a_function_requiring_decoration)
+
+print(a_function_requiring_decoration.__name__)
+print(a_function_requiring_decoration.__doc__)
+# Output: wrapTheFunction
+# 这里的函数被warpTheFunction替代了。它重写了我们函数的名字和注释文档(docstring)
+
+
+print_breakline()
+##############################################
+from functools import wraps
+def a_new_decorator(a_func):
+	"""This is newDecorator"""
+	@wraps(a_func)
+	def wrapTheFunction():
+		"""This is wrapTheFunction"""
+		print("I am doing some boring work before executing a_func()")
+		a_func()
+		print("I am doing some boring work after executing a_func()")
+	return wrapTheFunction
+
+@a_new_decorator
+def a_function_requiring_decoration():
+	"""Hey yo! Decorate me!"""
+	print("I am the function which needs some decoration to "
+		"remove my foul smell")
+
+print(a_function_requiring_decoration.__name__)
+print(a_function_requiring_decoration.__doc__)
+# Output: a_function_requiring_decoration
+
+print_breakline()
+##############################################
+# 注意：@wraps接受一个函数来进行装饰，并加入了复制函数名称、注释文档、参数列表等等的功能。
+# 这可以让我们在装饰器里面访问在装饰之前的函数的属性。
+def decorator_name(f):
+	@wraps(f)
+	def decorated(*args, **kwargs):
+		if not can_run:
+			return "Function will not run"
+		return f(*args, **kwargs)
+	return decorated
+
+@decorator_name
+def func():
+	return("Function is running")
+
+can_run = True
+print(func())
+# Output: Function is running
+
+can_run = False
+print(func())
+# Output: Function will not run
+
+##############################################
+# Step 6 使用场景：授权
+# 装饰器能有助于检查某个人是否被授权去使用一个web应用的端点(endpoint)。
+# 它们被大量使用于Flask和Django web框架中。这里是一个例子来使用基于装饰器的授权：
+##############################################
+# def requires_auth(f):
+# 	@wraps(f)
+# 	def decorated(*args, **kwargs):
+# 		auth = request.authorization
+# 		if not auth or not check_auth(auth.username, auth.password):
+# 			authenticate()
+# 			return f(*args, **kwargs)
+# 		return decorated
+
+##############################################
+# Step 7 使用场景：日志
+# 日志是装饰器运用的另一个亮点。这是个例子：
+##############################################
+# def logit(func):
+# 	@wraps(func)
+# 	def with_logging(*args, **kwargs):
+# 		print(func.__name__ + " was called")
+# 		return func(*args, **kwargs)
+# 	return with_logging
+#
+# @logit
+# def addition_func(x):
+# 	"""Do some math."""
+# 	return x + x
+#
+#
+# result = addition_func(4)
+# Output: addition_func was called
+
+##############################################
+# Step 7.1 使用场景：日志
+# 日志的例子，并创建一个包裹函数，能让我们指定一个用于输出的日志文件
+##############################################
+def logit(logfile='out.log'):
+	def logging_decorator(func):
+		@wraps(func)
+		def wrapped_function(*args, **kwargs):
+			log_string = func.__name__ + " was called"
+			print(log_string)
+			# 打开logfile，并写入内容
+			with open(logfile, 'a') as opened_file:
+				# 现在将日志打到指定的logfile
+				opened_file.write(log_string + '\n')
+			return func(*args, **kwargs)
+		return wrapped_function
+	return logging_decorator
+
+@logit()
+def myfunc1():
+	pass
+
+myfunc1()
+# Output: myfunc1 was called
+# 现在一个叫做 out.log 的文件出现了，里面的内容就是上面的字符串
+
+@logit(logfile='func2.log')
+def myfunc2():
+	pass
+
+myfunc2()
+# Output: myfunc2 was called
+# 现在一个叫做 func2.log 的文件出现了，里面的内容就是上面的字符串
+
+
+##############################################
+# Step 7.2 使用场景：日志
+# 类也可以用来构建装饰器。那我们现在以一个类而不是一个函数的方式，来重新构建logit。
+##############################################
+class logit(object):
+	def __init__(self, logfile='out.log'):
+		self.logfile = logfile
+
+	def __call__(self, func):
+		@wraps(func)
+		def wrapped_function(*args, **kwargs):
+			log_string = func.__name__ + " was called"
+			print(log_string)
+			# 打开logfile并写入
+			with open(self.logfile, 'a') as opened_file:
+				# 现在将日志打到指定的文件
+				opened_file.write(log_string + '\n')
+			# 现在，发送一个通知
+			self.notify()
+			return func(*args, **kwargs)
+		return wrapped_function
+
+	def notify(self):
+		# logit只打日志，不做别的
+		pass
+
+# 这个实现有一个附加优势，在于比嵌套函数的方式更加整洁，而且包裹一个函数还是使用跟以前一样的语法：
+
+@logit()
+def myfunc1():
+	pass
+
+# 现在，我们给logit创建子类，来添加email的功能(虽然email这个话题不会在这里展开)。
+# 从现在起，@email_logit将会和@logit产生同样的效果，但是在打日志的基础上，还会多发送一封邮件给管理员。
+
+class email_logit(logit):
+	'''
+	一个logit的实现版本，可以在函数调用时发送email给管理员
+	'''
+	def __init__(self, email='admin@myproject.com', *args, **kwargs):
+		self.email = email
+		super(logit, self).__init__(*args, **kwargs)
+
+	def notify(self):
+		# 发送一封email到self.email
+		# 这里就不做实现了
+		pass
