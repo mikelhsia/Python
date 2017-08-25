@@ -773,3 +773,264 @@ def test2():
 	print(locals())
 
 test2()
+
+
+def add_to(num, target=[]):
+	target.append(num)
+	return target
+
+add_to(1)
+# Output: [1]
+
+add_to(2)
+# Output: [1, 2]
+
+add_to(3)
+# Output: [1, 2, 3]
+# 在Python中当函数被定义时，默认参数只会运算一次，而不是每次被调用时都会重新运算。
+# 你应该永远不要定义可变类型的默认参数，除非你知道你正在做什么。你应该像这样做：
+
+def add_to(element, target=None):
+	if target is None:
+		target = []
+	target.append(element)
+	return target
+
+
+##############################################
+# __slots__魔法
+##############################################
+# 在Python中，每个类都有实例属性。默认情况下Python用一个字典来保存一个对象的实例属性。这非常有用，因为它允许我们在运行时去设置任意的新属性。
+#
+# 然而，对于有着已知属性的小类来说，它可能是个瓶颈。这个字典浪费了很多内存。Python不能在对象创建时直接分配一个固定量的内存来保存所有的属性。
+# 因此如果你创建许多对象（我指的是成千上万个），它会消耗掉很多内存。
+# 不过还是有一个方法来规避这个问题。这个方法需要使用__slots__来告诉Python不要使用字典，而且只给一个固定集合的属性分配空间。
+#
+# 这里是一个使用与不使用__slots__的例子：
+##############################################
+
+class MyClass(object):
+	def __init__(self, name, identifier):
+		self.name = name
+		self.identifier = identifier
+		self.set_up()
+	# ...
+
+# 第二段代码会为你的内存减轻负担。通过这个技巧，有些人已经看到内存占用率几乎40%~50%的减少。
+class MyClass2(object):
+	# __slots__ = ...  # type: Optional[Union[str, unicode, Iterable[Union[str, unicode]]]]
+	__slots__ = ['name', 'identifier']
+	def __init__(self, name, identifier):
+		self.name = name
+		self.identifier = identifier
+		self.set_up()
+	# ...
+
+##############################################
+# 虚拟环境(virtualenv)
+##############################################
+# 你听说过virtualenv吗？
+# 如果你是一位初学者，你可能没有听说过virtualenv；但如果你是位经验丰富的程序员，那么它可能是你的工具集的重要组织部分。
+#
+# 那么，什么是virtualenv?
+# Virtualenv 是一个工具，它能够帮我们创建一个独立(隔离)的Python环境。想象你有一个应用程序，依赖于版本为2的第三方模块，但另一个程序依赖的版本是3，请问你如何使用和开发这些应用程序？
+# 如果你把一切都安装到了/usr/lib/python2.7/site-packages（或者其它平台的标准位置），那很容易出现某个模块被升级而你却不知道的情况。
+# 在另一种情况下，想象你有一个已经开发完成的程序，但是你不想更新它所依赖的第三方模块版本；但你已经开始另一个程序，需要这些第三方模块的版本。
+#
+# 用什么方式解决？
+# 使用virtualenv！针对每个程序创建独立（隔离）的Python环境，而不是在全局安装所依赖的模块。
+# 要安装它，只需要在命令行中输入以下命令：
+#
+# $ pip install virtualenv
+# 最重要的命令是：
+#
+# $ virtualenv myproject
+# $ source bin/activate
+# 执行第一个命令在myproject文件夹创建一个隔离的virtualenv环境，第二个命令激活这个隔离的环境(virtualenv)。
+#
+# 在创建virtualenv时，你必须做出决定：这个virtualenv是使用系统全局的模块呢？还是只使用这个virtualenv内的模块。 默认情况下，virtualenv不会使用系统全局模块。
+# 如果你想让你的virtualenv使用系统全局模块，请使用--system-site-packages参数创建你的virtualenv，例如：
+#
+# virtualenv --system-site-packages mycoolproject
+# 使用以下命令可以退出这个virtualenv:
+# $ deactivate
+# 运行之后将恢复使用你系统全局的Python模块。
+#
+# 福利
+# 你可以使用smartcd来帮助你管理你的环境，当你切换目录时，它可以帮助你激活（activate）和退出（deactivate）你的virtualenv。我已经用了很多次，很喜欢它。你可以在github(https://github.com/cxreg/smartcd) 上找到更多关于它的资料。
+# 这只是一个virtualenv的简短介绍，你可以在 http://docs.python-guide.org/en/latest/dev/virtualenvs/ 找到更多信息。
+##############################################
+
+print_breakline()
+##############################################
+# 容器(Collections)
+##############################################
+# Python附带一个模块，它包含许多容器数据类型，名字叫作collections。我们将讨论它的作用和用法。
+#
+# 我们将讨论的是：
+# defaultdict
+# counter
+# deque
+# namedtuple
+# enum.Enum (包含在Python 3.4以上)
+##############################################
+
+from collections import defaultdict, Counter, deque, namedtuple
+
+# 我个人使用defaultdict较多，与dict类型不同，你不需要检查key是否存在，所以我们能这样做：
+colours = (
+	('Yasoob', 'Yellow'),
+	('Ali', 'Blue'),
+	('Arham', 'Green'),
+	('Ali', 'Black'),
+	('Yasoob', 'Red'),
+	('Ahmed', 'Silver'),
+)
+# defaultdict
+favorite_colours = defaultdict(list)
+for name, colour in colours:
+	favorite_colours[name].append(colour)
+
+print(favorite_colours)
+
+# Counter
+favs = Counter(name for name, colour in colours)
+print(favs)
+favs2 = Counter(colour for name, colour in colours)
+print(favs2)
+
+# deque
+d = deque()
+d.append('1')
+d.append('2')
+d.append('3')
+
+print("Deque length: ", len(d))
+## 输出: 3
+
+print("First item: ", d[0])
+## 输出: '1'
+
+print("Last item: ", d[-1])
+## 输出: '3'
+
+# 你可以从两端取出(pop)数据：
+
+d = deque(range(5))
+print(len(d))
+## 输出: 5
+
+d.popleft()
+## 输出: 0
+
+d.pop()
+## 输出: 4
+
+# 我们也可以限制这个列表的大小，当超出你设定的限制时，数据会从对队列另一端被挤出去(pop)。
+# 最好的解释是给出一个例子：
+# 现在当你插入30条数据时，最左边一端的数据将从队列中删除。
+d = deque(maxlen=30)
+
+d = deque([1,2,3,4,5])
+d.extendleft([0])
+d.extend([6,7,8])
+print(d)
+
+## 输出: deque([0, 1, 2, 3, 4, 5, 6, 7, 8])
+
+print(d)
+
+## 输出: deque([1, 2, 3])
+
+print("Now in the queue: ", d)
+
+# namedtuple
+# 它把元组变成一个针对简单任务的容器。你不必使用整数索引来访问一个namedtuples的数据。
+# 你可以像字典(dict)一样访问namedtuples，但namedtuples是不可变的
+# 在下面的例子中，我们的元组名称是Animal，字段名称是'name'，'age'和'type'。
+# namedtuple让你的元组变得自文档了。你只要看一眼就很容易理解代码是做什么的。
+# 你也不必使用整数索引来访问一个命名元组，这让你的代码更易于维护。
+# 而且，namedtuple的每个实例没有对象字典，所以它们很轻量，与普通的元组比，并不需要更多的内存。这使得它们比字典更快。
+Animal = namedtuple('Animal', 'name age type')
+perry = Animal(name="perry", age=31, type="cat")
+
+print(perry)
+## 输出: Animal(name='perry', age=31, type='cat')
+
+print(perry.name)
+## 输出: 'perry'
+
+
+print_breakline()
+# Enumerate
+from enum import Enum
+class Species(Enum):
+	cat = 1
+	dog = 2
+	horse = 3
+	aardvark = 4
+	butterfly = 5
+	owl = 6
+	platypus = 7
+	dragon = 8
+	unicorn = 9
+	# 依次类推
+
+	# 但我们并不想关心同一物种的年龄，所以我们可以使用一个别名
+	kitten = 1  # (译者注：幼小的猫咪)
+	puppy = 2   # (译者注：幼小的狗狗)
+
+for counter, value in enumerate(Species):
+	print "[{}, {}]".format(counter, value)
+
+
+print_breakline()
+##############################################
+# Introspection 自省
+##############################################
+# Python中所有一切都是一个对象，而且我们可以仔细勘察那些对象。
+# Python还包含了许多内置函数和模块来帮助我们。
+
+# dir
+# 它是用于自省的最重要的函数之一。它返回一个列表，列出了一个对象所拥有的属性和方法。这里是一个例子：
+my_list = [1, 2, 3]
+print(dir(my_list))
+
+# type函数返回一个对象的类型。举个例子：
+print(type(''))
+# Output: <type 'str'>
+
+print(type([]))
+# Output: <type 'list'>
+
+print(type({}))
+# Output: <type 'dict'>
+
+print(type(dict))
+# Output: <type 'type'>
+
+print(type(3))
+# Output: <type 'int'>
+
+# id()函数返回任意不同种类对象的唯一ID，举个例子：
+name = "Yasoob"
+print(id(name))
+# Output: 139972439030304
+
+# inspect模块
+# inspect模块也提供了许多有用的函数，来获取活跃对象的信息。比方说，你可以查看一个对象的成员，只需运行：
+
+import inspect
+print(inspect.getmembers(str))
+# Output: [('__add__', <slot wrapper '__add__' of ... ...
+
+
+##############################################
+# 各种推导式(comprehensions)
+##############################################
+# 推导式（又称解析式）是Python的一种独有特性，如果我被迫离开了它，我会非常想念。推导式是可以从一个数据序列构建另一个新的数据序列的结构体。 共有三种推导，在Python2和3中都有支持：
+# - 列表(list)推导式
+# - 字典(dict)推导式
+# - 集合(set)推导式
+# 我们将一一进行讨论。一旦你知道了使用列表推导式的诀窍，你就能轻易使用任意一种推导式了。
+##############################################
