@@ -35,10 +35,10 @@ class SilSpiderSpider(scrapy.Spider):
 	@classmethod
 	def from_crawler(cls, crawler, *args, **kwargs):
 		spider = super(SilSpiderSpider, cls).from_crawler(crawler, *args, **kwargs)
-		crawler.signals.connect(spider.spider_closed, signal=scrapy.signals.spider_closed)
+		crawler.signals.connect(spider.engine_started, signal=scrapy.signals.engine_started)
 		return spider
 
-	def spider_closed(self, spider):
+	def engine_started(self, spider):
 		spider.logger.info('Spider closed: %s', spider.name)
 
 	def parse(self, response):
