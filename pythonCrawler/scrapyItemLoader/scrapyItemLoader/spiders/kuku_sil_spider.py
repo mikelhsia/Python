@@ -4,6 +4,7 @@ import urlparse
 import os
 import urllib
 
+from scrapy import signals
 from scrapy.http import Request
 from scrapyItemLoader.items import KukuComicItem
 
@@ -29,6 +30,16 @@ class SilSpiderSpider(scrapy.Spider):
 		self._numChap = numChap
 		# self.log("[%s, %s, %s]" % (manga, targetChap, numChap))
 		self.start_urls = ["http://comic.kukudm.com/comiclist/%s/index.htm" % self._manga]
+
+	# Implementation of signals interception in spider
+	@classmethod
+	def from_crawler(cls, crawler, *args, **kwargs):
+		spider = super(SilSpiderSpider, cls).from_crawler(crawler, *args, **kwargs)
+		crawler.signals.connect(spider.spider_closed, signal=scrapy.signals.spider_closed)
+		return spider
+
+	def spider_closed(self, spider):
+		spider.logger.info('Spider closed: %s', spider.name)
 
 	def parse(self, response):
 		for num in range(0, int(self._numChap)):
