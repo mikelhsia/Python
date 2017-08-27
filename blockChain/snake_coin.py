@@ -51,6 +51,7 @@ def next_block(last_block):
 	return Block(this_index, this_timestamp, this_data, this_hash)
 
 
+# def main():
 '''
 创建我们的blockchain！在我们的例子中，blockchain本身就是一个简单的Python列表。
 列表的第一个元素是起源块。当然，我们需要添加后续的块。因为SnakeCoin是最小的块，
@@ -71,3 +72,6 @@ for i in range(0, num_of_block_to_be_added):
 	# Tell everyone about it
 	print "Block #{} has been added to the block chain!".format(block_to_add.index)
 	print "Hash: {}\n".format(block_to_add.hash)
+
+# if __name__ == '__main__':
+# 	main()
