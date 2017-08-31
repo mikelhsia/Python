@@ -1,12 +1,14 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+import time
+
 ####################################################################################
 # Python thread
 # thread.start_new_thread ( function, args[, kwargs] )
 ####################################################################################
 import thread
-import time
+
 
 def print_time(threadName, delay):
 	count = 0
