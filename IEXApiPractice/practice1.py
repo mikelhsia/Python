@@ -98,15 +98,14 @@ print r.json
 以上几种方式都可以调用API来执行动作，但requests这种方式代码最简洁，最清晰，建议采用。
 '''
 
-import requests, json
+import requests, json, pprint
 
-iexApiUrl = "https://api.iextrading.com/1.0/stock/aapl/quote"
+iexApiUrl = "https://api.iextrading.com/1.0/stock/aapl/news"
 # data = json.dumps({'name': 'test', 'description': 'some test repo'})
 # r = requests.post(github_url, data, auth=('user', '*****'))
 g = requests.get(iexApiUrl)
 
 aapl = json.loads(g.content)
-print aapl['symbol']
-print aapl
-
+# print aapl['symbol']
+print json.dumps(aapl, indent=4, sort_keys=True)
 
