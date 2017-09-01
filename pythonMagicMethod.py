@@ -15,17 +15,19 @@ from os import path as op
 
 class FileObject(object):
 	'''给文件对象进行包装从而确认在删除时文件流关闭'''
-	def __new__(cls, *args, **kwargs):
-		print("We're at __new__()")
+	# def __new__(cls, *args, **kwargs):
+		# print("We're at __new__()")
 
 	def __init__(self, filePath, fileName, fileMode):
 		# super(FileObject, self).__init__()
-		print("We have created file: {}".format(op.join(filePath, fileName)))
+		print("We have opened the file: {}".format(op.join(filePath, fileName)))
 		self.mode = fileMode
 		self.fileName = fileName
 		self.file = open(op.join(filePath, fileName), 'r+')
 
 	def __del__(self):
+		print("-------------")
+		print("Start cleaning up")
 		self.file.close()
 		del self.file
 
@@ -39,13 +41,39 @@ class FileObject(object):
 	# 只有当调用不存在的属性的时候会被返回。
 	def __getattr__(self, itemName):
 		if type(itemName) is str:
-			print("You're getting strings, which is fine")
+			print("You're getting strings:{}, which is fine".format(itemName))
 		else:
 			print("You're getting nothing, Out!")
 
-	def __setattr__(self, name, value):
-		pass
+	# 与__getattr__(self, name) 不同，__setattr__ 是一个封装的解决方案。无论属性是否存在，
+	# 它都允许你定义对对属性的赋值行为，以为这你可以对属性的值进行个性定制。实现__setattr__时要避免”无限递归”的错误。
+	# def __setattr__(self, name, value):
+	# 	pass
+	############################
+	# #  错误用法
+	# def __setattr__(self, name, value):
+	# 	self.name = value
+	# # 每当属性被赋值的时候(如self.name = value)， ``__setattr__()`` 会被调用，这样就造成了递归调用。
+	# # 这意味这会调用 ``self.__setattr__('name', value)`` ，每次方法会调用自己。这样会造成程序崩溃。
+	#
+	# #  正确用法
+	# def __setattr__(self, name, value):
+	# 	self.__dict__[name] = value  # 给类中的属性名分配值
+	# # 定制特有属性
+	############################
+
+	# 与 __setattr__ 相同，但是功能是删除一个属性而不是设置他们。实现时也要防止无限递归现象发生。
+	# def __delattr__(self, item):
+	# 	pass
+
+	# __getattribute__定义了你的属性被访问时的行为，相比较，__getattr__只有该属性不存在时才会起作用。
+	# 因此，在支持__getattribute__的Python版本, 调用__getattr__前必定会调用 __getattribute__。
+	# __getattribute__同样要避免”无限递归”的错误。需要提醒的是，最好不要尝试去实现__getattribute__,
+	# 因为很少见到这种做法，而且很容易出bug。
+	# def __getattribute__(self, item):
+	# 	print("Before getting the attribute")
+
 
 
 fp = FileObject('./', 'xml_sax.py', 'r+')
-print(type(fp.mode))
+print fp.fileName
