@@ -33,7 +33,7 @@ DOWNLOAD_DELAY = 0.25
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Configure the limit of yield depth
-DEPTH_LIMIT = 20
+DEPTH_LIMIT = 50
 
 # Disable cookies (enabled by default)
 #COOKIES_ENABLED = False

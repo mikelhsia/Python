@@ -2,7 +2,8 @@
 # -*- coding: UTF-8 -*-
 
 def print_breakline():
-	print "---------------------"
+	print("---------------------")
+
 
 ########################################################################################
 # 不定函数 -
@@ -21,15 +22,15 @@ def print_breakline():
 #   someclass.get_info = get_info
 ########################################################################################
 def test_var_args(f_arg, *argv):
-	print "First normal arg:", f_arg
+	print("First normal arg:", f_arg)
 	for arg in argv:
-		print "another arg through *argv:", arg
+		print("another arg through *argv:", arg)
 
 
 def test_var_key_args(f_arg, *args, **kwargs):
-	print "First normal arg:", f_arg
+	print("First normal arg:", f_arg)
 	for key in kwargs:
-		print "[%s] = \'%s\'" % (key, kwargs[key])
+		print("[%s] = \'%s\'" % (key, kwargs[key]))
 
 test_var_args('yasoob', 'python', 'eggs', 'test')
 print_breakline()
@@ -239,17 +240,17 @@ test_var_key_args('first', name='yasoob', lang='python', food='eggs', func='test
 print_breakline()
 my_string = "Yasoob"
 my_iter = iter(my_string)
-print next(my_iter)
-print next(my_iter)
-print next(my_iter)
-print next(my_iter)
+print(next(my_iter))
+print(next(my_iter))
+print(next(my_iter))
+print(next(my_iter))
 # Output: 'Y'
 
 
 print_breakline()
 items = [1, 2, 3, 4, 5]
 squared = list(map(lambda x: x**2, items))
-print squared
+print(squared)
 
 def multiply(x):
 	return (x*x)
@@ -271,7 +272,7 @@ print_breakline()
 number_list = range(-5, 5)
 # 这个filter类似于一个for循环，但它是一个内置函数，并且更快
 less_than_zero = filter(lambda x: x < 0, number_list)
-print less_than_zero
+print(less_than_zero)
 # 译者注：上面print时，加了list转换，是为了python2/3的兼容性
 #        在python2中filter直接返回列表，但在python3中返回迭代器
 #        因此为了兼容python3, 需要list转换一下
@@ -314,7 +315,7 @@ print(input_set.difference(valid))
 # 例子:
 is_fat = True
 state = "fat" if is_fat else "not fat"
-print state
+print(state)
 
 # 伪代码:
 # (返回假，返回真)[真或假]
@@ -348,7 +349,7 @@ def double_numbers(iterable):
 # Running the following would mean we'll double all values first and return all
 # of them back to be checked by our condition
 for value in double_numbers(range(1000000)):  # `test_non_generator`
-    print value
+    print(value)
     if value > 5:
         break
 
@@ -368,8 +369,8 @@ def double_numbers_generator(iterable):
 # over the values and doubling them one by one as they are being consumed by
 # our logic. Hence as soon as we see a value > 5, we break out of the
 # loop and don't need to double most of the values sent in (MUCH FASTER!)
-for value in double_numbers_generator(xrange(1000000)):  # ! `test_generator` !
-    print value
+for value in double_numbers_generator(range(1000000)):  # ! `test_generator` !
+    print(value)
     if value > 5:
         break
 
@@ -407,7 +408,7 @@ def get_fruits():
 
 # Prints out the list of fruits with 'Apple' element in it:
 # Banana, Mango, Orange, Apple
-print ', '.join(get_fruits())
+print(', '.join(get_fruits()))
 
 # in this example beg wraps say
 # Beg will call say. If say_please is True then it will change the returned
@@ -432,10 +433,10 @@ def say(say_please=False):
     return msg, say_please
 
 
-print say()  # Can you buy me a beer?
-print say(say_please=True)  # Can you buy me a beer? Please! I am poor :(
+print(say())  # Can you buy me a beer?
+print(say(say_please=True))  # Can you buy me a beer? Please! I am poor :(
 
-print "-------------"
+print("-------------")
 import os
 os.system('ls -la')
 
@@ -759,8 +760,8 @@ print_breakline()
 '''
 Python 推导式
 '''
-print [x + 10 for x in range(10) if x % 2 == 0]
-print {k:v for k, v in zip("abc", range(10, 13))}
+print([x + 10 for x in range(10) if x % 2 == 0])
+print({k:v for k, v in zip("abc", range(10, 13))})
 
 def test(data):
 	print(type(data), data)
@@ -981,7 +982,7 @@ class Species(Enum):
 	puppy = 2   # (译者注：幼小的狗狗)
 
 for counter, value in enumerate(Species):
-	print "[{}, {}]".format(counter, value)
+	print("[{}, {}]".format(counter, value))
 
 
 print_breakline()
