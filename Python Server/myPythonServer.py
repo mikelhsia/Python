@@ -15,6 +15,6 @@ sk.listen(5) # 开始TCP监听。backlog指定在拒绝连接之前，操作系�
 
 while True:
 	conn, addr = sk.accept()
-	print "链接地址：", addr
+	print("链接地址：", addr)
 	conn.send('欢迎访问菜鸟教程')
 	conn.close()

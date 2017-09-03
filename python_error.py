@@ -7,12 +7,12 @@
 
 while True:
 	try:
-		x = int(raw_input("Please enger a number:"))
+		x = int(input("Please enger a number:"))
 		break
 	except (ValueError, RuntimeError, TypeError, NameError):
-		print "Oops! That was no valid number. Try again..."
+		print("Oops! That was no valid number. Try again...")
 
-print "#########################"
+print("#########################")
 import sys
 
 try:
@@ -20,19 +20,19 @@ try:
 	s = f.readline()
 	i = int(s.strip())
 except IOError as e:
-	print "I/O error({0}): {1}".format(e.errno, e.strerror)
+	print("I/O error({0}): {1}".format(e.errno, e.strerror))
 except ValueError:
-	print "Could not convert data to an integer"
+	print("Could not convert data to an integer")
 except:
-	print "Unexpected error: ", sys,exc_info()[0]
+	print("Unexpected error: ", sys.exc_info()[0])
 	# 如果你需要明确一个异常是否抛出，但不想处理它， raise 语句可以让你很简单的重新抛出该异常:
 	raise
 else:
-	print "Else others..."
+	print("Else others...")
 finally:
 	# 不管有没有发生异常， finally子句 在程序离开 try 后都一定会被执行。
 	# 当 try 语句中发生了未被 except 捕获的异常（或者它发生在 except 或 else 子句中），在 finally 子句执行完后它会被重新抛出。
-	print "Finally..."
+	print("Finally...")
 
 
 
@@ -40,13 +40,13 @@ try:
 	# raise 语句允许程序员强制抛出一个指定的异常。例如:
 	raise Exception("spam", 'eggs')
 except Exception as inst:
-	print type(inst)
-	print inst.args
-	print inst
+	print(type(inst))
+	print(inst.args)
+	print(inst)
 
 	x,y=inst.args
-	print "x = ", x
-	print "y = ", y
+	print("x = ", x)
+	print("y = ", y)
 
 class MyError(Exception):
 	def __init__(self, value):
@@ -57,7 +57,7 @@ class MyError(Exception):
 try: 
 	raise MyError(2*2)
 except MyError as e:
-	print "My exception occurred, value: ", e.value
+	print("My exception occurred, value: ", e.value)
 
 raise MyError('oops!')
 

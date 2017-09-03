@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 f = open('workfile','rw')
-print f
+print(f)
 
 # f.read(size)
 f.read()

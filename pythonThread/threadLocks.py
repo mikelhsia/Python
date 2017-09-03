@@ -89,7 +89,7 @@ container = BoundedSemaphore(max_items)
 def producer(nloops):
 	for i in range(nloops):
 		time.sleep(random.randrange(2, 5))
-		print time.ctime(), ":",
+		print(time.ctime(), ":",)
 		try:
 			container.release()
 			print("Produced an item.")
@@ -99,7 +99,7 @@ def producer(nloops):
 def consumer(nloops):
 	for i in range(nloops):
 		time.sleep(random.randrange(2, 5))
-		print time.ctime(), ":",
+		print(time.ctime(), ":",)
 		if container.acquire(False):
 			print("Consumed an item.")
 		else:
@@ -133,13 +133,13 @@ event = Event()
 
 def waiter(event, nloops):
 	for i in range(nloops):
-		print "%s. Waiting for the flag to be set." % (i+1)
+		print("%s. Waiting for the flag to be set." % (i+1))
 		# Blocks until the flag becomes true.
 		event.wait()
-		print "Wait complete at: %s" % time.ctime()
+		print("Wait complete at: %s" % time.ctime())
 		# Resets the flag.
 		event.clear()
-		print ""
+		print("")
 
 def setter(event, nloops):
 	for i in range(nloops):
@@ -180,7 +180,7 @@ def producer(box, nitems):
 		num = random.randint(1, 10)
 		box.append(num)  # Puts an item into box for consumption.
 		condition.notify()  # Notifies the consumer about the availability.
-		print "Produced:", num
+		print("Produced:", num)
 		condition.release()
 
 
@@ -188,7 +188,7 @@ def consumer(box, nitems):
 	for i in range(nitems):
 		condition.acquire()
 		condition.wait()  # Blocks until an item is available for consumption.
-		print "%s: Acquired: %s" % (time.ctime(), box.pop())
+		print("%s: Acquired: %s" % (time.ctime(), box.pop()))
 		condition.release()
 
 threads = []
@@ -201,8 +201,8 @@ for func in [producer, consumer]:
 for thread in threads:
 	thread.join()
 
-print "All done."
-print "------------------------------"
+print("All done.")
+print("------------------------------")
 
 '''
 Barriers
@@ -221,11 +221,11 @@ names = ["Harsh", "Lokesh", "George", "Iqbal"]
 def player():
 	name = names.pop()
 	sleep(randrange(2, 5))
-	print "%s reached the barrier at: %s" % (name, ctime())
+	print("%s reached the barrier at: %s" % (name, ctime()))
 	b.wait()
 
 threads = []
-print "Race starts now…"
+print("Race starts now…")
 
 for i in range(num):
 	threads.append(Thread(target=player))
@@ -234,5 +234,5 @@ for i in range(num):
 for thread in threads:
 	thread.join()
 
-print ""
-print "Race over!"
+print("")
+print("Race over!")

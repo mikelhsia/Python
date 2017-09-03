@@ -3,9 +3,9 @@
 
 def fib(n):    # write Fibonacci series up to n
 	a, b = 0, 1
-	print "Inside Fib function", __name__
+	print("Inside Fib function", __name__)
 	while b < n:
-		print b
+		print(b)
 		a, b = b, a+b
 
 
@@ -35,10 +35,10 @@ if __name__ == "__main__":
 
 # str.zfill() 它用于向数值的字符串表达左侧填充 0。该函数可以正确理解正负号:
 for x in range(1,11):
-	print repr(x).rjust(2), repr(x*x).rjust(3), repr(x*x*x).rjust(4)
+	print(repr(x).rjust(2), repr(x*x).rjust(3), repr(x*x*x).rjust(4))
 for x in range(1,11):
-	print '{0:2d} {1:3d} {2:4d}'.format(x,x*x,x*x*x)
-print '12'.zfill(5)
-print 'We are the {} who say "{}!"'.format('knights', 'Ni')
-print 'This {food} is {adjective}.'.format(food='spam', adjective='absolutely horrible')
+	print('{0:2d} {1:3d} {2:4d}'.format(x,x*x,x*x*x))
+print('12'.zfill(5))
+print('We are the {} who say "{}!"'.format('knights', 'Ni'))
+print('This {food} is {adjective}.'.format(food='spam', adjective='absolutely horrible'))
 

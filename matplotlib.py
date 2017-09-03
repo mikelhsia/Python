@@ -14,7 +14,7 @@ plt.show()
 # plt.show()
 
 a = np.arange(5)
-print a.dtype
-print a
-print a.shape 
+print(a.dtype)
+print(a)
+print(a.shape)
 

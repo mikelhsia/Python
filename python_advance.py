@@ -42,12 +42,12 @@ test_var_key_args('first', name='yasoob', lang='python', food='eggs', func='test
 # python -m pdb python_advance.py
 ########################################################################################
 # - h(elp) [command]
-# Without argument, print the list of available commands. With a command as argument,
-# print help about that command. help pdb displays the full documentation (the docstring of the pdb module).
+# Without argument, print(the list of available commands. With a command as argument,)
+# print(help about that command. help pdb displays the full documentation (the docstring of the pdb module).)
 # Since the command argument must be an identifier, help exec must be entered to get help on the ! command.
 #
 # - w(here)
-# Print a stack trace, with the most recent frame at the bottom.
+# print(a stack trace, with the most recent frame at the bottom.)
 # An arrow indicates the current frame, which determines the context of most commands.
 #
 # - d(own) [count]
@@ -113,8 +113,8 @@ test_var_key_args('first', name='yasoob', lang='python', food='eggs', func='test
 # list, leading to ambiguities about which list to execute.
 #
 # If you use the ‘silent’ command in the command list, the usual message about stopping at a
-# breakpoint is not printed. This may be desirable for breakpoints that are to print a specific
-# message and then continue. If none of the other commands print anything, you see no sign that
+# breakpoint is not printed. This may be desirable for breakpoints that are to print(a specific)
+# message and then continue. If none of the other commands print(anything, you see no sign that)
 # the breakpoint was reached.
 #
 # s(tep)
@@ -164,17 +164,17 @@ test_var_key_args('first', name='yasoob', lang='python', food='eggs', func='test
 # New in version 3.2.
 #
 # a(rgs)
-# Print the argument list of the current function.
+# print(the argument list of the current function.)
 #
 # p expression
-# Evaluate the expression in the current context and print its value.
+# Evaluate the expression in the current context and print(its value.)
 #
 # Note print() can also be used, but is not a debugger command — this executes the Python print() function.
 # pp expression
-# Like the p command, except the value of the expression is pretty-printed using the pprint module.
+# Like the p command, except the value of the expression is pretty-printed using the pprint(module.)
 #
 # whatis expression
-# Print the type of the expression.
+# print(the type of the expression.)
 #
 # source expression
 # Try to get source code for the given object and display it.
@@ -213,9 +213,9 @@ test_var_key_args('first', name='yasoob', lang='python', food='eggs', func='test
 #
 # As an example, here are two useful aliases (especially when placed in the .pdbrc file):
 #
-# # Print instance variables (usage "pi classInst")
+# # print(instance variables (usage "pi classInst"))
 # alias pi for k in %1.__dict__.keys(): print("%1.",k,"=",%1.__dict__[k])
-# # Print instance variables in self
+# # print(instance variables in self)
 # alias ps pi self
 # unalias name
 # Delete the specified alias.

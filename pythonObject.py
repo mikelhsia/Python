@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 def printBreakLine():
-	print "-------------------------"
+	print("-------------------------")
 
 class Employee:
 	'所有员工的基类, self 代表类的实例，self 在定义类的方法时是必须有的，虽然在调用时不必传入相应的参数。'
@@ -15,10 +15,10 @@ class Employee:
 		Employee.empCount += 1
 
 	def displayCount(self):
-		print "Total Employee: %d" % Employee.empCount
+		print("Total Employee: %d" % Employee.empCount)
  
 	def displayEmployee(self):
-		print "Name : ", self.name,  ", Salary: ", self.salary
+		print("Name : ", self.name,  ", Salary: ", self.salary)
 
 	# self 不是 python 关键字，我们把他换成 runoob 也是可以正常执行的:
 	def prt(self):
@@ -57,13 +57,13 @@ emp1 = Employee("Michael", 1000)
 emp1.prt() 
 emp1.displayCount()
 emp1.displayEmployee()
-print "Total count of employees: ", emp1.empCount
+print("Total count of employees: ", emp1.empCount)
 
 # 可以添加，删除，修改类的属性，如下所示：
 emp1.age = 7  # 添加一个 'age' 属性
-print "emp1's age is: ", emp1.age
+print("emp1's age is: ", emp1.age)
 emp1.age = 8  # 修改 'age' 属性
-print "Now emp1's age is: ", emp1.age
+print("Now emp1's age is: ", emp1.age)
 hasattr(emp1, 'age')    # 如果存在 'age' 属性返回 True。
 getattr(emp1, 'age')    # 返回 'age' 属性的值
 setattr(emp1, 'age', 8) # 添加属性 'age' 值为 8
@@ -75,11 +75,11 @@ delattr(emp1, 'age')    # 删除属性 'age'
 # __name__: 类名
 # __module__: 类定义所在的模块（类的全名是'__main__.className'，如果类位于一个导入模块mymod中，那么className.__module__ 等于 mymod）
 # __bases__ : 类的所有父类构成元素（包含了一个由所有父类组成的元组）
-print "Employee.__doc__:", Employee.__doc__
-print "Employee.__name__:", Employee.__name__
-print "Employee.__module__:", Employee.__module__
-print "Employee.__bases__:", Employee.__bases__
-print "Employee.__dict__:", Employee.__dict__
+print("Employee.__doc__:", Employee.__doc__)
+print("Employee.__name__:", Employee.__name__)
+print("Employee.__module__:", Employee.__module__)
+print("Employee.__bases__:", Employee.__bases__)
+print("Employee.__dict__:", Employee.__dict__)
 
 printBreakLine()
 
@@ -102,12 +102,12 @@ class Point:
 		self.y = y
 	def __del__(self):
 		class_name = self.__class__.__name__
-		print class_name, "销毁"
+		print(class_name, "销毁")
  
 pt1 = Point()
 pt2 = pt1
 pt3 = pt1
-print id(pt1), id(pt2), id(pt3) # 打印对象的id
+print(id(pt1), id(pt2), id(pt3)) # 打印对象的id
 del pt1
 del pt2
 del pt3
@@ -124,24 +124,24 @@ printBreakLine()
 class Parent:        # 定义父类
 	parentAttr = 100
 	def __init__(self):
-		print "调用父类构造方法"
+		print("调用父类构造方法")
  
 	def parentMethod(self):
-		print '调用父类方法'
+		print('调用父类方法')
 
 	def setAttr(self, attr):
 		Parent.parentAttr = attr
 
 	def getAttr(self):
-		print "父类属性 :", Parent.parentAttr
+		print("父类属性 :", Parent.parentAttr)
  
 class Child(Parent): # 定义子类
 	def __init__(self):
 		Parent.__init__(self) # 调用父类构造方法
-		print "调用子类构造方法"
+		print("调用子类构造方法")
 
 	def childMethod(self):
-		print '调用子类方法 child method'
+		print('调用子类方法 child method')
  
 c = Child()          # 实例化子类, 同时调用父类及子类的建构方法
 c.childMethod()      # 调用子类的方法
@@ -168,11 +168,11 @@ printBreakLine()
 
 class Parent1:        # 定义父类
 	def myMethod(self):
-		print '调用父类方法'
+		print('调用父类方法')
  
 class Child1(Parent1): # 定义子类
 	def myMethod(self):
-		print '调用子类方法'
+		print('调用子类方法')
  
 c = Child1()          # 子类实例
 c.myMethod()         # 子类调用重写方法
@@ -203,9 +203,9 @@ class Vector:
  
 v1 = Vector(2,10)
 v2 = Vector(5,-2)
-print v1
-print v2
-print v1 + v2
+print(v1)
+print(v2)
+print(v1 + v2)
 
 printBreakLine()
 
@@ -216,16 +216,16 @@ class JustCounter:
     def count(self):
         self.__secretCount += 1
         self.publicCount += 1
-        print self.__secretCount
+        print(self.__secretCount)
  
 counter = JustCounter()
 counter.count()
 counter.count()
-print counter.publicCount
-# print counter.__secretCount  # 报错，实例不能访问私有变量
+print(counter.publicCount)
+# print(counter.__secretCount  # 报错，实例不能访问私有变量)
 
 # Python不允许实例化的类访问私有数据，但你可以使用 object._className__attrName 访问属性，将如下代码替换以上代码的最后一行代码
-print counter._JustCounter__secretCount 
+print(counter._JustCounter__secretCount )
 
 # 单下划线、双下划线、头尾双下划线说明：
 # __foo__: 定义的是特列方法，类似 __init__() 之类的。
@@ -246,12 +246,12 @@ line = "Cats are smarter than dogs"
 matchObj = re.match( r'(.*) are (.*?) (.*)', line, re.M|re.I)
  
 if matchObj:
-   print "matchObj.group()  : ", matchObj.group()
-   print "matchObj.group(1) : ", matchObj.group(1)
-   print "matchObj.group(2) : ", matchObj.group(2) # .*? 后面多个问号，代表非贪婪模式，只匹配符合条件的最少字符
-   print "matchObj.group(3) : ", matchObj.group(3)
+   print("matchObj.group()  : ", matchObj.group())
+   print("matchObj.group(1) : ", matchObj.group(1))
+   print("matchObj.group(2) : ", matchObj.group(2)) # .*? 后面多个问号，代表非贪婪模式，只匹配符合条件的最少字符
+   print("matchObj.group(3) : ", matchObj.group(3))
 else:
-   print "No match!!"
+   print("No match!!")
 
 printBreakLine()
 # re.match与re.search的区别
@@ -264,12 +264,12 @@ line = "Cats are smarter than dogs"
 searchObj = re.search( r'(.*) are (.*?) (.*)', line, re.M|re.I)
  
 if searchObj:
-   print "searchObj.group()  : ", searchObj.group()
-   print "searchObj.group(1) : ", searchObj.group(1)
-   print "searchObj.group(2) : ", searchObj.group(2) # .*? 后面多个问号，代表非贪婪模式，只匹配符合条件的最少字符
-   print "searchObj.group(3) : ", searchObj.group(3)
+   print("searchObj.group()  : ", searchObj.group())
+   print("searchObj.group(1) : ", searchObj.group(1))
+   print("searchObj.group(2) : ", searchObj.group(2)) # .*? 后面多个问号，代表非贪婪模式，只匹配符合条件的最少字符
+   print("searchObj.group(3) : ", searchObj.group(3))
 else:
-   print "No search result!!"
+   print("No search result!!")
 
 printBreakLine()
 # re.sub(pattern, repl, string, count=0, flags=0)
@@ -282,9 +282,9 @@ phone = "2004-959-559 # 这是一个国外电话号码"
  
 # 删除字符串中的 Python注释 
 num = re.sub(r'#.*$', "", phone)
-print "电话号码是: ", num
+print("电话号码是: ", num)
  
 # 删除非数字(-)的字符串 
 num = re.sub(r'\D', "", phone)
-print "电话号码是 : ", num
+print("电话号码是 : ", num)
 printBreakLine()

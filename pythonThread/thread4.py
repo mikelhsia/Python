@@ -22,7 +22,7 @@
 #  - Queue.join() 实际上意味着等到队列为空，再执行别的操作
 ####################################################################################
 
-import Queue
+import queue
 import threading
 import time
 
@@ -36,9 +36,9 @@ class myThread(threading.Thread):
 		self.q        = q
 
 	def run(self):
-		print "Starting " + self.name
+		print("Starting " + self.name)
 		self.process_data(self.name, self.q)
-		print "Exiting " + self.name
+		print("Exiting " + self.name)
 
 
 	def process_data(self, threadName, threadQ):
@@ -47,7 +47,7 @@ class myThread(threading.Thread):
 			if not workQueue.empty():
 				data = threadQ.get()
 				queueLock.release()
-				print "%s processing %s" % (threadName, data)
+				print("%s processing %s" % (threadName, data))
 			else:
 				queueLock.release()
 		time.sleep(1)
@@ -57,7 +57,7 @@ class myThread(threading.Thread):
 threadList = ["Thread-1", "Thread-2", "Thread-3"]
 nameList = ["One", "Two", "Three", "Four", "Five", "Six"]
 queueLock = threading.Lock()
-workQueue = Queue.Queue(10)
+workQueue = queue.Queue(10)
 threads = []
 threadID = 1
 
@@ -72,7 +72,7 @@ for tName in threadList:
 queueLock.acquire()
 for word in nameList:
 	workQueue.put(word)
-	print "填充队列"
+	print("填充队列")
 queueLock.release()
 
 # 等待队列清空
@@ -86,4 +86,4 @@ exitFlag = 1
 for t in threads:
 	t.join()
 
-print "Exit main thread"
+print("Exit main thread")

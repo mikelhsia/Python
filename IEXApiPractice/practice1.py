@@ -22,7 +22,7 @@ urllib2.install_opener(opener)  # install the opener...
 request = urllib2.Request(github_url, urllib.urlencode(
 	{'name': 'Test repo', 'description': 'Some test repository'}))  # Manual encoding required
 handler = urllib2.urlopen(request)
-print handler.read()
+print(handler.read())
 
 - Sample2
 ======
@@ -34,10 +34,10 @@ req.add_header('IAF', abc.token_authiaas)
 try:
 	resp = urllib2.urlopen(req)
 except urllib2.HTTPError, error:
-	print "Cannot remove service instance!", error
+	print("Cannot remove service instance!", error)
 	sys.exit(1)
 response = resp.read()
-print response
+print(response)
 
 - Sample3
 ======
@@ -50,7 +50,7 @@ data = urllib.urlencode({
 	'movetoironic': 'False',
 	'output': 'json'
 })
-print "Bootstrap Asset jobs starting .............."
+print("Bootstrap Asset jobs starting ..............")
 
 base64string = base64.encodestring('%s:%s' % (user, passwd)).replace('\n', '')
 request = urllib2.Request(url, data, headers={"Authorization": "Basic %s" % base64string})
@@ -60,7 +60,7 @@ response_status = response_json['status']
 status_code = response_status['statusCode']
 status = response_status['status']
 message = response_status['message']
-print status_code, status, message
+print(status_code, status, message)
 
 ============================================================
 2. httplib2
@@ -71,7 +71,7 @@ h = httplib2.Http(".cache")
 h.add_credentials("user", "******", "
 data = urllib.urlencode({"name": "test"})
 resp, content = h.request(github_url, "POST", data)
-print content
+print(content)
 
 ============================================================
 3. pycurl
@@ -94,7 +94,7 @@ import requests, json
 github_url = "
 data = json.dumps({'name': 'test', 'description': 'some test repo'})
 r = requests.post(github_url, data, auth=('user', '*****'))
-print r.json
+print(r.json)
 以上几种方式都可以调用API来执行动作，但requests这种方式代码最简洁，最清晰，建议采用。
 '''
 
@@ -106,6 +106,6 @@ iexApiUrl = "https://api.iextrading.com/1.0/stock/aapl/news"
 g = requests.get(iexApiUrl)
 
 aapl = json.loads(g.content)
-# print aapl['symbol']
-print json.dumps(aapl, indent=4, sort_keys=True)
+# print(aapl['symbol'])
+print(json.dumps(aapl, indent=4, sort_keys=True))
 

@@ -1,27 +1,38 @@
-#!/usr/bin/python
-# -*- coding: UTF-8 -*-
-
 import time
 
 ####################################################################################
 # Python thread
 # thread.start_new_thread ( function, args[, kwargs] )
 ####################################################################################
-import thread
+from threading import Thread
 
+class myThread (Thread):   #继承父类threading.Thread
+	def __init__(self, name, counter):
+		Thread.__init__(self)
+		self.name     = name
+		self.counter  = counter
+
+	def run(self): #把要执行的代码写到run函数里面 线程在创建后会直接运行run函数
+		print("Starting this thread: ", self.name)
+		print_time(self.name, self.counter)
+		print("Ending this thread: ", self.name)
 
 def print_time(threadName, delay):
 	count = 0
 	while count < 5:
 		time.sleep(delay)
 		count += 1
-		print "[%d] %s: %s" % (count, threadName, time.ctime(time.time()))
+		print("[%d] %s: %s" % (count, threadName, time.ctime(time.time())))
+
+thread1 = myThread("Thread 1-1", 2)
+thread2 = myThread("Thread 1-2", 4)
 
 try:
-	thread.start_new_thread(print_time, ("Thread 1-1", 2))
-	thread.start_new_thread(print_time, ("Thread 1-2", 4))
-except:
-	print "Error: unable to start thread"
+	thread1.start()
+	thread2.start()
+except Exception as e:
+	print("Error: unable to start thread")
+	print(e)
 else:
 	pass
 

@@ -127,7 +127,7 @@ print(a)
 #     python -m cProfile my_script.py
 # 备注：cProfile是一个比profile更快的实现，因为它是用c写的
 # CSV转换为json，在命令行执行这条指令
-#     python -c "import csv,json;print json.dumps(list(csv.reader(open('csv_file.csv'))))"
+#     python -c "import csv,json;print(json.dumps(list(csv.reader(open('csv_file.csv'))))")
 # 列表辗平: 您可以通过使用itertools包中的itertools.chain.from_iterable轻松快速的辗平一个列表。下面是一个简单的例子：
 #     a_list = [[1, 2], [3, 4], [5, 6]]
 #     print(list(itertools.chain.from_iterable(a_list)))

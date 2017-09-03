@@ -7,34 +7,34 @@ class MyClass:
 	__update = "update"   # private copy of original update() method
 
 	def __init__(self):
-		print "No no, __init__"
+		print("No no, __init__")
 
 	def f(self):
-		print "Hello World!"
+		print("Hello World!")
 
 
 
-print MyClass.i
+print(MyClass.i)
 
 try:
 	MyClass.f()
 except:
-	print "Exception..."
+	print("Exception...")
 
 x = MyClass()
 x.f()
 
 try:
-	print x.__update
+	print(x.__update)
 except:
-	print "This is private"
+	print("This is private")
 
 # 数据属性 相当于 Smalltalk 中的“实例变量”或 C++ 中的“数据成员”。和局部变量一样，数据属性不需要声明，
 x.counter = 1
 while x.counter < 10:
 	x.counter = x.counter * 2
 
-print x.counter
+print(x.counter)
 del x.counter
 
 # class DerivedClassName(BaseClassName):
@@ -79,22 +79,22 @@ for cls in [B, C, D]:
 	try:
 		raise cls()
 	except D:
-		print "D"
+		print("D")
 	except C:
-		print "C"
+		print("C")
 	except B:
-		print "B"
+		print("B")
 
 
 # Iterator 迭代器
 s = 'abcd'
 it = iter(s)
-print it
-print next(it)
-print it.next()
-print it.next()
-print it.next()
-# print it.next()
+print(it)
+print(next(it))
+print(it.next())
+print(it.next())
+print(it.next())
+# print(it.next())
 
 class Reverse:
 	"""Iterator for looping over a sequence backwards."""
@@ -107,15 +107,16 @@ class Reverse:
 
 	def __next__(self):
 		if self.index == 0:
-			raise StopInteration
+			# raise StopInteration
+			pass
 		self.index = self.index - 1
 		return self.data[self.data]
 
 rev = Reverse('spam')
-# print iter(rev)
+# print(iter(rev))
 
 # for char in rev:
-# 	print char
+# 	print(char)
 
 # generator 生成器
 # Generator 是创建迭代器的简单而强大的工具。它们写起来就像是正规的函数，需要返回数据的时候使用 yield 语句。
@@ -125,14 +126,14 @@ def reverse(data):
 		yield data[index]
 
 for char in reverse("golfball"):
-	print char
+	print(char)
 
 
-print sum(i*i for i in range(10))                 # sum of squares
+print(sum(i*i for i in range(10)))                # sum of squares)
 
 xvec = [10, 20, 30]
 yvec = [7, 5, 3]
-print sum(x*y for x,y in zip(xvec, yvec))         # dot product
+print(sum(x*y for x,y in zip(xvec, yvec)))        # dot product)
 
 # from math import pi, sin
 # sine_table = {x: sin(x*pi/180) for x in range(0, 91)}
@@ -140,4 +141,4 @@ print sum(x*y for x,y in zip(xvec, yvec))         # dot product
 # valedictorian = max((student.gpa, student.name) for student in graduates)
 
 data = 'golf'
-print list(data[i] for i in range(len(data)-1, -1, -1))
+print(list(data[i] for i in range(len(data)-1, -1, -1)))

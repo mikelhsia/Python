@@ -76,4 +76,4 @@ class FileObject(object):
 
 
 fp = FileObject('./', 'xml_sax.py', 'r+')
-print fp.fileName
+print(fp.fileName)

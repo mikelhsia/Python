@@ -70,8 +70,8 @@ for i in range(0, num_of_block_to_be_added):
 	blockchain.append(block_to_add)
 	previous_block = block_to_add
 	# Tell everyone about it
-	print "Block #{} has been added to the block chain!".format(block_to_add.index)
-	print "Hash: {}\n".format(block_to_add.hash)
+	print("Block #{} has been added to the block chain!".format(block_to_add.index))
+	print("Hash: {}\n".format(block_to_add.hash))
 
 # if __name__ == '__main__':
 # 	main()
