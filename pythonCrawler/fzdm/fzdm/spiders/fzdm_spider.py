@@ -35,9 +35,9 @@ class fzdmSpider(scrapy.Spider):
 	name = "fzdm"
 	allowed_domains = ["manhua.fzdm.com/"]
 
-	manga = int(raw_input("Input Manga code: "))
-	targetChap = int(raw_input("Input start downloading chapter: "))
-	numChap = int(raw_input("How many chapters you want to download: "))
+	manga = int(input("Input Manga code: "))
+	targetChap = int(input("Input start downloading chapter: "))
+	numChap = int(input("How many chapters you want to download: "))
 
 	# Scrapy为Spider的 start_urls 属性中的每个URL创建了 scrapy.Request 对象，
 	# 并将 parse 方法作为回调函数(callback)赋值给了Request。

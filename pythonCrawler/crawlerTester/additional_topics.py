@@ -8,14 +8,14 @@
 # from scrapy.cmdline import execute
 # import sys
 # import os
-# Put the raw_input here instead of inside the spider
+# Put the input here instead of inside the spider
 # sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-# manga      = int(raw_input("食戟之靈 - 58\t七原罪 - 56\t辛巴达 - 119\n"
+# manga      = int(input("食戟之靈 - 58\t七原罪 - 56\t辛巴达 - 119\n"
 #                            "猎人 - 10\t东京RE - 117\n"
 #                            "进击 - 39\t英雄学院 - 131"
 #                            "\nInput Manga code: "))
-# targetChap = int(raw_input("Input start downloading chapter: "))
-# numChap    = int(raw_input("How many chapters you want to download: "))
+# targetChap = int(input("Input start downloading chapter: "))
+# numChap    = int(input("How many chapters you want to download: "))
 # exec_str = "scrapy crawl sil_spider -a manga=%s -a targetChap=%s -a numChap=%s" % (manga, targetChap, numChap)
 # execute(exec_str.split())
 ###################################################################################

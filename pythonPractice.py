@@ -32,12 +32,12 @@ def printTime():
 	return "Current time is: %s" % (time.strftime("%Y-%m-%d" ,time.localtime(time.time())))
 print(printTime())
 
-# raw_input([prompt]) 函数从标准输入读取一个行，并返回一个字符串（去掉结尾的换行符）：
-# string = raw_input("请问你叫什么名字？ ")
+# input([prompt]) 函数从标准输入读取一个行，并返回一个字符串（去掉结尾的换行符）：
+# string = input("请问你叫什么名字？ ")
 # print("原来你是 %s 阿！" % string)
 # del string
 
-# input([prompt]) 函数和 raw_input([prompt]) 函数基本类似，但是 input 可以接收一个Python表达式作为输入，并将运算结果返回。
+# input([prompt]) 函数和 input([prompt]) 函数基本类似，但是 input 可以接收一个Python表达式作为输入，并将运算结果返回。
 # 请输入：[x*5 for x in range(2,10,2)]
 # 你输入的内容是:  [10, 20, 30, 40]
 # string = input("请输入列表组")
