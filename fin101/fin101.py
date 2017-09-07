@@ -58,6 +58,9 @@ def CND(X):
 
 	return w
 
+## Cumulative standard normal distribution
+from scipy.stats import norm as nm
+
 def bs_call(S, X, T, r, sigma):
 	"""
 	This is black-scholes model to price the European call option
@@ -70,4 +73,5 @@ def bs_call(S, X, T, r, sigma):
 	"""
 	d1 = (math.log(S/X) + (r + sigma * sigma/2.) * T) / (sigma * math.sqrt(T))
 	d2 = d1 - sigma * math.sqrt(T)
-	return S * CND(d1) - X * math.exp(-r * T) * CND(d2)
+	# return S * CND(d1) - X * math.exp(-r * T) * CND(d2)
+	return S * nm.cdf(d1) - X * math.exp(-r * T) * nm.cdf(d2)
