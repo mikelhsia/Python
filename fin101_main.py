@@ -103,4 +103,35 @@ f2 = interp1d(x, y, kind="cubic")
 xnew = np.linspace(0, 10, 40)
 plt.plot(x, y, 'o', xnew, f(xnew), '-', xnew, f2(xnew), '--')
 plt.legend(['data', 'linear', 'cubic'], loc='best')
-plt.show()
+# plt.show() if input("Want to show diagram?") == 'y' else print("123")
+if input("Want to show diagram?") == 'y' : plt.show()
+
+
+# Solving linear equations using SciPy
+# x+2y+5z = 10
+# 2x+5y+z = 8
+# 2x+3y+8z = 5
+
+A = sp.mat('[1 2 5; 2 5 1; 2 3 8]')
+b = sp.mat('[10; 8; 5]')
+# Two different ways ot solving equation
+print(A.I * b)
+print(np.linalg.solve(A, b))
+
+# In finance, many issues depend on optimization, such as choosing an optimal
+# portfolio with an objective function and with a set of constraints.
+# For those cases, we could use a SciPy optimization module called scipy.optimize.
+# Assume that we want to estimate the x value that minimizes the value of y,
+# where y =3 + x2. Obviously, the minimum value of y is achieved when x
+# takes a value of 0.
+##############################
+# import scipy.optimize as optimize
+# print(optimize.fmin(fn.bs_call, 3, (40, 1, 0.03, 0.2)))
+
+
+# CAPM Capital Assets Pricing Model
+#   Ri−Rf =a+βi(Rmkt−Rf)
+# Here Ri is the stock i's return; βi is the slope (market risk);
+# Rmkt is the market return and Rf is the risk-free rate.
+# Eventually, the preceding equation could be rewritten as follows:
+#   y=α+β∗x
