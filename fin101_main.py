@@ -201,3 +201,17 @@ plt.plot(t, y2, 'g--')
 plt.plot(t, y3, 'r-')
 
 if input("Want to show simple and compounded interest rates diagram?") == 'y' : plt.show()
+
+plt.clf()
+# Adding texts to our graph
+x = [0, 1, 2]
+y = [2, 4, 6]
+plt.plot(x,y)
+plt.figtext(0.2, 0.7, "North & West")
+plt.figtext(0.7, 0.2, "East & South")
+
+if input("Want to show texts on graph diagram?") == 'y': plt.show()
+
+# Finding ROE (Return on Equity) with histogram
+# DuPont identity divides Return on Equity (ROE) into three ratios:
+# Gross Profit Margin, Assets Turnover, and Equity Multiplier
