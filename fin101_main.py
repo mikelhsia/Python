@@ -212,6 +212,32 @@ plt.figtext(0.7, 0.2, "East & South")
 
 if input("Want to show texts on graph diagram?") == 'y': plt.show()
 
+plt.clf()
 # Finding ROE (Return on Equity) with histogram
 # DuPont identity divides Return on Equity (ROE) into three ratios:
 # Gross Profit Margin, Assets Turnover, and Equity Multiplier
+ind = np.arange(3)
+plt.title("DuPont Identity")
+plt.xlabel("Different Companies")
+plt.ylabel("Three ratios")
+
+ROE = [0.88, 0.22, 0.22]
+grossProfitMargin = [0.16, 0.04, 0.036]
+assetTurnover = [0.88, 1.12, 2.31]
+equityMultiplier = [6.32, 4.45, 2.66]
+
+width = 0.45
+
+plt.figtext(0.2, 0.85, "ROE=0.88")
+plt.figtext(0.5, 0.7, "ROE=0.22")
+plt.figtext(0.8, 0.6, "ROE=0.22")
+plt.figtext(0.2, 0.75, "Profit Margin=0.16")
+plt.figtext(0.5, 0.5, "0.041")
+plt.figtext(0.8, 0.4, "0.036")
+
+p1 = plt.bar(ind, grossProfitMargin, width, color='b')
+p2 = plt.bar(ind, assetTurnover, width, color='r', bottom=grossProfitMargin)
+p3 = plt.bar(ind, equityMultiplier, width, color='y', bottom=[grossProfitMargin[j] + assetTurnover[j] for j in range(len(grossProfitMargin))])
+plt.xticks(ind+width/2., ('IBM', 'DELL', 'WMT'))
+
+if input("Want to show histogram?") == 'y': plt.show()
