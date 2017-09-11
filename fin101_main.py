@@ -115,8 +115,9 @@ if input("Want to show diagram?") == 'y' : plt.show()
 A = sp.mat('[1 2 5; 2 5 1; 2 3 8]')
 b = sp.mat('[10; 8; 5]')
 # Two different ways ot solving equation
-print(A.I * b)
-print(np.linalg.solve(A, b))
+print("Solution 1: \n {}".format(A.I * b))
+print("Solution 2: \n {}".format(np.linalg.solve(A, b)))
+print_breakline()
 
 # In finance, many issues depend on optimization, such as choosing an optimal
 # portfolio with an objective function and with a set of constraints.
@@ -135,3 +136,24 @@ print(np.linalg.solve(A, b))
 # Rmkt is the market return and Rf is the risk-free rate.
 # Eventually, the preceding equation could be rewritten as follows:
 #   y=α+β∗x
+
+from scipy import stats
+stock_ret = [0.065, 0.0265, -0.0593, -0.001, 0.0346]
+mkt_ret = [0.055, -0.09, -0.041, 0.045, 0.022]
+beta, alpha, r_value, p_value, std_err = stats.linregress(stock_ret, mkt_ret)
+
+print("Beta: %f, alpha: %f" % (beta, alpha))
+print("R-squared: {}".format(r_value ** 2))
+print("p-value: {}".format(p_value))
+print_breakline()
+
+# Clean up the current plot
+plt.clf()
+
+plt.plot([1, 2, 3, 10])
+plt.xlabel("x- axis")
+plt.ylabel("My numbers")
+plt.title("My Fiture")
+plt.show()
+
+plt.clf()
