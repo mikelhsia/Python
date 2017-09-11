@@ -104,7 +104,7 @@ xnew = np.linspace(0, 10, 40)
 plt.plot(x, y, 'o', xnew, f(xnew), '-', xnew, f2(xnew), '--')
 plt.legend(['data', 'linear', 'cubic'], loc='best')
 # plt.show() if input("Want to show diagram?") == 'y' else print("123")
-if input("Want to show diagram?") == 'y' : plt.show()
+if input("Want to show data/linear/cubic diagram?") == 'y' : plt.show()
 
 
 # Solving linear equations using SciPy
@@ -154,6 +154,50 @@ plt.plot([1, 2, 3, 10])
 plt.xlabel("x- axis")
 plt.ylabel("My numbers")
 plt.title("My Fiture")
-plt.show()
+if input("Want to show basic linear diagram?") == 'y' : plt.show()
 
 plt.clf()
+
+# The next example presents two cosine functions:
+x = np.linspace(-np.pi, np.pi, 256, endpoint=True)
+# we start from -3.1415916 and stop at 3.1415926,
+# with 256 values between. In addition, the endpoints
+# will be included. By the way, the default value of num is 50
+# print("x = ", x)
+C, S = np.cos(x), np.sin(x)
+plt.plot(x,C), plt.plot(x,S)
+if input("Want to show two cosine diagram?") == 'y' : plt.show()
+
+
+plt.clf()
+# The following example shows the scatter pattern.
+# We could check the scatter pattern to visually perceive the
+# relationship between two stocks.
+n = 1024
+X = np.random.normal(0, 1, n)
+Y = np.random.normal(0, 1, n)
+plt.scatter(X,Y)
+if input("Want to show scatter diagram?") == 'y' : plt.show()
+
+plt.clf()
+# Simple and compounded interest rates
+pv = 1000
+r = 0.08
+n = 10
+t = np.linspace(0, n, n)
+# This is a horizontal lines
+y1 = np.ones(len(t)) * pv
+y2 = pv * (1+r*t)
+y3 = pv*(1+r)**t
+
+plt.title("Simple vs. Compounded interest rates")
+plt.xlabel("Number of years")
+plt.ylabel("Values")
+plt.xlim(0, 11)
+plt.ylim(800, 2200)
+
+plt.plot(t, y1, 'b-')
+plt.plot(t, y2, 'g--')
+plt.plot(t, y3, 'r-')
+
+if input("Want to show simple and compounded interest rates diagram?") == 'y' : plt.show()
