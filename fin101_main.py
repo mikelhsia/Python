@@ -93,19 +93,6 @@ stocks = np.random.random_integers(1, 500, 20)
 print(stocks)
 
 print_breakline()
-import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
-
-x = np.linspace(0, 10, 10)
-y = np.exp(-x/3.0)
-f = interp1d(x, y)
-f2 = interp1d(x, y, kind="cubic")
-xnew = np.linspace(0, 10, 40)
-plt.plot(x, y, 'o', xnew, f(xnew), '-', xnew, f2(xnew), '--')
-plt.legend(['data', 'linear', 'cubic'], loc='best')
-# plt.show() if input("Want to show diagram?") == 'y' else print("123")
-if input("Want to show data/linear/cubic diagram?") == 'y' : plt.show()
-
 
 # Solving linear equations using SciPy
 # x+2y+5z = 10
@@ -146,6 +133,20 @@ print("Beta: %f, alpha: %f" % (beta, alpha))
 print("R-squared: {}".format(r_value ** 2))
 print("p-value: {}".format(p_value))
 print_breakline()
+
+import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
+
+x = np.linspace(0, 10, 10)
+y = np.exp(-x/3.0)
+f = interp1d(x, y)
+f2 = interp1d(x, y, kind="cubic")
+xnew = np.linspace(0, 10, 40)
+plt.plot(x, y, 'o', xnew, f(xnew), '-', xnew, f2(xnew), '--')
+plt.legend(['data', 'linear', 'cubic'], loc='best')
+# plt.show() if input("Want to show diagram?") == 'y' else print("123")
+if input("Want to show data/linear/cubic diagram?") == 'y' : plt.show()
+
 
 # Clean up the current plot
 plt.clf()
@@ -241,3 +242,36 @@ p3 = plt.bar(ind, equityMultiplier, width, color='y', bottom=[grossProfitMargin[
 plt.xticks(ind+width/2., ('IBM', 'DELL', 'WMT'))
 
 if input("Want to show histogram?") == 'y': plt.show()
+
+plt.clf()
+# Understanding the Net Present Value profile
+cashflows = [-100, 50, 60, 70]
+rate = []
+npv = []
+x = (0, 0.7)
+y = (0, 0)
+
+for i in range(1, 70):
+	rate.append(0.01 * i)
+	npv.append(sp.npv(0.01*i, cashflows[1:]) + cashflows[0])
+
+plt.plot(rate, npv), plt.plot(x, y)
+if input("Want to show NPV profile?") == 'y': plt.show()
+
+plt.clf()
+
+# Understanding the Net Present Value profile
+cashflows = [504, -432, -432, -432, 832]
+rate = []
+npv = []
+x = (0, 0.3)
+y = (0, 0)
+
+for i in range(1, 30):
+	rate.append(0.01 * i)
+	npv.append(sp.npv(0.01*i, cashflows[1:]) + cashflows[0])
+
+plt.plot(rate, npv), plt.plot(x, y)
+if input("Want to show NPV-IRR profile?") == 'y': plt.show()
+
+plt.clf()
