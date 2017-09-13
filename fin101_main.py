@@ -320,12 +320,12 @@ ret_A = [0.102, -0.02, 0.213, 0.12, 0.13]
 ret_B = [0.1062, 0.23, 0.045, 0.234, 0.113]
 port_EW = (np.array(ret_A) + np.array(ret_B))/2.
 
-round(np.mean(ret_A), 3)
-round(np.mean(ret_B), 3)
-round(np.mean(port_EW), 3)
-round(np.std(ret_A), 3)
-round(np.std(ret_B), 3)
-round(np.std(port_EW), 3)
+np.round(np.mean(ret_A), 3)
+np.round(np.mean(ret_B), 3)
+np.round(np.mean(port_EW), 3)
+np.round(np.std(ret_A), 3)
+np.round(np.std(ret_B), 3)
+np.round(np.std(port_EW), 3)
 
 plt.figtext(0.2, 0.65, "Stock A")
 plt.figtext(0.15, 0.4, "Stock B")
@@ -339,3 +339,27 @@ plt.annotate("Equal-weighted Portfolio", xy=(2010, 0.1), xytext=(2011., 0), arro
 plt.ylim(-0.1, 0.3)
 
 if input("Want to show equal-weighted portfolio?") == 'y': plt.show()
+
+plt.clf()
+# Number of stocks and portfolio risk
+# n = the number of stock in the portfolio
+n = [1,2,4,6,8,10,12,14,16,18,20,25,30,35,40,45,50,75,100,200,300,400,500,600,700,800,900,1000]
+
+# Standard deviation of the n-stock portfolio
+port_sigma = [0.49236,0.37358,0.29687,0.26643,0.24983,0.23932,0.23204, 0.22670,0.22261,0.21939,0.21677,0.21196,0.20870,0.20634,0.20456,0.20316,0.20203,0.19860,0.19686,0.19432,0.19336,0.19292,0.19265,0.19347,0.19233,0.19224,0.19217,0.19211,0.19158]
+
+plt.xlim(0, 50)
+plt.ylim(0.1, 0.4)
+plt.hlines(0.19217, 0, 50, colors='r', linestyles='dashed')
+plt.annotate('', xy=(5, 0.19), xycoords='data', xytext=(5, 0.28), textcoords='data', arrowprops={'arrowstyle':'<->'})
+plt.annotate('', xy=(30, 0.19), xycoords='data', xytext=(30, 0.1), textcoords='data', arrowprops={'arrowstyle':'<->'})
+plt.annotate('Total portfolio risk', xy=(5, 0.3), xytext=(25, 0.35), arrowprops=dict(facecolor='black', shrink=0.02))
+plt.figtext(0.15, 0.4, "Diversifiable risk")
+plt.figtext(0.65, 0.25, "Nondiversifiable risk")
+plt.plot(n[0:17], port_sigma[0:17])
+plt.title("Relationship between n and portfolio risk")
+plt.xlabel("Number of stocks in a portfolio")
+plt.ylabel("Ratio of portfolio STD to STD of one stock")
+
+if input("Want to show relationship between n and portfolio risk?") == 'y': plt.show()
+
