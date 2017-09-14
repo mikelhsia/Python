@@ -363,3 +363,24 @@ plt.ylabel("Ratio of portfolio STD to STD of one stock")
 
 if input("Want to show relationship between n and portfolio risk?") == 'y': plt.show()
 
+plt.clf()
+import tushare as ts
+import matplotlib.mlab as mlab
+
+p = ts.get_hist_data('600848', start='2016-01-01', end='2016-12-31')
+p = p.sort_index(axis='index')
+px = np.array(p.close[1:])
+py = np.array(p.close[:-1])
+ret = (px - py)/px
+
+[n, bins, patches] = plt.hist(ret, 100)
+mu = np.mean(ret)
+sigma = np.std(ret)
+x = mlab.normpdf(bins, mu, sigma)
+
+plt.plot(bins, x, color='r', lw=2)
+plt.title("上海临港 Return Distribution")
+plt.xlabel("Returns")
+plt.ylabel("Frequency")
+
+if input("Want to show Histogram showing return distribution?") == 'y': plt.show()
