@@ -1,4 +1,13 @@
 import sys
+import fin101.fin101 as fn
+import numpy as np
+import scipy as sp
+from scipy.stats import norm as nm
+from scipy import stats
+import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
+import tushare as ts
+import matplotlib.mlab as mlab
 
 def print_breakline():
 	print("---------------------")
@@ -8,12 +17,8 @@ myFolder = "/Users/tsuyuhsia/Desktop/Python/fin101"
 if myFolder not in sys.path:
 	sys.path.append(myFolder)
 
-import fin101.fin101 as fn
-
 print(fn.pv_f (100, 0.1, 2))
 print_breakline()
-
-import numpy as np
 
 x = np.array([[1,2,3],
               [3,4,6]])
@@ -48,7 +53,6 @@ print(np.array(x1,dtype=float))
 
 
 print_breakline()
-import scipy as sp
 
 cashflows = [50, 40, 20, 10, 50]
 # The np.npv() function estimates the present values for a given set of future cashflows.
@@ -78,7 +82,6 @@ print("--\n", pv2, end="\n--------------------------")
 print_breakline()
 
 ## Cumulative standard normal distribution
-from scipy.stats import norm as nm
 print(nm.cdf(0))
 
 print("BS European call price = ", round(fn.bs_call(40, 40, 1, 0.03, 0.2), 2))
@@ -124,7 +127,6 @@ print_breakline()
 # Eventually, the preceding equation could be rewritten as follows:
 #   y=α+β∗x
 
-from scipy import stats
 stock_ret = [0.065, 0.0265, -0.0593, -0.001, 0.0346]
 mkt_ret = [0.055, -0.09, -0.041, 0.045, 0.022]
 beta, alpha, r_value, p_value, std_err = stats.linregress(stock_ret, mkt_ret)
@@ -133,9 +135,6 @@ print("Beta: %f, alpha: %f" % (beta, alpha))
 print("R-squared: {}".format(r_value ** 2))
 print("p-value: {}".format(p_value))
 print_breakline()
-
-import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
 
 x = np.linspace(0, 10, 10)
 y = np.exp(-x/3.0)
@@ -364,8 +363,6 @@ plt.ylabel("Ratio of portfolio STD to STD of one stock")
 if input("Want to show relationship between n and portfolio risk?") == 'y': plt.show()
 
 plt.clf()
-import tushare as ts
-import matplotlib.mlab as mlab
 
 p = ts.get_hist_data('600848', start='2016-01-01', end='2016-12-31')
 p = p.sort_index(axis='index')
@@ -379,7 +376,7 @@ sigma = np.std(ret)
 x = mlab.normpdf(bins, mu, sigma)
 
 plt.plot(bins, x, color='r', lw=2)
-plt.title("上海临港 Return Distribution")
+plt.title("Shanghai 600848 Return Distribution")
 plt.xlabel("Returns")
 plt.ylabel("Frequency")
 
