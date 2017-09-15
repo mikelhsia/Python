@@ -384,3 +384,31 @@ plt.xlabel("Returns")
 plt.ylabel("Frequency")
 
 if input("Want to show Histogram showing return distribution?") == 'y': plt.show()
+
+plt.clf()
+# Makes the trading days more evenly distributed
+import matplotlib.cbook as cbook
+import matplotlib.ticker as ticker
+import datetime
+
+myTicker = '600848'
+begDate = datetime.date(2017,1,1)
+endDate = datetime.date.today()
+price = ts.get_hist_data(myTicker, start=begDate.__str__(), end=endDate.__str__())
+
+price = price.sort_index(axis='index')
+
+"""
+def csv2rec(fname, comments='#', skiprows=0, checkrows=0, delimiter=',',
+converterd=None, names=None, missing='', missingd=None,
+use_mrecords=False, dayfirst=False, yearfirst=False):
+#	Load data from comma/space/tab delimited file in *fname* into a
+#	numpy record array and return the record array.
+ret = mlab.csv2rec(price)
+"""
+
+fig, ax = plt.subplots()
+ax.plot(price.index, price.close, 'o-')
+
+
+if input("Want to show earning days distribution?") == 'y': plt.show()
