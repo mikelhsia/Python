@@ -8,6 +8,10 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import tushare as ts
 import matplotlib.mlab as mlab
+import matplotlib.cbook as cbook
+import matplotlib.ticker as ticker
+import pandas as pd
+import datetime
 
 def print_breakline():
 	print("---------------------")
@@ -384,9 +388,6 @@ if input("Want to show Histogram showing return distribution?") == 'y': plt.show
 
 plt.clf()
 # Makes the trading days more evenly distributed
-import matplotlib.cbook as cbook
-import matplotlib.ticker as ticker
-import datetime
 
 myTicker = '600848'
 begDate = datetime.date(2017,1,1)
@@ -394,7 +395,7 @@ endDate = datetime.date.today()
 price = ts.get_hist_data(myTicker, start=begDate.__str__(), end=endDate.__str__())
 
 price = price.sort_index(axis='index')
-
+priceDate = pd.to_datetime(price.index)
 """
 def csv2rec(fname, comments='#', skiprows=0, checkrows=0, delimiter=',',
 converterd=None, names=None, missing='', missingd=None,
@@ -405,7 +406,21 @@ ret = mlab.csv2rec(price)
 """
 
 fig, ax = plt.subplots()
-ax.plot(price.index, price.close, 'o-')
+ax.plot(priceDate, price.close, 'o-')
+ax.set_title('Fig. 1: SHSTOCK last 30 days with gaps on weekends')
+fig.autofmt_xdate()
+N = len(price)
+ind = np.arange(N) # The evenly spaced plot indices
 
+def format_date(x, pos=None):
+	thisind = np.clip(int(x+0.5), 0, N-1)
+	return priceDate[thisind].strftime('%Y-%m-%d')
+
+fig, ax = plt.subplots()
+ax.plot(ind, price.close, 'o-')
+plt.xlabel("Every Monday Shown")
+ax.set_title("Fig 2: SHSTOCK last 30 days evenly spaced plot indices")
+ax.xaxis.set_major_formatter(ticker.FuncFormatter(format_date))
+fig.autofmt_xdate()
 
 if input("Want to show earning days distribution?") == 'y': plt.show()
