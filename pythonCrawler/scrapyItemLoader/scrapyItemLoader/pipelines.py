@@ -12,7 +12,7 @@ from scrapy.utils.trackref import get_oldest
 class ScrapyitemloaderPipeline(object):
 
 	def open_spider(self, spider):
-		print "######################\n# Now we're about to awake the spider\n######################"
+		print("######################\n# Now we're about to awake the spider\n######################")
 
 	##############################################################################################################
 	# process_request(request, spider)
@@ -53,9 +53,9 @@ class ScrapyitemloaderPipeline(object):
 			pass
 
 		r = get_oldest('HtmlResponse')
-		print get_oldest(r.url)
+		print(get_oldest(r.url))
 
-		urllib.urlretrieve(item['imgSrc'], item['imgDst'])
+		urllib.request.urlretrieve(item['imgSrc'], item['imgDst'])
 		return item
 
 
@@ -92,4 +92,4 @@ class ScrapyitemloaderPipeline(object):
 		# self.file.write(line)
 
 	def close_spider(self, spider):
-		print "######################\n# Now we're about to put the spider to sleep\n######################"
+		print("######################\n# Now we're about to put the spider to sleep\n######################")

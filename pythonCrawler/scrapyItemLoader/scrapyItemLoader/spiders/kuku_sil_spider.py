@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import scrapy
-import urlparse
+# This is for python
+# import urlparse
+# This is for python3
+from urllib.parse import urljoin
 import os
 import urllib
 
@@ -82,7 +85,7 @@ class SilSpiderSpider(scrapy.Spider):
 			startIdx = line.find(startStr)
 			endIdx = line.find(endStr)
 			if startIdx > 0:
-				item['imgSrc'] = self._comicServer + urllib.quote(line[startIdx+3:endIdx+3].encode("utf-8"))
+				item['imgSrc'] = self._comicServer + urllib.parse.quote(line[startIdx+3:endIdx+3].encode("utf-8"))
 				item['imgFileName'] = item['imgSrc'].split("/")[-1]
 				# self.logger.debug('[DEBUG] Source = %s', item['imgSrc'])
 				break
@@ -108,13 +111,13 @@ class SilSpiderSpider(scrapy.Spider):
 				else:
 					next_link = next_link[0]
 					pass
-				yield Request(url=urlparse.urljoin(response.url, next_link), callback=self.parse_item, dont_filter=True)
+				yield Request(url=urljoin(response.url, next_link), callback=self.parse_item, dont_filter=True)
 			else:
 				self.logger.debug("Hit /exit.htm")
 				pass
 
-		except:
-			self.logger.error("Something went wrong")
+		except Exception as e:
+			self.logger.error("Something went wrong: {}".format(e))
 			pass
 
 		yield item

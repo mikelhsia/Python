@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import scrapy
-import urlparse
+# This is for python
+# import urlparse
+# This is for python3
+from urllib.parse import urljoin
 import os
 import logging
 
@@ -90,7 +93,7 @@ class SilSpiderSpider(scrapy.Spider):
 
 			if next_link:
 				# self.log("3. [URL Parsing - Goes to next link]: %s" % next_link)
-				yield Request(url=urlparse.urljoin(response.url, next_link),
+				yield Request(url=urljoin(response.url, next_link),
 				              callback=self.parse,
 				              dont_filter=True)
 				# 注：可以修改settings.py 中的配置文件，以此来指定“递归”的层数，如： DEPTH_LIMIT = 1
