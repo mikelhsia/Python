@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import tushare as ts
 import matplotlib.mlab as mlab
-import matplotlib.cbook as cbook
 import matplotlib.ticker as ticker
 import pandas as pd
 import datetime
