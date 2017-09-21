@@ -3,10 +3,13 @@ import tushare as ts
 import numpy as np
 import datetime
 
+choice = 0
 if (__name__ == '__main__'):
 	choice = input("""What kind of chart you would like to see?
 	1. Comparing stock and market returns
+	2. Understanding the time value money
 	So?""")
+
 
 if choice == '1':
 	def ret_f(ticker, begDate, endDate):
@@ -40,12 +43,33 @@ if choice == '1':
 
 	plt.figtext(0.4, 0.8, "Red for stock, Blue for index")
 	plt.xlim(1, numberOfRows)
-	plt.title("Comparisons betwen stock and market return")
+	plt.title("Comparisons between stock and market return")
 	plt.xlabel("Day")
 	plt.ylabel("Returns")
 
 	plt.show()
 
-if choice == '2':
-	print("Here's the second one")
-	pass
+elif choice == '2':
+	fig1 = plt.figure(facecolor='white')
+	ax1 = plt.axes(frameon=True)
+	ax1.set_frame_on(False)
+	ax1.get_xaxis().tick_bottom()
+	ax1.axes.get_yaxis().set_visible(False)
+
+	x = range(0, 11, 2)
+	x1 = range(len(x), 0, -1)
+	y = [0] * len(x)
+
+	plt.annotate("Today's value of $100 received today", xy=(0, 0), xytext=(2, 0.1), arrowprops=dict(facecolor='black', shrink=0.02))
+	plt.annotate("Today's value of $100 received in 2 years", xy=(2, 0.0005), xytext=(3.5, 0.08), arrowprops=dict(facecolor='black', shrink=0.02))
+	plt.annotate("received in 6 years", xy=(4, 0.00005), xytext=(5.3, 0.06), arrowprops=dict(facecolor='black', shrink=0.02))
+	plt.annotate("received in 10 years", xy=(10, -0.00005), xytext=(4, -0.06), arrowprops=dict(facecolor='black', shrink=0.02))
+
+	plt.xlim(-2, 12)
+
+	s = [50 * 2.5 ** n for n in x1]
+	plt.title("Time value of money")
+	plt.xlabel("Time (number of years)")
+	plt.scatter(x, y, s=s)
+
+	plt.show()
