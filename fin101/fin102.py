@@ -8,7 +8,9 @@ if (__name__ == '__main__'):
 	choice = input("""What kind of chart you would like to see?
 	1. Comparing stock and market returns
 	2. Understanding the time value money
-	So?""")
+	3. Candlesticks representation of IBM's daily price
+	4. Graphical representation of two-year price movement
+	So?   """)
 
 
 if choice == '1':
@@ -73,3 +75,61 @@ elif choice == '2':
 	plt.scatter(x, y, s=s)
 
 	plt.show()
+
+elif choice == '3':
+	from matplotlib.dates import DateFormatter, WeekdayLocator, HourLocator, DayLocator, MONDAY
+	from matplotlib.pylab import date2num
+	from matplotlib.finance import candlestick_ohlc, candlestick_ochl
+
+	date1 = datetime.date(2017,8,1)
+	date2 = datetime.date.today()
+	ticker = '000001'
+
+	mondays = WeekdayLocator(MONDAY)    # Major ticks on the mondays
+	alldays = DayLocator()              # Minor ticks on the days
+	weekFormatter = DateFormatter('%b %d')  # e.g., Jan 12
+	dayFormatter = DateFormatter('%d')      # e.g., 12
+
+	quotes = ts.get_hist_data(ticker, start=date1.__str__(), end=date2.__str__())
+	quotes = quotes.sort_index(axis='index')
+
+	# 对tushare获取到的数据转换成candlestick_ohlc()方法可读取的格式
+	quoteList = []
+
+	# Iterate over DataFrame rows as (index, Series) pairs.
+	for dates, row in quotes.iterrows():
+		# 将时间转换为数字
+		date_time = datetime.datetime.strptime(dates, "%Y-%m-%d")
+		t = date2num(date_time)
+		open, high, close, low = row[:4]
+		# datas = (t, open, close, high, low)
+		datas = (t, open, high, low, close)
+		quoteList.append(datas)
+
+
+	if len(quotes) == 0:
+		raise SystemExit
+	fig, ax = plt.subplots()
+	fig.subplots_adjust(bottom=0.2)
+	ax.xaxis.set_major_locator(mondays)
+	ax.xaxis.set_minor_locator(alldays)
+	ax.xaxis.set_major_formatter(weekFormatter)
+	ax.xaxis.set_minor_formatter(dayFormatter)
+
+	# candlestick_ochl(ax, quoteList, width=0.6)
+	candlestick_ohlc(ax, quoteList, width=0.6)
+
+	ax.xaxis_date()
+	ax.autoscale_view()
+	plt.setp(plt.gca().get_xticklabels(), rotation=80, horizontalalignment='right')
+
+	plt.figtext(0.35, 0.32, 'Black ==> Close > Open ')
+	plt.figtext(0.35, 0.28, 'Red   ==> Close < Open ')
+	plt.title('Candlesticks for Shanghai index from 08/01/2017 to today')
+	plt.ylabel('Price')
+	plt.xlabel('Date')
+
+	plt.show()
+
+elif choice == '4':
+	pass
