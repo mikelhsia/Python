@@ -132,4 +132,43 @@ elif choice == '3':
 	plt.show()
 
 elif choice == '4':
+	from matplotlib.dates import DateFormatter, MonthLocator, WeekdayLocator, MONDAY
+	from matplotlib.dates import date2num
+
+	ticker = '000001'
+	begDate = datetime.date(2017,1,1)
+	endDate = datetime.datetime.today()
+	months = MonthLocator(range(1,13), bymonthday=1, interval=3) # every 3rd month
+	monthsFmt = DateFormatter("%b '%Y")
+	mondays = WeekdayLocator(MONDAY)    # Major ticks on the mondays
+
+	quotes = ts.get_hist_data(ticker, start=begDate.__str__(), end=endDate.__str__())
+
+	if len(quotes) == 0:
+		print("Found no data")
+		raise SystemExit
+
+	dates = []
+	closes = []
+
+	for date, row in quotes.iterrows():
+		# 将时间转换为数字
+		date_time = datetime.datetime.strptime(date, "%Y-%m-%d")
+		t = (date2num(date_time))
+		close = row[2]
+		# datas = (t, open, close, high, low)
+		dates.append(t)
+		closes.append(close)
+
+	fig, ax = plt.subplots()
+	ax.plot_date(dates, closes, '-')
+	ax.xaxis.set_major_locator(months)
+	ax.xaxis.set_major_formatter(monthsFmt)
+	ax.xaxis.set_minor_locator(mondays)
+	ax.autoscale_view()
+	ax.grid(True)           # Show grid
+	# ax.grid(False)
+	fig.autofmt_xdate()     # Format the x-axis ticker as date
+
+	plt.show()
 	pass
