@@ -207,10 +207,32 @@ elif choice == '4':
 
 elif choice == '5':
 	ticker = 'AAPL'
-	path = 'http://www.google.com/finance/getprices?q=ttt&i=60&p=1d&f=d,o,h,l,c, v '
+	path = 'http://www.google.com/finance/getprices?q=ttt&i=60&p=3d&f=d,o,h,l,c,v'
 	p = np.array(pd.read_csv(path.replace('ttt', ticker), skiprows=7, header=None))
+
 	date = []
-	#TODO: Not finished yet
+
+	for i in np.arange(0, len(p)):
+		if p[i][0][0] == 'a':
+			t = datetime.datetime.fromtimestamp(int(p[i][0].replace('a', '')))
+			date.append(t)
+		else:
+			date.append(t+datetime.timedelta(minutes = int(p[i][0])))
+
+	final = pd.DataFrame(p, index=date)
+	final.columns = ['a', 'Open', 'High', 'Low', 'Close', 'Vol']
+	del final['a']
+
+	x = final.index
+	y = final.Close
+
+	plt.title('Intraday price pattern for AAPL')
+	plt.xlabel('Price of stock')
+	plt.ylabel('Intro-day price pattern')
+
+	plt.plot(x, y)
+
+	plt.show()
 
 elif choice == '6':
 	ticker = '000001'
