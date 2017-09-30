@@ -208,3 +208,7 @@ print(sp.stats.bartlett(x, y))
 
 # Many useful applications
 # In this section, we discuss many issues, such as 52-week high and low trading strategy
+# by taking a long position if today's price is close to the minimum price achieved in the past 52 weeks
+# and taking an opposite position if today's price is close to its 52-week high.
+from dateutil.relativedelta import relativedelta
+
