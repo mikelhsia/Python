@@ -210,5 +210,102 @@ print(sp.stats.bartlett(x, y))
 # In this section, we discuss many issues, such as 52-week high and low trading strategy
 # by taking a long position if today's price is close to the minimum price achieved in the past 52 weeks
 # and taking an opposite position if today's price is close to its 52-week high.
-from dateutil.relativedelta import relativedelta
 
+# Not used
+# from dateutil.relativedelta import relativedelta
+
+ticker = '000001'
+begDate = datetime.date(2017, 1, 1).__str__()
+endDate = datetime.datetime.today().__str__()
+
+p = ts.get_hist_data(ticker, start=begDate, end=endDate)
+p = p.sort_index(axis='index')
+
+x = p.close
+y = list(p.close[:-1])
+high=max(y)
+low=min(y)
+
+print("Today\t\t\tPrice\t\tHigh\t\tLow\t\t% from low")
+print(x.index[-1], '\t\t', x[-1], '\t\t', high, '\t\t', low, '\t\t', round((x[-1]-low)/(high-low)*100,2))
+
+# Roll's model to estimate spread (1984)
+# Liquidity is de ned as how quickly we can dispose of our asset without losing its intrinsic value.
+# Usually, we use spread to represent liquidity. However, we need high-frequency data to estimate spread.
+# Later in the chapter, we show how to estimate spread directly by using high-frequency data.
+# To measure spread indirectly based on daily observations, Roll (1984) shows that we can estimate it based on
+# the serial covariance in price changes as follows
+
+print("",end="\n________________\n")
+
+import math
+import matplotlib.mathtext as mt
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+mpl.rc('image', origin='upper')
+parser = mt.MathTextParser("Bitmap")
+
+# P is the closing price of a stock on day t, ~P is the average share price in the estimation period
+rgba1, depth1 = parser.to_rgba(r'$S=2\sqrt{-cov(\Delta P_t, \Delta P_{t-1})}$',
+                               color='black', fontsize=12, dpi=200)
+rgba2, depth2 = parser.to_rgba(r'$\%spread=\frac{s}{p}$', color='blue', fontsize=12,
+                               dpi=200)
+
+fig = plt.figure()
+fig.figimage(rgba1.astype(float) / 255., 100, 100)
+fig.figimage(rgba2.astype(float) / 255., 100, 200)
+
+plt.show()
+plt.clf()
+
+ticker = '000001'
+begDate = datetime.date(2017, 1, 1).__str__()
+endDate = datetime.datetime.today().__str__()
+
+data = ts.get_hist_data(ticker, start=begDate, end=endDate)
+data = data.sort_index(axis='index')
+
+p = data.close
+d = np.diff(p)
+cov_ = np.cov(d[:-1], d[1:])
+
+if cov_[0,1] < 0:
+	print("Roll spread for ", ticker, " is ", round(2*math.sqrt(-cov_[0, 1]), 3))
+else:
+	print("Cov is positive for ", ticker, " positive ", round(cov_[0, 1], 3))
+
+
+print("",end="\n________________\n")
+mpl.rc('image', origin='upper')
+parser = mt.MathTextParser("Bitmap")
+
+# According to Amihud (2002), liquidity re ects the impact of order  ow on price. His illiquidity measure
+# is defined as follows:
+rgba1, depth1 = parser.to_rgba(r'$illiq_t = \frac{|R_t|}{P_t*V_t}$',
+                               color='black', fontsize=12, dpi=200)
+# Rt is the daily return at day t, Pt is closing price at t, and Vt is the daily dollar trading volume at t.
+# Since the illiquidity is the reciprocal of liquidity, the lower the illiquidity value, the higher the liquidity
+# of the underlying security.
+fig = plt.figure()
+fig.figimage(rgba1.astype(float) / 255., 100, 100)
+
+plt.show()
+plt.clf()
+
+x = np.array([1,2,3], dtype='float')
+y = np.array([2,2,4], dtype='float')
+print("np.divide(x, y) = ", np.divide(x, y))
+
+# In the following code, we estimate Amihud's illiquidity for IBM based on trading data in October 2013.
+# The value is 1.165*10-11. It seems that this value is quite
+# small. Actually, the absolute value is not important; the relative value matters. If we estimate the
+# illiquidity for DELL over the same period, we would  nd a value of 0.638*10-11. Since 1.165 is greater
+# than 0.638, we conclude that IBM is less liquid than DELL.
+
+p = np.array(data.close)
+dollar_vol = np.array(data.volume * p)
+
+px = np.array(p.close[1:])
+py = np.array(p.close[:-1])
+ret = (px - py) / px
