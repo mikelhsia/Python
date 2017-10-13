@@ -1,16 +1,19 @@
-import sys
-import fin101.fin101 as fn
-import numpy as np
-import scipy as sp
-from scipy.stats import norm as nm
-from scipy import stats
-import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
-import tushare as ts
-import matplotlib.mlab as mlab
-import matplotlib.ticker as ticker
-import pandas as pd
 import datetime
+import sys
+
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import numpy as np
+import pandas as pd
+import scipy as sp
+import tushare as ts
+from scipy import stats
+from scipy.interpolate import interp1d
+from scipy.stats import norm as nm
+
+from fin101.fin101_module import fin101 as fn
+
 
 def print_breakline():
 	print("---------------------")
