@@ -21,10 +21,10 @@ class SilSpiderSpider(scrapy.Spider):
 
 		if int(numChap) >= 0:
 			# self.log("Positive[%d, %d - %d]" % (int(manga), int(targetChap), int(targetChap)+int(numChap)))
-			self.start_urls = ["http://manhua.fzdm.com/%s/%s/" % (int(manga), chap) for chap in xrange(int(targetChap), int(targetChap)+int(numChap))]
+			self.start_urls = ["http://manhua.fzdm.com/%s/%s/" % (int(manga), chap) for chap in range(int(targetChap), int(targetChap)+int(numChap))]
 		else:
 			# self.log("Positive[%d, %d - %d]" % (int(manga), int(targetChap)+int(numChap), int(targetChap)))
-			self.start_urls = ["http://manhua.fzdm.com/%s/%s/" % (int(manga), chap) for chap in xrange(int(targetChap)+int(numChap)+1, int(targetChap)+1)]
+			self.start_urls = ["http://manhua.fzdm.com/%s/%s/" % (int(manga), chap) for chap in range(int(targetChap)+int(numChap)+1, int(targetChap)+1)]
 
 	def parse(self, response):
 		# This is a contract for us

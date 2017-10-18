@@ -11,7 +11,7 @@ spider = input("风之动漫 - 1\tKuku动漫 - 2\t"
 					"Which site you want to crawl: ")
 
 if spider == '1':
-	print("""http://comic.kukudm.com/\n*****************************""")
+	print("""http://manhua.fzdm.com\n*****************************""")
 	manga = input("食戟之靈 - 58\t七原罪 - 56\t辛巴达 - 119\n"
 						"猎人 - 10\t东京RE - 117\n"
 						"进击的巨人 - 39\t英雄学院 - 131\n"
@@ -19,8 +19,8 @@ if spider == '1':
 	targetChap = input("Input start downloading chapter: ")
 	numChap = input("How many chapters you want to download: (-2 meaning download 2 chap before X) ")
 	exec_str = "scrapy crawl sil_spider -a manga=%s -a targetChap=%s -a numChap=%s" % (manga, targetChap, numChap)
-else:
-	print("""http://manhua.fzdm.com\n*****************************""")
+elif spider == '2':
+	print("""http://comic.kukudm.com/\n*****************************""")
 	manga = input("食戟之靈 - 1694\t七原罪 - 1733\t魔笛 - 982\n"
 						"猎人 - 146\t东京RE - 1393\n"
 						"进击的巨人 - 941\t英雄学院 - 2049\n"
