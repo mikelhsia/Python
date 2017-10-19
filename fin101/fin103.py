@@ -92,6 +92,7 @@ del date
 # ff=load('c:/temp/ffDaily.pickle')
 # final=pd.merge(x2,ff,left_index=True,right_index=True)
 
+########################################################################################################
 # Student T-test and F-test
 from scipy import stats
 import tushare as ts
@@ -103,6 +104,7 @@ x = stats.norm.rvs(size=10000)
 print("T-value   P-value  (two-tails")
 print(stats.ttest_1samp(x, 5.0))
 print(stats.ttest_1samp(x, 0))
+
 
 # Test whether the mean daily returns from Shanghai Index is zero:
 def ts2mpf_all(quotes):
@@ -118,6 +120,7 @@ def ts2mpf_all(quotes):
 		quoteList.append(datas)
 
 	return quoteList
+
 
 def ts2mpf_dohcl(quotes):
 	dates = []
@@ -155,12 +158,16 @@ ret = (px - py) / px
 print("Mean        T-value                                       P-value")
 print(round(np.mean(ret), 5), stats.ttest_1samp(ret, 0))
 
-
-# Next, we test whether two variances for IBM and DELL in 2013 are equal or not.
-# The function called sp.stats.bartlet performs Bartlett's test for equal variances
-# with a null hypothesis that all input samples are from populations with equal variances.
+########################################################################################################
+'''
+Next, we test whether two variances for IBM and DELL in 2013 are equal or not.
+The function called sp.stats.bartlet performs Bartlett's test for equal variances
+with a null hypothesis that all input samples are from populations with equal variances.
+'''
 
 import scipy as sp
+
+
 def ret_f(ticker, begDate, endDate):
 	p = ts.get_hist_data(ticker, start=begDate, end=endDate)
 	p = p.sort_index(axis='index')
@@ -175,7 +182,6 @@ y = ret_f('000002', '2017-01-01', '2017-09-01')
 # With a T-value of 15.1 and a P-value of 0.0001 percent, we conclude that these two stocks
 # will have different variances for their daily stock returns in 2017 if we choose a significant level of 5 percent
 print(sp.stats.bartlett(x, y))
-
 
 # we use IBM's data to test the existence of the so-called January effect which states that stock returns
 # in January are statistically different from those in other months
@@ -206,11 +212,14 @@ print(sp.stats.bartlett(x, y))
 #  In terms of the weekday effect, we could apply the same procedure to test its existence.
 
 
+########################################################################################################
 # Many useful applications
-# In this section, we discuss many issues, such as 52-week high and low trading strategy
-# by taking a long position if today's price is close to the minimum price achieved in the past 52 weeks
-# and taking an opposite position if today's price is close to its 52-week high.
-
+'''
+In this section, we discuss many issues, such as 52-week high and low trading strategy
+by taking a long position if today's price is close to the minimum price achieved in the past 52 weeks
+and taking an opposite position if today's price is close to its 52-week high.
+'''
+########################################################################################################
 # Not used
 # from dateutil.relativedelta import relativedelta
 
@@ -223,20 +232,23 @@ p = p.sort_index(axis='index')
 
 x = p.close
 y = list(p.close[:-1])
-high=max(y)
-low=min(y)
+high = max(y)
+low = min(y)
 
 print("Today\t\t\tPrice\t\tHigh\t\tLow\t\t% from low")
-print(x.index[-1], '\t\t', x[-1], '\t\t', high, '\t\t', low, '\t\t', round((x[-1]-low)/(high-low)*100,2))
+print(x.index[-1], '\t\t', x[-1], '\t\t', high, '\t\t', low, '\t\t', round((x[-1] - low) / (high - low) * 100, 2))
 
+########################################################################################################
 # Roll's model to estimate spread (1984)
-# Liquidity is de ned as how quickly we can dispose of our asset without losing its intrinsic value.
-# Usually, we use spread to represent liquidity. However, we need high-frequency data to estimate spread.
-# Later in the chapter, we show how to estimate spread directly by using high-frequency data.
-# To measure spread indirectly based on daily observations, Roll (1984) shows that we can estimate it based on
-# the serial covariance in price changes as follows
+'''
+Liquidity is defined as how quickly we can dispose of our asset without losing its intrinsic value.
+Usually, we use spread to represent liquidity. However, we need high-frequency data to estimate spread.
+Later in the chapter, we show how to estimate spread directly by using high-frequency data.
+To measure spread indirectly based on daily observations, Roll (1984) shows that we can estimate it based on
+the serial covariance in price changes as follows
+'''
 
-print("",end="\n________________\n")
+print("", end="\n________________\n")
 
 import math
 import matplotlib.mathtext as mt
@@ -270,42 +282,69 @@ p = data.close
 d = np.diff(p)
 cov_ = np.cov(d[:-1], d[1:])
 
-if cov_[0,1] < 0:
-	print("Roll spread for ", ticker, " is ", round(2*math.sqrt(-cov_[0, 1]), 3))
+if cov_[0, 1] < 0:
+	print("Roll spread for ", ticker, " is ", round(2 * math.sqrt(-cov_[0, 1]), 3))
 else:
 	print("Cov is positive for ", ticker, " positive ", round(cov_[0, 1], 3))
 
+'''
+Thus, during that period, Roll's spread for IBM is 1.145. The major assumption for Roll's model is that the
+covariance between  and  is negative. When its value is positive, Roll's model would fail. In a real world,
+it is true for many cases. Usually, practitioners adopt two approaches: when the spread is negative, we just
+ignore those cases or use other methods to estimate spread. The second approach is to add a negative sign in
+front of a positive covariance.
+'''
 
-print("",end="\n________________\n")
+########################################################################################################
+print("", end="\n________________\n")
 mpl.rc('image', origin='upper')
 parser = mt.MathTextParser("Bitmap")
 
-# According to Amihud (2002), liquidity re ects the impact of order  ow on price. His illiquidity measure
-# is defined as follows:
-rgba1, depth1 = parser.to_rgba(r'$illiq_t = \frac{|R_t|}{P_t*V_t}$',
-                               color='black', fontsize=12, dpi=200)
-# Rt is the daily return at day t, Pt is closing price at t, and Vt is the daily dollar trading volume at t.
-# Since the illiquidity is the reciprocal of liquidity, the lower the illiquidity value, the higher the liquidity
-# of the underlying security.
+'''
+According to Amihud (2002), liquidity reflects the impact of order  ow on price. His illiquidity measure
+is defined as follows:
+Rt is the daily return at day t, Pt is closing price at t, and Vt is the daily dollar trading volume at t.
+Since the illiquidity is the reciprocal of liquidity, the lower the illiquidity value, the higher the liquidity
+of the underlying security.
+'''
+rgba1, depth1 = parser.to_rgba(r'$illiq_t = \frac{|R_t|}{P_t*V_t}$', color='black', fontsize=12, dpi=200)
 fig = plt.figure()
 fig.figimage(rgba1.astype(float) / 255., 100, 100)
 
 plt.show()
 plt.clf()
 
-x = np.array([1,2,3], dtype='float')
-y = np.array([2,2,4], dtype='float')
+x = np.array([1, 2, 3], dtype='float')
+y = np.array([2, 2, 4], dtype='float')
 print("np.divide(x, y) = ", np.divide(x, y))
 
-# In the following code, we estimate Amihud's illiquidity for IBM based on trading data in October 2013.
-# The value is 1.165*10-11. It seems that this value is quite
-# small. Actually, the absolute value is not important; the relative value matters. If we estimate the
-# illiquidity for DELL over the same period, we would  nd a value of 0.638*10-11. Since 1.165 is greater
-# than 0.638, we conclude that IBM is less liquid than DELL.
+'''
+In the following code, we estimate Amihud's illiquidity for IBM based on trading data in October 2013.
+The value is 1.165*10-11. It seems that this value is quite
+small. Actually, the absolute value is not important; the relative value matters. If we estimate the
+illiquidity for DELL over the same period, we would  nd a value of 0.638*10-11. Since 1.165 is greater
+than 0.638, we conclude that IBM is less liquid than DELL.
+'''
 
 p = np.array(data.close)
 dollar_vol = np.array(data.volume * p)
 
-px = np.array(p.close[1:])
-py = np.array(p.close[:-1])
+px = np.array(p[1:])
+py = np.array(p[:-1])
 ret = (px - py) / px
+illiq = np.mean(np.divide(abs(ret), dollar_vol[1:]))
+
+print("Aminud illiq = ", illiq)
+########################################################################################################
+# Pastor and Stambaugh liquidity measure (2003)
+'''
+Based on the methodology and empirical evidence in Campbell, Grossman and Wang(1993), Pastor and Stambaugh(2003) designed
+the following model to measure individual stock's liquidity and the market liquidity:
+'''
+rgba1, depth1 = parser.to_rgba(r'$illiq_t = \frac{|R_t|}{P_t*V_t}$', color='black', fontsize=12, dpi=200)
+fig = plt.figure()
+fig.figimage(rgba1.astype(float) / 255., 100, 100)
+
+plt.show()
+plt.clf()
+
