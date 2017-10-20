@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'practiceDJApp',    # New application installed practice
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,17 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+# Database settings of mySQL
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',  # 或者使用 mysql.connector.django
+#         'NAME': 'test',
+#         'USER': 'test',
+#         'PASSWORD': 'test123',
+#         'HOST':'localhost',
+#         'PORT':'3306',
+#     }
+# }
 
 
 # Password validation
