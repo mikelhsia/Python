@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from . import view, testdb
+from . import view, testdb, search, searchPost
 
 # Django url() 可以接收四个参数，分别是两个必选参数：regex、view 和两个可选参数：kwargs、name，接下来详细介绍这四个参数。
 #  - regex: 正则表达式，与之匹配的 URL 会执行对应的第二个参数 view。
@@ -24,6 +24,9 @@ from . import view, testdb
 #  - kwargs: 视图使用的字典类型的参数。
 #  - name: 用来反向获取 URL。
 urlpatterns = [
+    url(r'^search-post', searchPost.search_post),
+    url(r'^search-form', search.searchForm),
+    url(r'^search', search.search),
     url(r'^helloBase', view.sayHelloWorldBase),
     url(r'^hello', view.sayHelloWorld),
     url(r'^testdb$', testdb.testdb),
