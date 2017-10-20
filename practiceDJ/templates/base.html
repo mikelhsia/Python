@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+</head>
+<body>
+<!--以下代码中，名为 mainbody 的 block 标签是可以被继承者们替换掉的部分。-->
+<!--所有的  block  标签告诉模板引擎，子模板可以重载这些部分。-->
+
+    <h1>Hello World!</h1>
+    <p>菜鸟教程 Django 测试。</p>
+    {% block mainbody %}
+       <p>original</p>
+    {% endblock %}
+</body>
+</html>
