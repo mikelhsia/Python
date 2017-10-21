@@ -6,6 +6,7 @@ import scrapy
 from urllib.parse import urljoin
 import os
 import urllib
+from selenium import webdriver
 
 from scrapy import signals
 from scrapy.http import Request
@@ -53,10 +54,12 @@ class SilSpiderSpider(scrapy.Spider):
 			#  - Never include <tbody> elements in your XPath expressions unless you really know what you’re doing
 
 			# Use the text to find the right chapter
-			_xpathStr = "//a[contains(text(), \' %s%s\') and @target]/@href" % (str(int(self._targetChap)+num), u'\u8bdd')
+			# _xpathStr = "//a[contains(text(), \' %s%s\') and @target]/@href" % (str(int(self._targetChap)+num), u'\u8bdd')
+			_xpathStr = "//a[contains(text(), %s) and @target]/@href" % (str(int(self._targetChap)+num))
 			# self.logger.debug("[DEBUG] xpath = %s", _xpathStr)
 			_currentChap = response.xpath(_xpathStr).extract()
 			if not _currentChap:
+				print(_currentChap)
 				self.logger.info("[INFO] No further comic")
 				break
 			itemUrl = u"http://comic.kukudm.com%s" % _currentChap[0]
@@ -76,24 +79,23 @@ class SilSpiderSpider(scrapy.Spider):
 	def parse_item(self, response):
 		item = KukuComicItem()
 
-		# parse filename and file source
-		infoScript = response.xpath('//script/text()').extract()
-		# self.logger.debug("[DEBUG] Script = %s", infoScript)
-		for line in infoScript:
-			startStr = 'd+"'
-			endStr = 'jpg'
-			startIdx = line.find(startStr)
-			endIdx = line.find(endStr)
-			if startIdx > 0:
-				item['imgSrc'] = self._comicServer + urllib.parse.quote(line[startIdx+3:endIdx+3].encode("utf-8"))
-				item['imgFileName'] = item['imgSrc'].split("/")[-1]
-				# self.logger.debug('[DEBUG] Source = %s', item['imgSrc'])
-				break
+		# Selenium chrome web driver
+		driver = webdriver.PhantomJS()
+
+		driver.get(response.url)
+		img_url = driver.find_element_by_id("comicpic").get_attribute("src")
+		self.logger.debug("[DEBUG] Source = {}".format(img_url))
+
+		item['imgSrc'] = img_url
+		item['imgFileName'] = img_url.split("/")[-1]
 
 		# Rename the folder name and downloaded filename
-		item['imgDst'] = "%s/%s/%s" % (os.getcwd(), response.url.split('/')[-2], response.url.split('/')[-1].replace('htm', 'jpg')
-)
+		item['imgDst'] = "%s/%s/%s" % (os.getcwd(), response.url.split('/')[-2], response.url.split('/')[-1].replace('htm', 'jpg'))
 		# self.logger.debug("[DEBUG] Dst folder = %s", item['imgDst'])
+
+		# Close the driver
+		driver.close()
+
 		############################################################
 		# 第一页的漫画只有一个list item，所以这个是nextlink
 		# response.xpath("/html/body/table[2]/tr/td/a[1]/@href").extract()
