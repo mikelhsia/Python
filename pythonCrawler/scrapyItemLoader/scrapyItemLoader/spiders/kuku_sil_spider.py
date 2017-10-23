@@ -12,6 +12,9 @@ from scrapy import signals
 from scrapy.http import Request
 from scrapyItemLoader.items import KukuComicItem
 
+
+driver = ""
+
 class SilSpiderSpider(scrapy.Spider):
 	name = 'kuku_sil_spider'
 	allowed_domains = ['comic.kukudm.com']
@@ -39,11 +42,23 @@ class SilSpiderSpider(scrapy.Spider):
 	@classmethod
 	def from_crawler(cls, crawler, *args, **kwargs):
 		spider = super(SilSpiderSpider, cls).from_crawler(crawler, *args, **kwargs)
-		# crawler.signals.connect(spider.engine_started, signal=scrapy.signals.engine_started)
+		crawler.signals.connect(spider.spider_opened, signal=scrapy.signals.spider_opened)
+		crawler.signals.connect(spider.spider_closed, signal=scrapy.signals.spider_closed)
 		return spider
 
-	# def engine_started(self, spider):
-	# 	spider.logger.info('Spider closed: %s', spider.name)
+	def spider_opened(self, spider):
+		# Selenium chrome web driver
+		global driver
+		driver = webdriver.PhantomJS()
+
+		spider.logger.info('Spider opened signal received, and webdriver PhantomJS is opened')
+
+	def spider_closed(self, spider):
+		# Close the driver
+		global driver
+		driver.close()
+
+		spider.logger.info('Spider closed signal received, and webdriver PhantomJS is closed')
 
 	def parse(self, response):
 		for num in range(0, int(self._numChap)):
@@ -79,9 +94,6 @@ class SilSpiderSpider(scrapy.Spider):
 	def parse_item(self, response):
 		item = KukuComicItem()
 
-		# Selenium chrome web driver
-		driver = webdriver.PhantomJS()
-
 		driver.get(response.url)
 		img_url = driver.find_element_by_id("comicpic").get_attribute("src")
 		self.logger.debug("[DEBUG] Source = {}".format(img_url))
@@ -92,9 +104,6 @@ class SilSpiderSpider(scrapy.Spider):
 		# Rename the folder name and downloaded filename
 		item['imgDst'] = "%s/%s/%s" % (os.getcwd(), response.url.split('/')[-2], response.url.split('/')[-1].replace('htm', 'jpg'))
 		# self.logger.debug("[DEBUG] Dst folder = %s", item['imgDst'])
-
-		# Close the driver
-		driver.close()
 
 		############################################################
 		# 第一页的漫画只有一个list item，所以这个是nextlink

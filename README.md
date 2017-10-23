@@ -25,8 +25,3 @@ In fzdm folder
 	  b. Input start downloading chapter: 从第几话开始下载
 	  c. How many chapters you want to download: 要下载几话
 	  
-	  
-#TODO 1. Add selenium and phantomJS
-#TODO 2. Open phantomJS only when spider is open and close to reduce resources
-#TODO 3. Django practice
-#TODO 4. Pyhton in Finance 2nd Edition practice matplotlib
