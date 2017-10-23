@@ -84,11 +84,12 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',  # 或者使用 mysql.connector.django
-#         'NAME': 'test',
-#         'USER': 'test',
-#         'PASSWORD': 'test123',
-#         'HOST':'localhost',
-#         'PORT':'3306',
+#         'NAME': 'test', # NAME: 指定的数据库名，如果是sqlite的话，就需要填数据库文件的绝对位置
+#         'USER': 'test', # USER: 数据库登录的用户名，mysql一般都是root
+#         'PASSWORD': 'test123', # PASSWORD：登录数据库的密码，必须是USER用户所对应的密码
+#         'HOST':'localhost', # HOST: 由于一般的数据库都是C/S结构的，所以得指定数据库服务器的位置，我们一般数据库服务器和客户端都是在一台主机上面，所以一般默认都填127.0.0.1
+#         'PORT':'3306', # PORT：数据库服务器端口，mysql默认为3306
+#         HOST和PORT都可以不填，使用默认的配置，但是如果你有更改默认配置的话，就需要填入更改后的
 #     }
 # }
 
