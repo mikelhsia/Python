@@ -57,6 +57,7 @@ class SilSpiderSpider(scrapy.Spider):
 		# Close the driver
 		global driver
 		driver.close()
+		del driver
 
 		spider.logger.info('Spider closed signal received, and webdriver PhantomJS is closed')
 
@@ -95,7 +96,7 @@ class SilSpiderSpider(scrapy.Spider):
 		item = KukuComicItem()
 
 		driver.get(response.url)
-		img_url = driver.find_element_by_id("comicpic").get_attribute("src")
+		img_url = driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td/img").get_attribute("src")
 		self.logger.debug("[DEBUG] Source = {}".format(img_url))
 
 		item['imgSrc'] = img_url
