@@ -14,7 +14,7 @@ def testdb(request):
 	# 通过objects这个模型管理器的all()获得所有数据行，相当于SQL中的SELECT * FROM
 	list = Test.objects.all()
 
-	if len(list) < 1:
+	if len(list) > 1:
 		# filter相当于SQL中的WHERE，可设置条件过滤结果
 		# response2 = Test.objects.filter(id=1)
 
@@ -39,7 +39,7 @@ def testdb(request):
 		# Test.objects.filter(id=1).update(name='Google')
 
 		# 修改所有的列
-		# Test.objects.all().update(username='runxxb')
+		Test.objects.all().update(username='runxxb')
 
 	for var in list:
 		response1 += var.username + "({}), ".format(var.id)
