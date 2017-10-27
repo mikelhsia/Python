@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+    <style>
+        #user-profile {
+            font-weight:800;
+            color:#929;
+        }
+    </style>
+</head>
+<body>
+<h2> {{ hello }} </h2>
+<span>This is <span id="user-profile">{{ request.user }}</span> from <span id="user-profile">{{ request.path }}?{{ request.GET.urlencode }}</span>..</span>
+<!-- Django template if condition -->
+{% if condition1 and condition1.1 %}
+   ... display 1
+{% elif condition2 %}
+   ... display 2
+{% else %}
+   ... display 3
+{% endif %}
+
+<!-- Django template for condition -->
+<!--
+forloop.counter	索引从 1 开始算
+forloop.counter0	索引从 0 开始算
+forloop.revcounter	索引从最大长度到 1
+forloop.revcounter0	索引从最大长度到 0
+forloop.first	当遍历的元素为第一项时为真
+forloop.last	当遍历的元素为最后一项时为真
+forloop.parentloop 用在嵌套的 for 循环中，获取上一层 for 循环的 forloop
+
+当列表中可能为空值时用 for empty-->
+<ul>
+{% for lang in TutorialList %}
+    <li> {{ lang }} </li>
+    {% if forloop.last %}
+    	<li>...</li>
+    {% endif %}
+{% endfor %}
+</ul>
+
+<!-- Django template nested for condition -->
+{% for athlete in athlete_list %}
+    <h1>{{ athlete.name }}</h1>
+    <ul>
+    {% for sport in athlete.sports_played %}
+        <li>{{ sport }}</li>
+    {% endfor %}
+    </ul>
+{% endfor %}
+
+<!-- Django template if equal condition -->
+{% ifequal section 'sitenews' %}
+    <h1>Site News</h1>
+{% else %}
+    <h1>No News Here</h1>
+{% endifequal %}
+
+<!-- Django template comments -->
+{# 这是一个注释 #}
+
+<!-- Django template filter -->
+{{ name|lower }}
+{{ my_list|first|upper }}
+{{ bio|truncatewords:"30" }}
+{{ pub_date|date:"F j, Y" }}
+
+<!-- Django template include tag -->
+<!-- include 标签允许在模板中包含其它的模板的内容。-->
+{% include "base.html" %}
+</body>
+</html>
