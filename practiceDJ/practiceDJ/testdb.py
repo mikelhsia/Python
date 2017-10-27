@@ -35,6 +35,26 @@ def testdb(request):
 		test2.username = "runxxb"
 		test2.save()
 
+		###########################################################################
+		# 一共有四种方法
+		# 方法 1
+		# Author.objects.create(name="WeizhongTu", email="tuweizhong@163.com")
+ 
+		# 方法 2
+		# twz = Author(name="WeizhongTu", email="tuweizhong@163.com")
+		# twz.save()
+ 
+		# 方法 3
+		# twz = Author()
+		# twz.name="WeizhongTu"
+		# twz.email="tuweizhong@163.com"
+		# twz.save()
+		 
+		# 方法 4，首先尝试获取，不存在就创建，可以防止重复
+		# Author.objects.get_or_create(name="WeizhongTu", email="tuweizhong@163.com")
+		# 返回值(object, True/False)
+		###########################################################################
+		
 		# 另外一种方式
 		# Test.objects.filter(id=1).update(name='Google')
 
