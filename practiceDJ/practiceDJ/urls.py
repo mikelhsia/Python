@@ -33,7 +33,7 @@ urlpatterns = [
 	url(r'^hello', view.sayHelloWorld),
 	url(r'^testdb$', testdb.testdb),
 	url(r'^add/$', add.index, name='add'),
-    url(r'^add/(\d+)/(\d+)/$', add.old_add_redirect, name='add2'),
+	url(r'^add/(\d+)/(\d+)/$', add.old_add_redirect, name='add2'),
 	url(r'^new_add/(\d+)/(\d+)/$', add.add3, name='add3'),
 	url(r'^admin/', admin.site.urls),
 ]

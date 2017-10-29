@@ -1,4 +1,16 @@
 {% extends "base.html" %}
+<!--
+First of all extends can only occur as the very first line of the file.
+Secondly, include pushes and pops a context object on the resolve stack,
+which means that value created in the context while in the include will
+go out of scope when it returns.
+
+My rule is: create base.html template files that define the overall
+structure of your site and use liberal amounts of {% block foo %} around
+critical areas. Then all of your other templates extends the base
+(or something that itself extends the base) and you replace those blocks
+ as needed. include, on the other hand, is good for encapsulating things
+  you may need to use in more than one place, maybe even on the same page.-->
 {% block mainbody %}
     <p>继承了 base.html 文件</p>
 {% endblock %}
