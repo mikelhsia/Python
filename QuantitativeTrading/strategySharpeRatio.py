@@ -76,12 +76,6 @@ for value in range(30):
 		print("Found no data")
 		raise SystemExit
 
-	dates = []
-	opens = []
-	highs = []
-	closes = []
-	lows = []
-
 	dates, opens, highs, closes, lows = ts2mpf_dohcl(quote)
 
 	dates = np.array(dates)
@@ -106,12 +100,6 @@ for value in range(30):
 	if len(shortQuote) == 0:
 		print("Found no data")
 		raise SystemExit
-
-	shortDates = []
-	shortOpens = []
-	shortHighs = []
-	shortCloses = []
-	shortLows = []
 
 	shortDates, shortOpens, shortHighs, shortCloses, shortLows = ts2mpf_dohcl(quote)
 
