@@ -26,8 +26,16 @@ Main function
 Description: 
 """
 def main():
-	array = ts2np.ts2numpy_dohcl('300018', '2017-09-10', '2017-10-10')
-	print(array[0])
+
+	goldTicker = "601899"
+	goldETFTicker = "518880"
+	begDate = "2017-01-01"
+	endDate = "2017-11-01"
+	goldArray = ts2np.ts2numpy_dohcl(goldTicker, begDate, endDate)
+	goldETFArray = ts2np.ts2numpy_dohcl(goldETFTicker, begDate, endDate)
+
+	# print(goldArray)
+	# print(goldETFArray)
 
 
 if __name__ == "__main__":
