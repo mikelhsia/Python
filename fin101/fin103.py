@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
 
+############################################
 # Used to generate an index array
 dates = pd.date_range('20130101', periods=5)
 np.random.seed(12345)
@@ -16,6 +19,7 @@ y = x1.fillna(fill)
 
 del dates, x, x1, fill, y
 
+
 '''
 Ordinary Least Square (OLS) regression is a method for 
 estimating the unknown parameters in a linear regression model.
@@ -28,7 +32,6 @@ Assume that we have the following equation where y is an n by 1 vector (array),
  independent variables:
 '''
 
-import statsmodels.api as sm
 
 y = [1, 2, 3, 4, 2, 3, 4]
 x = range(1, 8)
@@ -40,6 +43,81 @@ print(results.params)
 
 del y, x, results
 
+
+############################################
+# 简单的数据模型分析
+# y = 1 + 10x
+
+# 虚构一组数据，数据量为100
+nsample = 100
+
+# 创建X的数据
+x = np.linspace(0, 10, nsample)
+
+# 加入常数项 1
+X = sm.add_constant(x)
+
+# 设置模型里的beta0 和 beta1
+beta = np.array([1, 10])
+
+# 然后加上误差项，所以生成一个长度为nsample的正态分布样本
+e = np.random.normal(size=nsample)
+
+# 生成 y(t)
+# dot(a, b)[i,j,k,m] = sum(a[i,j,:] * b[k,:,m])
+y = np.dot(X, beta) + e
+
+# 在反映变量和回归变量上使用OLS
+model = sm.OLS(y, X)
+
+# fit 取结果, 再调取计算出的回归系数
+results = model.fit()
+print("results.params: {}".format(results.params))
+
+# coef列就是计算出的回归系数
+print("results.summary: {}".format(results.summary()))
+
+# 将拟合结果画出来
+# 先调用拟合结果的fittedvalues得到拟合的 y 值
+y_fitted = results.fittedvalues
+
+# matplotlib画图。设定图轴，图片大小为8x6
+fig, ax = plt.subplots(figsize=(8, 6))
+
+# 原数据
+ax.plot(x, y, 'o', label='data')
+
+# 拟合数据
+ax.plot(x, y_fitted, 'r--.',label='OLS')
+
+#注解
+ax.legend(loc='best')
+# ax.axis((-0.05, 2, -1, 25))
+
+############################################
+# y = B0 + B1x + B2x^2 + .... + Bnx^
+# y = 1 + 0.1x + 10x^2
+nsample = 100
+
+x = np.linspace(0, 10, nsample)
+
+# 创建一个 k×2 的 array，两列分别为 x1 和 x2。我们需要 x2 为 x1 的平方
+X = np.column_stack((x, x**2))
+
+# 使用 sm.add_constant() 在 array 上加入一列常项 1。
+X = sm.add_constant(X)
+
+# beta, e
+beta = np.array([1, 0.1, 10])
+e = np.random.normal(size=nsample)
+
+y = np.dot(X, beta) + e
+model = sm.OLS(y, X)
+results = model.fit()
+print(results.params)
+print(results.summary())
+
+############################################
 # pd.read_csv()
 # pd.read_clipboard()
 # pd.read_table()
@@ -253,7 +331,6 @@ print("", end="\n________________\n")
 import math
 import matplotlib.mathtext as mt
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 
 mpl.rc('image', origin='upper')
 parser = mt.MathTextParser("Bitmap")
