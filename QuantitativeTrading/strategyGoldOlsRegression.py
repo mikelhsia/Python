@@ -10,6 +10,7 @@ import datetime
 from matplotlib.dates import date2num
 import numpy as np
 import ts2numpy as ts2np
+import statsmodels.api as sm
 
 """
 Tips:
@@ -34,8 +35,20 @@ def main():
 	goldArray = ts2np.ts2numpy_dohcl(goldTicker, begDate, endDate)
 	goldETFArray = ts2np.ts2numpy_dohcl(goldETFTicker, begDate, endDate)
 
-	# print(goldArray)
+	# print(len(goldArray[1]))
 	# print(goldETFArray)
+	dataSet = np.array([goldArray[3], goldETFArray[3]])
+
+	# print(dataSet)
+
+	trainingSet, testSet = np.hsplit(dataSet, 2)
+
+	print("Training Set:\n {}".format(trainingSet))
+	print("Test Set:\n {}".format(testSet))
+
+	# model = sm.OLS(trainingSet, testSet)
+	# results = model.fit()
+	# print("Result summary:\n {}".format(results.summary()))
 
 
 if __name__ == "__main__":
