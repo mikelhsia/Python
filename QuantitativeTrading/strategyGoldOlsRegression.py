@@ -43,8 +43,15 @@ def main():
 
 	trainingSet, testSet = np.hsplit(dataSet, 2)
 
-	print("Training Set:\n {}".format(trainingSet))
-	print("Test Set:\n {}".format(testSet))
+	# print("Training Set:\n {}".format(trainingSet[1,:]))
+	# print("Test Set:\n {}".format(testSet))
+
+	y = trainingSet[0,:]
+	x = trainingSet[1,:]
+	X = sm.add_constant(x)
+	model = sm.OLS(y, X)
+	results = model.fit()
+	print("Result summary:\n {}".format(results.summary()))
 
 	# model = sm.OLS(trainingSet, testSet)
 	# results = model.fit()
