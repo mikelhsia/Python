@@ -3,13 +3,124 @@
 <head>
 <meta charset="utf-8">
 <title>菜鸟教程(runoob.com)</title>
+<!-- <link rel="stylesheet" href="/static/css/square.css" type="text/css"/> -->
+<style type="text/css">
+/*第一种方法：利用border*/
+/*hack 出三角形只需要两个条件，第一，元素本 身的长宽为0；其次，将不需要的部分通过 border-color 来设置隐藏。*/
+div {
+  display: inline-block;
+  margin: 20px 0 0 20px;
+}
+
+#first {
+	width: :20px;
+	height: 20px;
+	border-width: 10px;
+	border-style: solid;
+	border-color: red green blue brown;
+}
+
+#second {
+	width: 0;
+	height: 0;
+	border-width: 10px;
+	border-style: solid;
+	border-color: red green blue brown;
+}
+
+#third {
+	width: 0;
+	height: 0;
+	border-width: 10px;
+	border-style: solid;
+	border-color: red transparent transparent transparent;
+}
+
+/*如何拼接出一个平行四边形了*/
+.para{
+	display: inline-block;
+	position: relative;
+	padding: 0 10px;
+	height: 24px;
+	line-height: 24px;
+	margin-left: 12px;
+	color: #fff;
+	background: red;
+}
+
+.para:after{
+	content: '';
+	display: block;
+	width: 0;
+	height: 0;
+	position: absolute;
+	border-style: solid;
+	border-width: 12px 6px;
+	top: 0;
+	right:-12px;
+	border-color: red transparent transparent red;
+}
+
+.para:before {
+	content: '';
+	display: block;
+	width: 0;
+	height: 0;
+	position: absolute;
+	border-style: solid;
+	border-width: 12px 6px;
+	top: 0;
+	left: -12px;
+	border-color: transparent red red transparent;
+}
+
+/*第二种方法：利用transform*/
+.city {
+	display: inline-block;
+	padding: 5px 10px;
+	border: 1px solid #44a5fc;
+	color: #333;
+	transform: skew(-20deg);
+}
+
+.city span{
+	transform: skew(20deg);
+}
+</style>
 </head>
 <body>
-<!--以下代码中，名为 mainbody 的 block 标签是可以被继承者们替换掉的部分。-->
-<!--所有的  block  标签告诉模板引擎，子模板可以重载这些部分。-->
+<!-- 
+以下代码中，名为 mainbody 的 block 标签是可以被继承者们替换掉的部分。
+所有的  block  标签告诉模板引擎，子模板可以重载这些部分。
+ -->    
+ 	<h1>Hello World!</h1>
 
-    <h1>Hello World!</h1>
-    <p>菜鸟教程 Django 测试。</p>
+    <div id='first'></div>
+    <div id='second'></div>
+    <div id='third'></div>
+    <br>
+<!-- 
+在border法中，它由三部分组成，分别是左三角形、矩形、右三角形。
+如果每次绘制平行四边形都要创建三个元素显然过于麻烦了，所以在这里:before和
+:after伪元素是个不错的选择。下面我们实现一下这样的效果
+ -->
+ 	<h3>第一种方法：利用border</h3>
+	<div class="para">1</div>
+	<div class="para">2</div>
+	<div class="para">3</div>
+
+ 	<h3>第二种方法：利用transform</h3>
+ 	<div class="city">
+		<span>上海</span>
+	</div>
+	<div class="city">
+		<span>北京</span>
+	</div>
+	<div class="city">
+		<span>杭州</span>
+	</div>
+    
+    <p>Django 测试。</p>
     {% block mainbody %}
        <p>original</p>
     {% endblock %}

@@ -18,6 +18,9 @@ from django.contrib import admin
 
 from . import view, testdb, search, searchPost, add
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 # Django url() 可以接收四个参数，分别是两个必选参数：regex、view 和两个可选参数：kwargs、name，接下来详细介绍这四个参数。
 #  - regex: 正则表达式，与之匹配的 URL 会执行对应的第二个参数 view。
 #  - view: 用于执行与正则表达式匹配的 URL 请求。
@@ -36,4 +39,4 @@ urlpatterns = [
 	url(r'^add/(\d+)/(\d+)/$', add.old_add_redirect, name='add2'),
 	url(r'^new_add/(\d+)/(\d+)/$', add.add3, name='add3'),
 	url(r'^admin/', admin.site.urls),
-]
+] + static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)

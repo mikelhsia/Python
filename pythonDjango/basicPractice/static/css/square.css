@@ -1,0 +1,76 @@
+/*第一种方法：利用border*/
+/*第一种方法是借助border属性 hack 出三角形，然后通过一个矩形拼接两个三角形最终制造出一个平行四边形。
+为什么使用border可以产生三角形呢？先来看看一张图片：
+CSS triangle
+看了图中的三个小图形的变化过程，你应该已经清楚了一半。其实 hack 出三角形只需要两个条件，第一，元素本
+身的长宽为0；其次，将不需要的部分通过 border-color 来设置隐藏。通过类似的方法，你还可以创造出梯形，
+上图中的三个图形的代码如下。*/
+/*hack 出三角形只需要两个条件，第一，元素本 身的长宽为0；其次，将不需要的部分通过 border-color 来设置隐藏。*/
+
+div {
+  display: inline-block;
+  margin: 20px 0 0 20px;
+}
+
+#first {
+	width:20px;
+	height:20px;
+	border-width: 10px;
+	border-style: solid;
+	border-color: red green blue brown;
+}
+
+#second {
+	width: 0;
+	height: 0;
+	border-width: 10px;
+	border-style: solid;
+	border-color: red green blue brown;
+}
+
+#third {
+	width: 0;
+	height: 0;
+	border-width: 10px;
+	border-style: solid;
+	border-color: red transparent transparent transparent;
+}
+
+/*如何拼接出一个平行四边形了*/
+.para{
+	display: inline-block;
+	position: relative;
+	padding: 0 10px;
+	height: 24px;
+	line-height: 24px;
+	margin-left: 12px;
+	color: #fff;
+	background: red;
+}
+
+.para:after{
+	content: '';
+	display: block;
+	width: 0;
+	height: 0;
+	position: absolute;
+	border-style: solid;
+	border-width: 12px 6px;
+	top: 0;
+	right:-12px;
+	border-color: red transparent transparent red;
+}
+
+.para:before {
+	content: '';
+	display: block;
+	width: 0;
+	height: 0;
+	position: absolute;
+	border-style: solid;
+	border-width: 12px 6px;
+	top: 0;
+	left: -12px;
+	border-color: transparent red red transparent;
+
+}
