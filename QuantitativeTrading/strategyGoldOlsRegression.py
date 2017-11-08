@@ -60,35 +60,50 @@ def main():
 	# print(" * \t{}".format(trainingSet[1,0]))
 	# print("-------------------------")
 	# print("{}".format(spread[0]))
+	# print("Spread: {}".format(spread))
 
 	# 训练集平均差价
 	spreadMean = np.mean(spread)
+	# print("SpreadMean: {}".format(spreadMean))
 
 	# 训练集差价标准差
 	spreadStd = np.std(spread)
+	# print("SpreadStd: {}".format(spreadStd))
 
 	# 差价标准化 (用z-scores方法)
 	zscore = (spread - spreadMean)/spreadStd
+	# print("Zscore: {}".format(zscore))
 
-	# 在组合价值向下跌破两倍标准差时，购买此差价组合
-	longs = zscore <= -2
+	# 在组合价值向下跌破1.3倍标准差时，购买此差价组合
+	longs = zscore <= -1.3
+	# print("Longs: {}".format(longs))
 
-	# 在组合价值上升超过两倍标准差时，做空该差价组合
-	shorts = zscore >= 2
+	# 在组合价值上升超过.13倍标准差时，做空该差价组合
+	shorts = zscore >= 1.3
+	# print("Shorts: {}".format(shorts))
 
-	# 当组合价值回到一倍标准差以内时，清仓
-	exits = abs(zscore) <= 1
+	# 当组合价值回到0.7倍标准差以内时，清仓
+	exits = abs(zscore) <= 0.7
+	# print("Exits: {}".format(exits))
 
 	# 初始化头寸数组
-	positions = np.zeros(len(goldArray[3]))
+	positions = np.zeros([len(zscore),2])
+	# print(positions[0,:])
 
 	# 多头入市
+	from numpy.matlib import repmat
+	positions[shorts, :] = repmat([-1, 1], len(shorts[shorts != False]), 1)
 
 	# 空头入市
+	positions[longs, :] = repmat([1, -1], len(longs[longs != False]), 1)
+	# print(positions)
 
 	# 清仓
+	positions[exits, :] = repmat([0, 0], len(exits[exits == True]), 1)
+	print(positions)
 
 	# 确保继续持仓，除非出现清仓信号
+	# positions = fillMissingData(positions)
 
 	# 合并两个价格序列
 
