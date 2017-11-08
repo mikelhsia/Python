@@ -39,4 +39,4 @@ urlpatterns = [
 	url(r'^add/(\d+)/(\d+)/$', add.old_add_redirect, name='add2'),
 	url(r'^new_add/(\d+)/(\d+)/$', add.add3, name='add3'),
 	url(r'^admin/', admin.site.urls),
-] + static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
+]

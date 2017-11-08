@@ -26,3 +26,4 @@ if (__name__ == '__main__'):
 	writer = pd.ExcelWriter(fout)
 	df.to_excel(writer,'Sheet1')
 	writer.save()
+        # writer.close()
