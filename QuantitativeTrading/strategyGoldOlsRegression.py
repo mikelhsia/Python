@@ -85,7 +85,7 @@ def main():
 	# print("Shorts: {}".format(shorts))
 
 	# 当组合价值回到0.7倍标准差以内时，清仓
-	exits = abs(zscore) <= 0.5
+	exits = abs(zscore) <= 0.7
 	# print("Exits: {}".format(exits))
 
 	# 初始化头寸数组
@@ -107,17 +107,40 @@ def main():
 	# positions = fillMissingData(positions)
 
 	# 合并两个价格序列 = dataSet
-	dailyRet = (dataSet[:, 1:] - dataSet[:, :-1]) / dataSet[:, :-1]
+	dailyRet = (trainingSet[:, 1:] - trainingSet[:, :-1]) / trainingSet[:, :-1]
 
-	strategyRet = np.sum(dailyRet[:,:len(trainingSet[0,:])] * positions.T)
-	# print(strategyRet)
+	strategyRet = np.sum(dailyRet[:,] * positions.T[:,:-1])
+	print("Training SetStrategy Return: {}".format(strategyRet))
 
 	# 训练集的夏普比
-	sharpeTrainSet = np.sqrt(252) * np.mean(dailyRet[:,:len(trainingSet[0,:])] * positions.T)/np.std(trainingSet)
-	print(sharpeTrainSet)
+	sharpeTrainSet = np.sqrt(252) * np.mean(dailyRet[:,] * positions.T[:,:-1])/np.std(trainingSet)
+	print("Training Set Sharpe Ratio: {}".format(sharpeTrainSet))
 
+	######################3
 	# 评测集的夏普比
-	# Do everything again
+	testSpread = testSet[0, :] - results.params[1] * testSet[1, :]
+	testSpreadMean = np.mean(testSpread)
+	testSpreadStd = np.std(testSpread)
+	testZscore = (testSpread - testSpreadMean)/testSpreadStd
+
+	testLongs = testZscore <= -1.3
+	testShorts = testZscore >= 1.3
+	testExits = abs(testZscore) <= 0.7
+
+	testPositions = np.zeros([len(testZscore),2])
+
+	testPositions[testShorts, :] = repmat([-1, 1], len(testShorts[testShorts != False]), 1)
+	testPositions[testLongs, :] = repmat([1, -1], len(testLongs[testLongs != False]), 1)
+	testPositions[testExits, :] = repmat([0, 0], len(testExits[testExits == True]), 1)
+
+	testDailyRet = (testSet[:, 1:] - testSet[:, :-1]) / testSet[:, :-1]
+
+	testStrategyRet = np.sum(testDailyRet[:,] * testPositions.T[:,:-1])
+	print("Test Set Strategy Return: {}".format(testStrategyRet))
+
+	# 训练集的夏普比
+	sharpeTestSet = np.sqrt(252) * np.mean(testDailyRet[:,] * testPositions.T[:,:-1])/np.std(testSet)
+	print("Test Set Sharpe Ratio: {}".format(sharpeTestSet))
 
 	# 保存头寸文件以便检查数据先窥偏差
 
