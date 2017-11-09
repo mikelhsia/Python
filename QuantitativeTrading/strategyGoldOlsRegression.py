@@ -116,7 +116,7 @@ def main():
 	sharpeTrainSet = np.sqrt(252) * np.mean(dailyRet[:,] * positions.T[:,:-1])/np.std(trainingSet)
 	print("Training Set Sharpe Ratio: {}".format(sharpeTrainSet))
 
-	######################3
+	######################
 	# 评测集的夏普比
 	testSpread = testSet[0, :] - results.params[1] * testSet[1, :]
 	testSpreadMean = np.mean(testSpread)
