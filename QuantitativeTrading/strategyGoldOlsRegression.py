@@ -12,6 +12,9 @@ import statsmodels.api as sm
 
 """
 Tips:
+1. 若同时训练集和测试集上的夏普比率都很高，那么可以说此策略是无数据迁就偏差的。
+2. 可以改不同的标准差阀值来调整出不同的夏普比率
+3. 尚未考虑交易成本
 
 Terms:
 前视偏差
@@ -19,16 +22,15 @@ Terms:
 样本含量
 样本外测试: 训练集，测试集
 """
-
-"""
-Main function
-Description: 
-"""
 def main():
+	"""
+	Main function
+	Description:
+	"""
 
 	goldTicker = "601899"
 	goldETFTicker = "600824"
-	begDate = "2017-01-01"
+	begDate = "2016-11-01"
 	endDate = "2017-11-01"
 	goldArray = ts2np.ts2numpy_dohcl(goldTicker, begDate, endDate)
 	goldETFArray = ts2np.ts2numpy_dohcl(goldETFTicker, begDate, endDate)
@@ -83,7 +85,7 @@ def main():
 	# print("Shorts: {}".format(shorts))
 
 	# 当组合价值回到0.7倍标准差以内时，清仓
-	exits = abs(zscore) <= 0.7
+	exits = abs(zscore) <= 0.5
 	# print("Exits: {}".format(exits))
 
 	# 初始化头寸数组
@@ -100,16 +102,22 @@ def main():
 
 	# 清仓
 	positions[exits, :] = repmat([0, 0], len(exits[exits == True]), 1)
-	print(positions)
 
 	# 确保继续持仓，除非出现清仓信号
 	# positions = fillMissingData(positions)
 
-	# 合并两个价格序列
+	# 合并两个价格序列 = dataSet
+	dailyRet = (dataSet[:, 1:] - dataSet[:, :-1]) / dataSet[:, :-1]
+
+	strategyRet = np.sum(dailyRet[:,:len(trainingSet[0,:])] * positions.T)
+	# print(strategyRet)
 
 	# 训练集的夏普比
+	sharpeTrainSet = np.sqrt(252) * np.mean(dailyRet[:,:len(trainingSet[0,:])] * positions.T)/np.std(trainingSet)
+	print(sharpeTrainSet)
 
 	# 评测集的夏普比
+	# Do everything again
 
 	# 保存头寸文件以便检查数据先窥偏差
 
