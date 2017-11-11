@@ -15,21 +15,24 @@ import datetime
 """
 Tips:
 1. 通常S&P500指数成份股是最好用来做回测的数据，因为他的流动性是最好的。
+2. 其实我看不太懂其中一小段怎么计算日收益率的
 
 Terms:
+交易成本调整
+策略改进
 """
 
 def main():
 	hsIndex = ts2np.ts.get_hs300s()
 	# print(hsIndex.code)
-	# print(hsIndex.name)
+	print(hsIndex.name)
 	# print(hsIndex.date)
 	# print(hsIndex.weight)
 
 	for ticker in hsIndex.code:
 		begDate = "2016-11-01"
 		endDate = str(datetime.date.today())
-		# goldArray = ts2np.ts2numpy_dohcl(goldTicker, begDate, endDate)
+		ticketClosePrice = ts2np.ts2numpy_dohcl(ticker, begDate, endDate)
 		print("{} - {} ~ {}".format(ticker, begDate, endDate))
 	else:
 		print("DONE!")

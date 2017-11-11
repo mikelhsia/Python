@@ -1,4 +1,3 @@
-
 """
 Strategy name: GLD（黄金的现货价格）与GDX（採金企业的ETF）的配对交易
 Date: 2017/11/01
@@ -22,9 +21,11 @@ Terms:
 样本含量
 样本外测试: 训练集，测试集
 """
+
+
 def main():
 	"""
-	Main function
+	Name: Main function
 	Description:
 	"""
 
@@ -46,8 +47,8 @@ def main():
 	# print("Training Set:\n {}".format(trainingSet[1,:]))
 	# print("Test Set:\n {}".format(testSet))
 
-	y = trainingSet[0,:]
-	x = trainingSet[1,:]
+	y = trainingSet[0, :]
+	x = trainingSet[1, :]
 	X = sm.add_constant(x)
 	model = sm.OLS(y, X)
 	results = model.fit()
@@ -73,7 +74,7 @@ def main():
 	# print("SpreadStd: {}".format(spreadStd))
 
 	# 差价标准化 (用z-scores方法)
-	zscore = (spread - spreadMean)/spreadStd
+	zscore = (spread - spreadMean) / spreadStd
 	# print("Zscore: {}".format(zscore))
 
 	# 在组合价值向下跌破1.3倍标准差时，购买此差价组合
@@ -89,7 +90,7 @@ def main():
 	# print("Exits: {}".format(exits))
 
 	# 初始化头寸数组
-	positions = np.zeros([len(zscore),2])
+	positions = np.zeros([len(zscore), 2])
 	# print(positions[0,:])
 
 	# 多头入市
@@ -109,11 +110,11 @@ def main():
 	# 合并两个价格序列 = dataSet
 	dailyRet = (trainingSet[:, 1:] - trainingSet[:, :-1]) / trainingSet[:, :-1]
 
-	strategyRet = np.sum(dailyRet[:,] * positions.T[:,:-1])
+	strategyRet = np.sum(dailyRet[:, ] * positions.T[:, :-1])
 	print("Training SetStrategy Return: {}".format(strategyRet))
 
 	# 训练集的夏普比
-	sharpeTrainSet = np.sqrt(252) * np.mean(dailyRet[:,] * positions.T[:,:-1])/np.std(trainingSet)
+	sharpeTrainSet = np.sqrt(252) * np.mean(dailyRet[:, ] * positions.T[:, :-1]) / np.std(trainingSet)
 	print("Training Set Sharpe Ratio: {}".format(sharpeTrainSet))
 
 	######################
@@ -121,13 +122,13 @@ def main():
 	testSpread = testSet[0, :] - results.params[1] * testSet[1, :]
 	testSpreadMean = np.mean(testSpread)
 	testSpreadStd = np.std(testSpread)
-	testZscore = (testSpread - testSpreadMean)/testSpreadStd
+	testZscore = (testSpread - testSpreadMean) / testSpreadStd
 
 	testLongs = testZscore <= -1.3
 	testShorts = testZscore >= 1.3
 	testExits = abs(testZscore) <= 0.7
 
-	testPositions = np.zeros([len(testZscore),2])
+	testPositions = np.zeros([len(testZscore), 2])
 
 	testPositions[testShorts, :] = repmat([-1, 1], len(testShorts[testShorts != False]), 1)
 	testPositions[testLongs, :] = repmat([1, -1], len(testLongs[testLongs != False]), 1)
@@ -135,14 +136,15 @@ def main():
 
 	testDailyRet = (testSet[:, 1:] - testSet[:, :-1]) / testSet[:, :-1]
 
-	testStrategyRet = np.sum(testDailyRet[:,] * testPositions.T[:,:-1])
+	testStrategyRet = np.sum(testDailyRet[:, ] * testPositions.T[:, :-1])
 	print("Test Set Strategy Return: {}".format(testStrategyRet))
 
 	# 训练集的夏普比
-	sharpeTestSet = np.sqrt(252) * np.mean(testDailyRet[:,] * testPositions.T[:,:-1])/np.std(testSet)
+	sharpeTestSet = np.sqrt(252) * np.mean(testDailyRet[:, ] * testPositions.T[:, :-1]) / np.std(testSet)
 	print("Test Set Sharpe Ratio: {}".format(sharpeTestSet))
 
-	# 保存头寸文件以便检查数据先窥偏差
+
+# 保存头寸文件以便检查数据先窥偏差
 
 if __name__ == "__main__":
 	main()
