@@ -6,7 +6,6 @@ Description:
 """
 import numpy as np
 import ts2numpy as ts2np
-import statsmodels.api as sm
 import datetime
 
 """
@@ -31,16 +30,18 @@ Terms:
 """
 
 def main():
-	hsIndex = ts2np.ts.get_hs300s()
+	ticker1 = '601857'
+	ticker2 = '601318'
+	ticker3 = '300033'
 
-	for ticker in hsIndex.code:
-		begDate = "2016-11-01"
-		endDate = str(datetime.date.today())
-		# ticketClosePrice = ts2np.ts2numpy_dohcl(ticker, begDate, endDate)
-		print("{} - {} ~ {}".format(ticker, begDate, endDate))
-	else:
-		print("DONE!")
-		# dataSet = np.array([goldArray[3], goldETFArray[3]])
+	# for ticker in hsIndex.code:
+	# 	begDate = "2016-11-01"
+	# 	endDate = str(datetime.date.today())
+	# 	ticketClosePrice = ts2np.ts2numpy_dohcl(ticker, begDate, endDate)
+	# 	print("{} - {} ~ {}".format(ticker, begDate, endDate))
+	# else:
+	# 	print("DONE!")
+	# 	dataSet = np.array([goldArray[3], goldETFArray[3]])
 
 
 if __name__ == '__main__':
