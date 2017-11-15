@@ -30,19 +30,49 @@ Terms:
 """
 
 def main():
-	ticker1 = '601857'
-	ticker2 = '601318'
-	ticker3 = '300033'
+	oilStockLabel = 1
+	bankStockLabel = 2
+	retailStockLabel = 3
+	tickers = ['601857', '601318', '300033']
+	begDate = "2016-11-01"
+	endDate = str(datetime.date.today())
+	dataSet = None
 
-	# for ticker in hsIndex.code:
-	# 	begDate = "2016-11-01"
-	# 	endDate = str(datetime.date.today())
-	# 	ticketClosePrice = ts2np.ts2numpy_dohcl(ticker, begDate, endDate)
-	# 	print("{} - {} ~ {}".format(ticker, begDate, endDate))
-	# else:
-	# 	print("DONE!")
-	# 	dataSet = np.array([goldArray[3], goldETFArray[3]])
+	np.set_printoptions(threshold=10)   # Adjust print columns number to 10
 
+	for ticker in tickers:
+		ticketClosePrice = ts2np.ts2numpy_dohcl(ticker, begDate, endDate)
+		if dataSet is None:
+			# Actually we don't need the date
+			# dataSet = np.array(ticketClosePrice[0])
+			dataSet = np.array(ticketClosePrice[3])
+		else:
+			# dataSet = np.array([dataSet, ticketClosePrice[3]])
+			dataSet = np.row_stack((dataSet, ticketClosePrice[3]))
+	else:
+		print("Done combining three stocks into one array!")
+		# print(dataSet)
+
+	# 收益率
+	ret = np.array((dataSet[:,1:] - dataSet[:,:-1]) / dataSet[:,:-1])
+
+	from numpy.matlib import repmat
+	# 超频收益率：假设年无风险利率 4%
+	excessRet = ret - repmat(0.04/252, len(ret), len(ret[0]))
+	# print(excessRet)
+
+	# 年平均超额收益率
+	M = 252 * np.mean(excessRet)
+	print(M)
+
+	# 年协方差矩阵
+	C = 252 * np.cov(excessRet)
+	print(C)
+
+	# 凯利最优杠杆
+	print(type(C))
+	F = np.invert(C) * M
+	print(F)
 
 if __name__ == '__main__':
 	main()
