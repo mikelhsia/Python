@@ -62,7 +62,7 @@ def main():
 	# print(excessRet)
 
 	# 年平均超额收益率
-	M = 252 * np.mean(excessRet)
+	M = 252 * np.mean(excessRet, 1).reshape(3, 1)
 	print(M)
 
 	# 年协方差矩阵
@@ -70,9 +70,13 @@ def main():
 	print(C)
 
 	# 凯利最优杠杆
-	print(type(C))
-	F = np.invert(C) * M
-	print(F)
+	# (a).T －－ 返回自身的转置
+	# (b).H －－ 返回自身的共轭转置
+	# (c).I －－ 返回自身的逆矩阵
+	# (d).A －－ 返回自身数据的2维数组的一个视图
+	F = np.matrix(C).I * M
+	print("F:\n{}".format(F))
+
 
 if __name__ == '__main__':
 	main()
