@@ -76,7 +76,17 @@ def main():
 	# (d).A －－ 返回自身数据的2维数组的一个视图
 	F = np.matrix(C).I * M
 	print("F:\n{}".format(F))
+	# 正的为买空建议，负的为卖空建议
 
+	# 最大年化复合增长率，根据多策略高斯过程所对应的最大复合增长率为：
+	# g(F*) = r + F * (T)CF* / 2
+	g = 0.04 + F.T * C * F / 2
+	print("g:\n{}".format(g))
+
+	# 投资组合的夏普比率
+	# S = sqrt(F * (T)CF*)
+	S = np.sqrt(F.T * C * F)
+	print("S:\n{}".format(S))
 
 if __name__ == '__main__':
 	main()
