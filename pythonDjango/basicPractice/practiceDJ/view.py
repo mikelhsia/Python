@@ -26,3 +26,6 @@ def sayHelloWorld(request):
 
 def sayHelloWorldBase(request):
     return render(request, 'helloBase.html')
+
+def tryBootstrapsJquery(request):
+    return render(request, 'home.html')

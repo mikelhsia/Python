@@ -34,6 +34,7 @@ urlpatterns = [
 	url(r'^search', search.search),
 	url(r'^helloBase', view.sayHelloWorldBase, name='base'),
 	url(r'^hello', view.sayHelloWorld),
+	url(r'^home', view.tryBootstrapsJquery),
 	url(r'^testdb$', testdb.testdb),
 	url(r'^add/$', add.index, name='add'),
 	url(r'^add/(\d+)/(\d+)/$', add.old_add_redirect, name='add2'),

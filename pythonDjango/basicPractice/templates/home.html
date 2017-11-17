@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bootstrap Practice</title>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+	<link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel='stylesheet'>
+	<!-- HTML5 Shim 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+    <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+    <!--[if lt IE 9]>
+    	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+    	p {
+    		font-style:italic;
+    		padding:20px;
+    	}
+    </style>
+</head>
+<body>
+<div style="border:1px solid; padding:20px;margin:10px;border-radius:4px;" class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+
+<div class='row col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+	<h1>Hello, world! </h1> <span style='font-style:italic;color:grey;'><blockquote class="pull-right">为了在内容中嵌套默认的网格，请添加一个新的 .row，并在一个已有的 .col-md-* 列内添加一组 .col-md-* 列。被嵌套的行应包含一组列，这组列个数不能超过12<small><cite>其实，没有要求你必须占满12列</cite></small></blockquote></span>
+</div>
+<div class='row'>
+	<div class='col-lg-6 col-md-6 col-sm-12 col-xs-12'>
+		<p>在之前的 Bootstrap 版本中（直到 2.x），您需要手动引用另一个 CSS，才能让整个项目友好的支持移动设备。
+		现在不一样了，Bootstrap 3 默认的 CSS 本身就对移动设备友好支持。
+		Bootstrap 3 的设计目标是移动设备优先，然后才是桌面设备。这实际上是一个非常及时的转变，因为现在越来越多的用户使用移动设备。</p>
+
+		<ul>
+			<li>为了让 Bootstrap 开发的网站对移动设备友好，确保适当的绘制和触屏缩放，需要在网页的 head 之中添加 viewport meta 标签，如下所示</li>
+			<li>在移动设备浏览器上，通过为 viewport meta 标签添加 user-scalable=no 可以禁用其缩放（zooming）功能。</li>
+			<li>通常情况下，maximum-scale=1.0 与 user-scalable=no 一起使用。这样禁用缩放功能后，用户只能滚动屏幕，就能让您的网站看上去更像原生应用的感觉。</li>
+		</ul>
+	</div>
+	<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+		<img src="Bootstrap_support_img.png" class="img-responsive">
+	</div>
+</div>
+<div class='row'>
+	<div class='col-lg-4 col-md-4 col-sm-8 col-xs-12 col-lg-offset-4 col-md-offset-4 col-sm-offset-2'>
+		<p>为了在大屏幕显示器上使用偏移，请使用 .col-md-offset-* 类。这些类会把一个列的左外边距（margin）增加 * 列，其中 * 范围是从 1 到 11。</p>
+	</div>
+</div>
+<div class='row'>
+	<div class='col-lg-4 col-md-4 col-sm-8 col-xs-12 col-lg-offset-4 col-md-offset-4 col-sm-offset-2'> 
+		<p>您可以很轻易地改变带有 .col-md-push-* 和 .col-md-pull-* 类的内置网格列的顺序，其中 * 范围是从 1 到 11。 在下面的实例中，我们有两列布局，左列很窄，作为侧边栏。我们将使用 .col-md-push-* 和 .col-md-pull-* 类来互换这两列的顺序。 </p>
+		<p style='color:grey'>**重要：push 跟 pull 不管屏幕尺寸如何都会拉或推。lg, md, sm, xs 指的是推和拉的大小</p>
+	</div>
+	<div class='col-lg-6 col-md-6 col-sm-6 col-xs-6 col-xs-push-1'>
+		<h3 style='text-align:center;border:1px solid #44efcc'>This side is push md</h3>
+	</div>
+	<div class='col-lg-6 col-md-6 col-sm-6 col-xs-6 col-sm-pull-2'>
+		<h3 style='text-align:center;border:1px solid #44efcc'>This side is pull sm</h3>
+	</div>
+</div>
+<div class='row'>
+	<div style="background:lightgrey;" class='col-lg-10 col-md-10 col-sm-10 col-xs-10 col-lg-offset-1 col-md-offset-1 col-sm-offset-1'> 
+		<small>本行内容是在标签内</small><br>
+		<strong>本行内容是在标签内</strong><br>
+		<em>本行内容是在标签内，并呈现为斜体</em><br>
+		<p class="text-left">向左对齐文本</p>
+		<p class="text-center">居中对齐文本</p>
+		<p class="text-right">向右对齐文本</p>
+		<p class="lead">本行为引导主体副本</p>
+		<p class="text-muted">本行内容是减弱的</p>
+		<p class="text-primary">本行内容带有一个 primary class</p>
+		<p class="text-success">本行内容带有一个 success class</p>
+		<p class="text-info">本行内容带有一个 info class</p>
+		<p class="text-warning">本行内容带有一个 warning class</p>
+		<p class="text-danger">本行内容带有一个 danger class</p>
+		<abbr title="World Wide Web">WWW</abbr><br>
+		<abbr title="Real Simple Syndication" class="initialism">RSS</abbr>
+		<hr>
+		<h4>有序列表</h4>
+		<ol>
+			<li>Item 1</li>
+			<li>Item 2</li>
+			<li>Item 3</li>
+			<li>Item 4</li>
+		</ol>
+		<h4>无序列表</h4>
+		<ul>
+			<li>Item 1</li>
+			<li>Item 2</li>
+			<li>Item 3</li>
+			<li>Item 4</li>
+		</ul>
+		<h4>未定义样式列表</h4>
+		<ul class="list-unstyled">
+			<li>Item 1</li>
+			<li>Item 2</li>
+			<li>Item 3</li>
+			<li>Item 4</li>
+		</ul>
+		<h4>内联列表</h4>
+		<ul class="list-inline">
+			<li>Item 1</li>
+			<li>Item 2</li>
+			<li>Item 3</li>
+			<li>Item 4</li>
+		</ul>
+		<h4>定义列表</h4>
+		<dl>
+			<dt>Description 1</dt> <dd>Item 1</dd>
+			<dt>Description 2</dt> <dd>Item 2</dd>
+		</dl>
+		<h4>水平的定义列表</h4>
+		<dl class="dl-horizontal">
+			<dt>Description 1</dt> <dd>Item 1</dd>
+			<dt>Description 2</dt> <dd>Item 2</dd>
+		</dl>
+	</div>
+</div>
+<div class='row col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+	<p><code>&lt;header&gt;</code> 作为内联元素被包围。<small>- &lt;code&gt; 标签</small></p>
+	<p>如果需要把代码显示为一个独立的块元素，请使用 &lt;pre&gt; 标签：</p>
+	<pre>
+	    &lt;article&gt;
+	        &lt;h1&gt;Article Heading&lt;/h1&gt;
+	    &lt;/article&gt;
+	</pre>
+	<p><kbd>ctrl + p</kbd>使用 &lt;kdb&gt; 标签</p>
+</div>
+<div class='row col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+	<table class="table table-hover table-responsive">
+		<caption>上下文表格布局</caption>
+		<thead>
+			<tr>
+				<th>产品</th>
+				<th>付款日期</th>
+				<th>状态</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="active">
+				<td>产品1</td>
+				<td>23/11/2013</td>
+				<td>待发货</td>
+			</tr>
+			<tr class="success">
+				<td>产品2</td>
+				<td>10/11/2013</td>
+				<td>发货中</td>
+			</tr>
+			<tr  class="warning">
+				<td>产品3</td>
+				<td>20/10/2013</td>
+				<td>待确认</td>
+			</tr>
+			<tr  class="danger">
+				<td>产品4</td>
+				<td>20/10/2013</td>
+				<td>已退货</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div class='col-lg-6 col-md-6 col-sm-6 col-xs-6'>
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+    <label class="col-sm-2 control-label">聚焦</label>
+    <div class="col-sm-10">
+      <input class="form-control" id="focusedInput" type="text" value="该输入框获得焦点...">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPassword" class="col-sm-2 control-label">禁用</label>
+    <div class="col-sm-10">
+      <input class="form-control" id="disabledInput" type="text" placeholder="该输入框禁止输入..." disabled>
+    </div>
+  </div>
+  <fieldset disabled>
+    <div class="form-group">
+      <label for="disabledTextInput" class="col-sm-2 control-label">禁用输入（Fieldset disabled）</label>
+      <div class="col-sm-10">
+        <input type="text" id="disabledTextInput" class="form-control" placeholder="禁止输入">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="disabledSelect" class="col-sm-2 control-label">禁用选择菜单（Fieldset disabled）</label>
+      <div class="col-sm-10">
+        <select id="disabledSelect" class="form-control">
+          <option>禁止选择</option>
+        </select>
+      </div>
+    </div>
+  </fieldset>
+  <div class="form-group has-success">
+    <label class="col-sm-2 control-label" for="inputSuccess">输入成功</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="inputSuccess">
+      <p class="help-block">inputSuccess</p>
+    </div>
+  </div>
+  <div class="form-group has-warning">
+    <label class="col-sm-2 control-label" for="inputWarning">输入警告</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="inputWarning">
+      <p class="help-block">inputWarning</p>
+    </div>
+  </div>
+  <div class="form-group has-error">
+    <label class="col-sm-2 control-label" for="inputError">输入错误</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="inputError">
+      <p class="help-block">inputError</p>
+    </div>
+  </div>
+</form>
+</div>
+<div class='col-lg-4 col-md-4 col-sm-4 col-xs-4'>
+    <button type="button" class="btn btn-default">
+        <span class="glyphicon glyphicon-sort-by-attributes"></span>
+    </button>
+    <button type="button" class="btn btn-default">
+        <span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+    </button>
+    <button type="button" class="btn btn-default">
+        <span class="glyphicon glyphicon-sort-by-order"></span>
+    </button>
+    <button type="button" class="btn btn-default">
+        <span class="glyphicon glyphicon-sort-by-order-alt"></span>
+    </button>
+    <br>
+	<button type="button" class="btn btn-default btn-lg">
+	    <span class="glyphicon glyphicon-user"></span>
+	    User
+	</button>
+	<button type="button" class="btn btn-default btn-sm">
+	    <span class="glyphicon glyphicon-user"></span>
+	    User
+	</button>
+	<button type="button" class="btn btn-default btn-xs">
+	    <span class="glyphicon glyphicon-user"></span>
+	    User
+	</button>
+</div>
+<div class='col-lg-2 col-md-2 col-sm-2 col-xs-2'>
+    <div class="dropdown">
+		<button type="button" class="btn dropdown-toggle">主题<span class="caret"></span></button>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+
+		</ul>
+	</div>
+</div>
+
+</div>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://code.jquery.com/jquery.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+</body>
+</html>
