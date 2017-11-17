@@ -4,7 +4,8 @@
 	<title>Bootstrap Practice</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 	<!-- 新 Bootstrap 核心 CSS 文件 -->
-	<link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel='stylesheet'>
+ 	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static "/bootstrap-3.3.7-dist/css/bootstrap.min.css" %}">
 	<!-- HTML5 Shim 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
     <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
     <!--[if lt IE 9]>
@@ -37,7 +38,7 @@
 		</ul>
 	</div>
 	<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-		<img src="Bootstrap_support_img.png" class="img-responsive">
+		<img src="{% static "/Bootstrap_support_img.png" %}" class="img-responsive">
 	</div>
 </div>
 <div class='row'>
@@ -250,8 +251,8 @@
 
 </div>
 <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-<script src="https://code.jquery.com/jquery.js"></script>
+<script src="{% static "/js/jquery-3.2.1.js" %}"></script>
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-<script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="{% static "/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"> </script>
 </body>
 </html>
