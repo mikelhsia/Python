@@ -151,7 +151,7 @@ var linear = d3.scaleLinear()
 // 按照上一章的方法添加矩形，在给矩形设置宽度的时候，应用比例尺。
 var rectHeight = 25;   //每个矩形所占的像素高度(包括空白)
 
-svg.selectAll("rect")
+var rects = svg.selectAll("rect")
     .data(dataset)
     .enter()
     .append("rect")
@@ -265,26 +265,39 @@ var rects = svgHist.selectAll(".my-hist-rect")
 				.attr("x", function(d, i) {
 					return xScale(i) + rectPadding/2;
 				})
-				.attr("y", function(d, i) {
-					var min = yScale.domain()[0];
-				    return yScale(min);
-				})
 				.attr("width", xScale.bandwidth() - rectPadding)
-				.attr("height", function(d) {
-					return 0;
-				})
 				.attr("fill","steelblue")
-				.transition()
-				.delay(function(d, i) {
-    				return i * 200;
-				})
-				.duration(2000)
-				.ease(d3.easeBounce)
+				// .attr("height", function(d) {
+				// 	return 0;
+				// })
+				// .attr("y", function(d, i) {
+				// 	var min = yScale.domain()[0];
+				//     return yScale(min);
+				// })
+				// .transition()
+				// .delay(function(d, i) {
+    // 				return i * 200;
+				// })
+				// .duration(2000)
+				// .ease(d3.easeBounce)
+				/***************************************************
+				 * Transition and the event can't work at the same time.
+  				 ***************************************************/
 				.attr("y", function(d, i) {
 					return yScale(d);
 				})
 				.attr("height", function(d) {
 					return height - padding.top - padding.bottom - yScale(d);
+				})
+				.on("mouseover", function(d, i) {
+					d3.select(this)
+						.attr("fill","purple");
+				})
+				.on("mouseout", function(d, i) {
+					d3.select(this)
+						.transition()
+						.duration(500)
+						.attr("fill","steelblue");
 				});
 
 // 添加文字元素
@@ -370,7 +383,34 @@ circle1.transition()
 	.duration(2000)
 	.ease(d3.easeBounce)
 	.attr("cx", 300)
-	.style("fill", "red")
+	.style("fill", "red");
+
+/*
+ * on() 的第一个参数是监听的事件，第二个参数是监听到事件后响应的内容，第二个参数是一个函数。
+ * 鼠标常用的事件有：
+ * click：鼠标单击某元素时，相当于 mousedown 和 mouseup 组合在一起。
+ * mouseover：光标放在某元素上。
+ * mouseout：光标从某元素上移出来时。
+ * mousemove：鼠标被移动的时候。
+ * mousedown：鼠标按钮被按下。
+ * mouseup：鼠标按钮被松开。
+ * dblclick：鼠标双击。
+ * 
+ * 键盘常用的事件有三个：
+ * keydown：当用户按下任意键时触发，按住不放会重复触发此事件。该事件不会区分字母的大小写，例如“A”和“a”被视为一致。
+ * keypress：当用户按下字符键（大小写字母、数字、加号、等号、回车等）时触发，按住不放会重复触发此事件。该事件区分字母的大小写。
+ * keyup：当用户释放键时触发，不区分字母的大小写。 触屏常用的事件有三个：
+ * * touchstart：当触摸点被放在触摸屏上时。
+ * * touchmove：当触摸点在触摸屏上移动时。
+ * * touchend：当触摸点从触摸屏上拿开时。 
+ * 
+ * 当某个事件被监听到时，D3 会把当前的事件存到 d3.event 对象，
+ * 里面保存了当前事件的各种参数，请大家好好参详。
+ * 如果需要监听到事件后立刻输出该事件，可以添加一行代码： console.log(d3.event);
+ */
+circle1.on(d3.mouseover, function(d, i) {
+	console.log(d3.event);
+});
 
 
 var circle2 = svgCircleTransition.append("circle")
