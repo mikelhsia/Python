@@ -5,7 +5,7 @@
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 	<!-- 新 Bootstrap 核心 CSS 文件 -->
  	{% load static %}
-	<link rel="stylesheet" type="text/css" href="{% static "/bootstrap-3.3.7-dist/css/bootstrap.min.css" %}">
+	<link rel="stylesheet" type="text/css" href="{% static '/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
 	<!-- HTML5 Shim 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
     <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
     <!--[if lt IE 9]>
@@ -30,16 +30,20 @@
 	<div class='row col-lg-12 col-md-12 col-sm-12 col-xs-12' id="circle-animation">
 	</div>
 </div>
-<script type="text/javascript">
-	
-</script>
 
 <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-<script src="{% static "/js/jquery-3.2.1.js" %}"></script>
+<script src="{% static '/js/jquery-3.2.1.js' %}"></script>
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-<script src="{% static "/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"> </script>
+<script src="{% static '/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"> </script>
 <!-- D3.js JavaScript 文件 -->
 <script src="{% static '/d3/d3.js' %}"> </script>
+<script type="text/javascript">
+    /*
+     * 需要注意的是，我们如果直接这么做，传递到 js 的时候，网页的内容会被转义，得到的格式会报错。
+     * 访问时会得到 Uncaught SyntaxError: Unexpected token ILLEGAL
+     */
+    var dataset = {{ byd_close_list | safe }};
+</script>
 <script src="{% static '/js/d3Practice.js' %}"></script>
 </body>
 </html>

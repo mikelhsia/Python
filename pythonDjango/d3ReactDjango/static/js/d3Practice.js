@@ -2,6 +2,8 @@
 datum()：绑定一个数据到选择集上
 data()：绑定一个数组到选择集上，数组的各项值分别与选择集的各元素绑定
 */
+
+console.log(dataset);
 var str = "China";
 
 var body = d3.select("body");
@@ -19,11 +21,11 @@ p.text(function(d, i){
 });
 
 
-var dataset = [ "I like dog",
+var dSet = [ "I like dog",
 				"I like cat",
 				"I like snake"];
 
-p.data(dataset)
+p.data(dSet)
   .text(function(d, i) {
 		return d;
   });
@@ -41,8 +43,9 @@ var svg = d3.select(".my-canvas")     //选择文档中的body元素
     .attr("width", width)       //设定宽度
     .attr("height", height);    //设定高度
 
-var dataset = [ 250 , 210 , 170 , 130 , 90 ];  //数据（表示矩形的宽度）
-var rectHeight = 25;   //每个矩形所占的像素高度(包括空白)
+//var dataset = [ 250 , 210 , 170 , 130 , 90 ];  //数据（表示矩形的宽度）
+// Now I'm getting data from home.html {{byd_close_list}}
+var rectHeight = 4;   //每个矩形所占的像素高度(包括空白)
 
 /*********************************************************
  * 有数据，而没有足够图形元素的时候，使用此方法可以添加足够的元素。
