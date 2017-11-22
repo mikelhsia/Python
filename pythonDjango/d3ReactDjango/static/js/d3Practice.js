@@ -130,6 +130,10 @@ var rectHeight = 4;   //每个矩形所占的像素高度(包括空白)
  * //exit部分的处理通常是删除元素
  * // exit.remove();
  *********************************************************/
+var linear = d3.scaleLinear()	
+        .domain([d3.min(dataset), d3.max(dataset)])
+        .range([0, 300]);
+
 svg.selectAll("rect")		// 选择svg内所有的矩形
     .data(dataset)			// 绑定数组
     .enter()				// 指定选择集的enter部分
@@ -139,7 +143,7 @@ svg.selectAll("rect")		// 选择svg内所有的矩形
          return i * rectHeight;
     })
     .attr("width",function(d){
-         return d;
+         return linear(d);
     })
     .attr("height",rectHeight-2)
     .attr("fill","steelblue");
