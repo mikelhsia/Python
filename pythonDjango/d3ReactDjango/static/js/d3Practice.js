@@ -3,7 +3,43 @@ datum()：绑定一个数据到选择集上
 data()：绑定一个数组到选择集上，数组的各项值分别与选择集的各元素绑定
 */
 
-console.log(dataset);
+/* JavaScript Ajax 动态刷新页面
+ * 网页前台使用Ajax发送请求，后台处理数据后返回数据给前台，前台不刷新网页动态加载数据
+ * JS 发送ajax请求，后台处理请求并返回status, result
+ * 在 success: 后面定义回调函数处理返回的数据，需要使用 JSON.parse(data)
+ * This is jQuery ajax method
+ */
+function getStockHisData(code) {
+	var post_data = {
+		"code": code
+	};
+
+	var price;
+
+	d = $.ajax({
+		url: 'dataset',
+		type: "POST",
+		data: post_data,
+		// 阻塞同步
+		async: false,
+		success: function (data) {
+			data = JSON.parse(data);
+			if (data) {
+				price = data;
+			} else {
+				dataset = "";
+				alert("No Data");
+			}
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("Ajax failed: "+ XMLHttpRequest.readyState + " (" + XMLHttpRequest.status + ") " + textStatus);
+		}
+	});
+
+	return price;
+}
+dataset = getStockHisData('601899');
+
 var str = "China";
 
 var body = d3.select("body");

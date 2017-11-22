@@ -42,7 +42,7 @@
      * 需要注意的是，我们如果直接这么做，传递到 js 的时候，网页的内容会被转义，得到的格式会报错。
      * 访问时会得到 Uncaught SyntaxError: Unexpected token ILLEGAL
      */
-    var dataset = {{ byd_close_list | safe }};
+    // var dataset = {{ byd_close_list | safe }};
 </script>
 <script src="{% static '/js/d3Practice.js' %}"></script>
 </body>
