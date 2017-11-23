@@ -74,7 +74,7 @@ t.style("color","red")
 var width = 300;  //画布的宽度
 var height = 300;   //画布的高度
 
-var svg = d3.select(".my-canvas")     //选择文档中的body元素
+var svg = d3.select("#my-canvas")     //选择文档中的body元素
     .append("svg")          //添加一个svg元素
     .attr("width", width)       //设定宽度
     .attr("height", height);    //设定高度
@@ -148,6 +148,10 @@ svg.selectAll("rect")		// 选择svg内所有的矩形
     .attr("height",rectHeight-2)
     .attr("fill","steelblue");
 
+
+var line = d3.line()
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.close); });
 
 /*********************************************************
  * 比例尺（Scale）：
@@ -481,3 +485,90 @@ circle3.transition()
 	.attr("cy", 300)
 	.style("fill", "red")
 	.attr("r",20);
+
+
+/*********************************************************
+ * Pie Chart
+ *********************************************************/
+var svgPie = d3.select("#pie-chart")
+							.append("svg")
+							.attr("width", width)
+							.attr("height", height);
+// 基础数据
+var dataset = [ 30 , 10 , 43 , 55 , 13 ];
+
+// 布局（数据转换）返回值赋给变量 pie，此时 pie 可以当做函数使用。
+var pie = d3.pie();
+
+// 将数组 dataset 作为 pie() 的参数，返回值给 piedata。如此一来，piedata 就是转换后的数据。
+var piedata = pie(dataset);
+
+// 5 个整数被转换成了 5 个对象（Object） ，每个对象都有变量起始角度（startAngle）和终止角度（endAngle）
+// ，还有原数据（属性名称为 data）。这些都是绘图需要的数据。
+// console.log(piedata)
+
+/*********************************************************
+ * 为了根据转换后的数据 piedata 来作图，还需要一样工具：生成器。
+ * SVG 有一个元素，叫做路径 path，是 SVG 中功能最强的元素，它可以表示其它任意的图形。
+ * 顾名思义，路径元素就是通过定义一个段“路径”，来绘制出各种图形。但是，路径是很难计算的，
+ * 通过布局转换后的数据 piedata 仍然很难手动计算得到路径值。为我们完成这项任务的，就是生成器。
+ *********************************************************/
+// 这里要用到的叫做弧生成器
+var outerRadius = 150;	// 外半径
+var innerRadius = 0;	//内半径，为0则中间没有空白
+
+// 弧生成器返回的结果赋值给 arc。此时，arc 可以当做一个函数使用，把 piedata 作为参数传入，即可得到路径值。
+var arc = d3.arc()
+			.innerRadius(innerRadius)
+			.outerRadius(outerRadius);
+
+
+var arcs = svgPie.selectAll("g")
+			.data(piedata)
+			.enter()
+			.append("g")
+			.attr("transform","translate("+ (width/2) +","+ (width/2) +")");
+
+var color = d3.scaleOrdinal(d3.schemeCategory10);   //有十种颜色的颜色比例尺
+
+// 所以调用 append(“path”) 后，每个 g 中都有 path 。路径值的属性名称是 d，调用弧生成器后返回的值赋值给它。
+// 要注意，arc(d) 的参数 d 是被绑定的数据
+arcs.append("path")
+    .attr("fill",function(d,i){
+        return color(i);
+    })
+    .attr("d",function(d){
+        return arc(d);   //调用弧生成器，得到路径值
+    });
+
+
+// 在每一个弧线中心添加文本
+/***********************************************************/
+// arc.centroid(d) 能算出弧线的中心。
+// 要注意，text() 里返回的是 d.data ，而不是 d 。
+// 因为被绑定的数据是对象，里面有 d.startAngle、d.endAngle、d.data 等，其中 d.data 才是转换前的整数的值。
+arcs.append("text")
+    .attr("transform",function(d){
+        return "translate(" + arc.centroid(d) + ")";
+    })
+    .attr("text-anchor","middle")
+    .text(function(d){
+        return d.data;
+    });
+
+
+/*********************************************************
+ * 力导向图Force-Directed Graph
+ * 是绘图的一种算法。在二维或三维空间里配置节点，节点之间用线连接，称为连线。各连线的长度几乎相等，且尽可能不相交
+ * 节点和连线都被施加了力的作用，力是根据节点和连线的相对位置计算的。根据力的作用，来计算节点和连线的运动轨迹，
+ * 并不断降低它们的能量，最终达到一种能量很低的安定状态
+ *********************************************************/
+
+/*********************************************************
+ * 树状图，可表示节点之间的包含与被包含关系。 
+ *********************************************************/
+
+/*********************************************************
+ * 本章以中国地图为例，介绍地图的制作方法。
+ * 在数据可视化中，地图是很重要的一部分。很多情况会与地图有关联，如中国各省的人口多少，GDP多少等，都可以和地图联系在一起。
+ *********************************************************/
