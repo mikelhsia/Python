@@ -74,7 +74,7 @@ def main():
 		R = dailyRet.iloc[(d - lookback + 1):d,:]
 
 		# 不考虑所有收益率有缺失的股票
-		RnoNA = R.dropna(axis=1, how='any')
+		RnoNA = R.dropna(axis=0, how='any')
 
 		# 移除均值
 		avgRnoNa = RnoNA.mean(axis=0)
