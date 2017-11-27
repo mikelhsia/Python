@@ -6,7 +6,12 @@ import scrapy
 from urllib.parse import urljoin
 import os
 import urllib
+
+# Selenium getting ajax url
 from selenium import webdriver
+from selenium.webdriver.common.by import By as WebCommonBy
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as WebExpectedCond
 
 from scrapy import signals
 from scrapy.http import Request
@@ -96,7 +101,23 @@ class SilSpiderSpider(scrapy.Spider):
 		item = KukuComicItem()
 
 		driver.get(response.url)
-		img_url = driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td/img").get_attribute("src")
+		## Make sure fetching element won't take too long and die silently
+		# http://selenium-python.readthedocs.io/waits.html
+		#################################################################################
+		# This waits up to 5 seconds before throwing a TimeoutException unless it finds the element
+		# to return within 5 seconds. WebDriverWait by default calls the ExpectedCondition every
+		# 500 milliseconds until it returns successfully. A successful return is for ExpectedCondition type is Boolean return true or not null return value for all other ExpectedCondition types.
+		try:
+			element = WebDriverWait(driver, 5).until(
+				# WebExpectedCond.presence_of_element_located((WebCommonBy.ID, "myDynamicElement"))
+				WebExpectedCond.presence_of_element_located((WebCommonBy.XPATH, "/html/body/table[2]/tbody/tr/td/img"))
+			)
+		except:
+			self.logger.ERROR("[ERROR] Source = {}".format("PhantomJS not getting the element"))
+		finally:
+			img_url = element.get_attribute("src")
+
+		# img_url = driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td/img").get_attribute("src")
 		self.logger.debug("[DEBUG] Source = {}".format(img_url))
 
 		item['imgSrc'] = img_url
