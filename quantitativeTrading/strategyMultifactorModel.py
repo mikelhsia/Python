@@ -18,6 +18,7 @@ Tips:
 Terms:
 """
 TESTING_FLAG = True
+TESTING_SCOPE = 10
 
 topN = 20
 
@@ -33,8 +34,8 @@ def main():
 	endDate = datetime.datetime.timestamp(datetime.datetime.today())
 	lookback = 30		# 回望期
 
-	# np.set_printoptions(threshold=10)   # Adjust print columns number to 10
-	if TESTING_FLAG == True:
+	np.set_printoptions(threshold=10)   # Adjust print columns number to 10
+	if TESTING_FLAG:
 		i = 0
 
 	for ticker in hs300Tickers:
@@ -54,12 +55,12 @@ def main():
 		else:
 			tickerPriceTable = pd.concat([tickerPriceTable, hisPrice['close'].rename(ticker)], axis=1)
 
-		if TESTING_FLAG == True:
+		if TESTING_FLAG:
 			i += 1
-			if i > 4:
+			if i > TESTING_SCOPE:
+				print(tickerPriceTable)
 				break
 
-	print(tickerPriceTable)
 
 	# 建立全0的position table
 	positionTable = pd.DataFrame(np.zeros(shape=(len(tickerPriceTable.index), len(tickerPriceTable.columns))), 
@@ -70,10 +71,22 @@ def main():
 
 	for d in range(lookback+1, len(tickerPriceTable.index)):
 		# R 的列是不同的观测现象
-		R = dailyRet.ix[(d - lookback + 1):d,:]
+		R = dailyRet.iloc[(d - lookback + 1):d,:]
 
-		if TESTING_FLAG == True:
-			print(R)
+		# 不考虑所有收益率有缺失的股票
+		RnoNA = R.dropna(axis=1, how='any')
+
+		# 移除均值
+		avgRnoNa = RnoNA.mean(axis=0)
+		from numpy.matlib import repmat
+		Rfinal = RnoNA - repmat(avgRnoNa.T, len(RnoNA.values), 1)
+
+		# 计算不同股票收益率的协方差矩阵
+
+		if TESTING_FLAG:
+			# print("RnoNA: \n{}".format(RnoNA))
+			# print("avgRnoNA: \n{}".format(avgRnoNa))
+			print("Rfinal: \n{}".format(Rfinal))
 			break
 
 	# 收益率
