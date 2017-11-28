@@ -22,22 +22,24 @@ TESTING_FLAG = True
 TESTING_SCOPE = 10
 
 topN = 20
+lookback = 30		# 回望期
+numFactors = 5      # 因子5个
 
 def _getHS300Tickers():
 	tickers = ts.get_hs300s()
 	return tickers['code']
 
 def smartCov(m):
-	print("{} {}".format(len(m), len(m.columns)))
-	y = np.matrix(np.repeat(np.NaN, len(m))).repeat(len(m), axis=0)
+	y = pd.DataFrame(np.matrix(np.repeat(np.NaN, len(m.values))).repeat(len(m.values), axis=0))
 	xc = np.repeat(np.NaN, len(m.columns))
 
-	# TODO [smartCov]: Not correct yet. Still need to be recalculated
 	goodStock = m.dropna(axis=0, how="any")
-	goodStockmean = goodStock.mean(axis=0)
-	goodStockRep = repmat(goodStock.mean(axis=0).T, len(m.values), 1)
+
+	# 移去均值
 	xc = goodStock - repmat(goodStock.mean(axis=0).T, len(m.values), 1)
-	return
+
+	# 回传协方差矩阵
+	return xc.corr()
 
 def main():
 
@@ -45,7 +47,6 @@ def main():
 
 	begDate = "2016-11-01"
 	endDate = datetime.datetime.timestamp(datetime.datetime.today())
-	lookback = 30		# 回望期
 
 	np.set_printoptions(threshold=10)   # Adjust print columns number to 10
 	if TESTING_FLAG:
@@ -76,8 +77,8 @@ def main():
 
 
 	# 建立全0的position table
-	positionTable = pd.DataFrame(np.zeros(shape=(len(tickerPriceTable.index), len(tickerPriceTable.columns))), 
-		                        index=tickerPriceTable.index, 
+	positionTable = pd.DataFrame(np.zeros(shape=(len(tickerPriceTable.index), len(tickerPriceTable.columns))),
+		                        index=tickerPriceTable.index,
 		                        columns=tickerPriceTable.columns)
 
 	dailyRet = pd.DataFrame((tickerPriceTable.values[1:,:] - tickerPriceTable.values[:-1,:]) / tickerPriceTable.values[:-1,:], columns=tickerPriceTable.columns)
@@ -101,10 +102,16 @@ def main():
 			print("Rfinal: \n{}".format(Rfinal))
 			break
 
-	smartCov(Rfinal)
+	# 计算不同股票收益率的协方差矩阵
+	covR = smartCov(Rfinal)
+	print("covR: {}".format(covR))
 
-	# 收益率
-	# ret = np.array((dataSet[:, 1:] - dataSet[:, :-1]) / dataSet[:, :-1])
+	# X是因子风险矩阵，B是因子收益率的方差
+	# 用covR的特征值作为X的列向量
+	[X, B] = np.linalg.eig(covR)
+
+	# 保留的因子数为numFactors
+	B[:, :len(B.values)-numFactors]
 
 
 if __name__ == "__main__":
