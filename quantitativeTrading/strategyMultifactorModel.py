@@ -8,6 +8,7 @@ import numpy as np
 import tushare as ts
 import datetime
 import pandas as pd
+from numpy.matlib import repmat
 
 """
 Tips:
@@ -25,6 +26,18 @@ topN = 20
 def _getHS300Tickers():
 	tickers = ts.get_hs300s()
 	return tickers['code']
+
+def smartCov(m):
+	print("{} {}".format(len(m), len(m.columns)))
+	y = np.matrix(np.repeat(np.NaN, len(m))).repeat(len(m), axis=0)
+	xc = np.repeat(np.NaN, len(m.columns))
+
+	# TODO [smartCov]: Not correct yet. Still need to be recalculated
+	goodStock = m.dropna(axis=0, how="any")
+	goodStockmean = goodStock.mean(axis=0)
+	goodStockRep = repmat(goodStock.mean(axis=0).T, len(m.values), 1)
+	xc = goodStock - repmat(goodStock.mean(axis=0).T, len(m.values), 1)
+	return
 
 def main():
 
@@ -78,7 +91,6 @@ def main():
 
 		# 移除均值
 		avgRnoNa = RnoNA.mean(axis=0)
-		from numpy.matlib import repmat
 		Rfinal = RnoNA - repmat(avgRnoNa.T, len(RnoNA.values), 1)
 
 		# 计算不同股票收益率的协方差矩阵
@@ -88,6 +100,8 @@ def main():
 			# print("avgRnoNA: \n{}".format(avgRnoNa))
 			print("Rfinal: \n{}".format(Rfinal))
 			break
+
+	smartCov(Rfinal)
 
 	# 收益率
 	# ret = np.array((dataSet[:, 1:] - dataSet[:, :-1]) / dataSet[:, :-1])
