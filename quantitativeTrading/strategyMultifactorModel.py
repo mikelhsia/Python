@@ -9,6 +9,7 @@ import tushare as ts
 import datetime
 import pandas as pd
 from numpy.matlib import repmat
+import statsmodels.api as sm
 
 """
 Tips:
@@ -111,8 +112,13 @@ def main():
 	[X, B] = np.linalg.eig(covR)
 
 	# 保留的因子数为numFactors
-	B[:, :len(B.values)-numFactors]
+	X = sm.add_constant(B[:, :len(B.values) - numFactors])
+	model = sm.OLS(Rfinal.iloc[:,-1], X)
+	results = model.fit()
 
+	b = results.params[1]
+
+	print(b)
 
 if __name__ == "__main__":
 	main()
