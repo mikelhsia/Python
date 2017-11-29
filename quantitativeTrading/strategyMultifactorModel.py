@@ -31,13 +31,10 @@ def _getHS300Tickers():
 	return tickers['code']
 
 def smartCov(m):
-	y = pd.DataFrame(np.matrix(np.repeat(np.NaN, len(m.values))).repeat(len(m.values), axis=0))
-	xc = np.repeat(np.NaN, len(m.columns))
-
 	goodStock = m.dropna(axis=0, how="any")
 
 	# 移去均值
-	xc = goodStock - repmat(goodStock.mean(axis=0).T, len(m.values), 1)
+	xc = goodStock - repmat(goodStock.mean(axis=0).T, len(goodStock.values), 1)
 
 	# 回传协方差矩阵
 	return xc.corr()
@@ -89,13 +86,44 @@ def main():
 		R = dailyRet.iloc[(d - lookback + 1):d,:]
 
 		# 不考虑所有收益率有缺失的股票
-		RnoNA = R.dropna(axis=0, how='any')
+		RnoNA = R.dropna(axis=1, how='all')
 
 		# 移除均值
 		avgRnoNa = RnoNA.mean(axis=0)
 		Rfinal = RnoNA - repmat(avgRnoNa.T, len(RnoNA.values), 1)
 
 		# 计算不同股票收益率的协方差矩阵
+		covR = smartCov(Rfinal)
+		print("covR: {}".format(covR))
+
+		# X是因子风险矩阵，B是因子收益率的方差
+		# 用covR的特征值作为X的列向量
+		[X, B] = np.linalg.eig(covR)
+
+		# 保留的因子数为numFactors
+		X = sm.add_constant(B[:, :B.shape[0] - numFactors])
+		model = sm.OLS(Rfinal.iloc[:,-1], X)
+		results = model.fit()
+
+		# b 是从时间t-1到t的因子收益率
+		b = results.params[1]
+
+		# Rexp 是假设因子收益率保持常数时，下一个时间段的期望收益率
+		Rexp = avgRnoNa + X * b
+
+		pd.DataFrame.sort_index(Rexp, ascending=True)
+
+		# 做空期望收益率最低的50只股票
+		positionTable[d, Rexp.iloc[1:topN]] = -1
+
+		# 做多期望收益率最大的50只股票
+		positionTable[d, Rexp.iloc[-topN+1:]] = 1
+
+		# 计算交易策略的每日收益率
+		ret = pd.DataFrame.sum(matlab.backshift(1, positionTable) * dailyRet, 2)
+
+		# 计算交易策略的年华收益率
+		avgRet = pd.DataFrame.mean(ret) * 252
 
 		if TESTING_FLAG:
 			# print("RnoNA: \n{}".format(RnoNA))
@@ -103,22 +131,9 @@ def main():
 			print("Rfinal: \n{}".format(Rfinal))
 			break
 
-	# 计算不同股票收益率的协方差矩阵
-	covR = smartCov(Rfinal)
-	print("covR: {}".format(covR))
+		print("Daily Return : \n{}".format(ret))
+		print("Annual Return : \n{}".format(avgRet))
 
-	# X是因子风险矩阵，B是因子收益率的方差
-	# 用covR的特征值作为X的列向量
-	[X, B] = np.linalg.eig(covR)
-
-	# 保留的因子数为numFactors
-	X = sm.add_constant(B[:, :len(B.values) - numFactors])
-	model = sm.OLS(Rfinal.iloc[:,-1], X)
-	results = model.fit()
-
-	b = results.params[1]
-
-	print(b)
 
 if __name__ == "__main__":
 	main()
