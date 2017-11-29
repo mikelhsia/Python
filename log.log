@@ -1,0 +1,102 @@
+^C2017-11-27 23:40:11 [scrapy.crawler] INFO: Received SIG_UNBLOCK, shutting down gracefully. Send again to force 
+2017-11-27 23:40:11 [scrapy.core.scraper] ERROR: Spider error processing <GET http://comic.kukudm.com/comiclist/2070/58970/13.htm> (referer: http://comic.kukudm.com/comiclist/2070/58970/12.htm)
+Traceback (most recent call last):
+	  File "/usr/local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+	      yield next(it)
+	    File "/usr/local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+	      for x in result:
+	    File "/usr/local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+	      return (_set_referer(r) for r in result or ())
+	    File "/usr/local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+	      return (r for r in result or () if _filter(r))
+	    File "/usr/local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+	      return (r for r in result or () if _filter(r))
+	    File "/Users/puppylpy/Desktop/Python/pythonCrawler/scrapyItemLoader/scrapyItemLoader/spiders/kuku_sil_spider.py", line 103, in parse_item
+	      driver.get(response.url)
+	    File "/usr/local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 320, in get
+	      self.execute(Command.GET, {'url': url})
+		    File "/usr/local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 306, in execute
+			    response = self.command_executor.execute(driver_command, params)
+	  File "/usr/local/lib/python3.6/site-packages/selenium/webdriver/remote/remote_connection.py", line 464, in execute
+	      return self._request(command_info[0], url, body=data)
+	  File "/usr/local/lib/python3.6/site-packages/selenium/webdriver/remote/remote_connection.py", line 526, in _request
+	      resp = opener.open(request, timeout=self._timeout)
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 526, in open
+	      response = self._open(req, data)
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 544, in _open
+	      '_open', req)
+		    File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 504, in _call_chain
+			    result = func(*args)
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 1346, in http_open
+	      return self.do_open(http.client.HTTPConnection, req)
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 1321, in do_open
+	      r = h.getresponse()
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1331, in getresponse
+	      response.begin()
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 297, in begin
+	      version, status, reason = self._read_status()
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 266, in _read_status
+	      raise RemoteDisconnected("Remote end closed connection without"
+				  http.client.RemoteDisconnected: Remote end closed connection without response
+				  2017-11-27 23:40:12 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://127.0.0.1:49753/wd/hub/session/a3bb0d40-d387-11e7-b02e-4372d44a529f/url {"url": "http://comic.kukudm.com/comiclist/2070/56975/14.htm", "sessionId": "a3bb0d40-d387-11e7-b02e-4372d44a529f"}
+				  ^C2017-11-27 23:40:12 [scrapy.crawler] INFO: Received SIG_UNBLOCK twice, forcing unclean shutdown
+				  2017-11-27 23:40:12 [scrapy.core.scraper] ERROR: Spider error processing <GET http://comic.kukudm.com/comiclist/2070/56975/14.htm> (referer: http://comic.kukudm.com/comiclist/2070/56975/13.htm)
+				  Traceback (most recent call last):
+				    File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 1318, in do_open
+					    encode_chunked=req.has_header('Transfer-encoding'))
+					     File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1239, in request
+					       self._send_request(method, url, body, headers, encode_chunked)
+					     File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1285, in _send_request
+					       self.endheaders(body, encode_chunked=encode_chunked)
+					     File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1234, in endheaders
+					       self._send_output(message_body, encode_chunked=encode_chunked)
+					     File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 1026, in _send_output
+					       self.send(msg)
+					     File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 964, in send
+					       self.connect()
+					     File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/http/client.py", line 936, in connect
+					       (self.host,self.port), self.timeout, self.source_address)
+					     File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 722, in create_connection
+					       raise err
+					     File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/socket.py", line 713, in create_connection
+					       sock.connect(sa)
+					   OSError: [Errno 22] Invalid argument
+
+								 During handling of the above exception, another exception occurred:
+
+								 Traceback (most recent call last):
+									   File "/usr/local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+									       yield next(it)
+									     File "/usr/local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+									       for x in result:
+									     File "/usr/local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+									       return (_set_referer(r) for r in result or ())
+									     File "/usr/local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+									       return (r for r in result or () if _filter(r))
+									     File "/usr/local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+									       return (r for r in result or () if _filter(r))
+									     File "/Users/puppylpy/Desktop/Python/pythonCrawler/scrapyItemLoader/scrapyItemLoader/spiders/kuku_sil_spider.py", line 103, in parse_item
+									       driver.get(response.url)
+									     File "/usr/local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 320, in get
+									       self.execute(Command.GET, {'url': url})
+										     File "/usr/local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 306, in execute
+											     response = self.command_executor.execute(driver_command, params)
+	  File "/usr/local/lib/python3.6/site-packages/selenium/webdriver/remote/remote_connection.py", line 464, in execute
+	      return self._request(command_info[0], url, body=data)
+	  File "/usr/local/lib/python3.6/site-packages/selenium/webdriver/remote/remote_connection.py", line 526, in _request
+	      resp = opener.open(request, timeout=self._timeout)
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 526, in open
+	      response = self._open(req, data)
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 544, in _open
+	      '_open', req)
+		    File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 504, in _call_chain
+			    result = func(*args)
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 1346, in http_open
+	      return self.do_open(http.client.HTTPConnection, req)
+	  File "/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/lib/python3.6/urllib/request.py", line 1320, in do_open
+	      raise URLError(err)
+	urllib.error.URLError: <urlopen error [Errno 22] Invalid argument>
+	2017-11-27 23:40:12 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://comic.kukudm.com/comiclist/2070/57248/14.htm> (referer: http://comic.kukudm.com/comiclist/2070/57248/13.htm)
+	2017-11-27 23:40:12 [scrapy.core.engine] INFO: Closing spider (shutdown)
+	2017-11-27 23:40:12 [scrapy.extensions.logstats] INFO: Crawled 238 pages (at 53 pages/min), scraped 233 items (at 53 items/min)
+
