@@ -15,8 +15,10 @@ Tips:
 
 Terms:
 """
+
 TESTING_FLAG = True
-TESTING_SCOPE = 10
+TESTING_SCOPE = 3
+
 
 def _getHS300Tickers():
 	tickers = ts.get_hs300s()
@@ -24,27 +26,19 @@ def _getHS300Tickers():
 
 def main():
 
+	oneWayTransCost = 0.0005    # 5bp one way transaction cost
+
+	begDate = "2013-11-01"
+	today = datetime.date.today()
+
 	hs300Tickers = _getHS300Tickers()
-
-	begDate = "2016-11-01"
-	endDate = datetime.datetime.timestamp(datetime.datetime.today())
-
-	np.set_printoptions(threshold=10)   # Adjust print columns number to 10
 	if TESTING_FLAG:
 		i = 0
 
 	for ticker in hs300Tickers:
 
-		hisPrice = ts.get_hist_data(ticker, begDate, datetime.datetime.fromtimestamp(endDate).__str__())
+		hisPrice = ts.get_hist_data(ticker, begDate, today.__str__())
 
-		'''
-		Another way of implementing this
-			try:
-				print('Found: {0}'.format())
-			except NameError:
-				print('Not found')
-			else:
-		'''
 		if 'tickerPriceTable' not in locals().keys():
 			tickerPriceTable = pd.DataFrame(hisPrice['close'].rename(ticker), index=hisPrice.index)
 		else:
@@ -53,8 +47,25 @@ def main():
 		if TESTING_FLAG:
 			i += 1
 			if i > TESTING_SCOPE:
-				print(tickerPriceTable)
+				# print(tickerPriceTable)
 				break
+
+	dateIndex = pd.DataFrame(tickerPriceTable.index, index=tickerPriceTable.index)
+	years = dateIndex.applymap(lambda x:datetime.datetime.strptime(x, "%Y-%m-%d").year)
+	years = years.iloc[:,0].rename('years')
+	months = dateIndex.applymap(lambda x:datetime.datetime.strptime(x, "%Y-%m-%d").month)
+	months = months.iloc[:,0].rename('months')
+	nextDayYear = dateIndex.applymap(lambda x:(datetime.datetime.strptime(x, "%Y-%m-%d") + datetime.timedelta(days=1)).year)
+	nextDayYear = nextDayYear.iloc[:,0].rename('nextDayYear')
+	nextDayMonth = dateIndex.applymap(lambda x:(datetime.datetime.strptime(x, "%Y-%m-%d") + datetime.timedelta(days=1)).month)
+	nextDayMonth = nextDayMonth.iloc[:,0].rename('nextDayMonth')
+
+	dateTable = pd.concat([years, months, nextDayYear, nextDayMonth], axis=1)
+	print(dateTable)
+	print(type(dateTable))
+	# lastDayOfDec = pd.DataFrame(months == 12)
+	# lastDayOfJan = pd.DataFrame(months == 1)
+	# print(lastDayOfDec)
 
 
 if __name__ == "__main__":
