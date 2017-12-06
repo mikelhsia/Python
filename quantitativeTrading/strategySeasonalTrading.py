@@ -88,8 +88,13 @@ def main():
 	# janRet = pd.DataFrame((lastDayOfJan.values[1:,:] - lastDayOfDec.values[:-1,:]) / lastDayOfDec.values[:-1,:], columns=eoy.columns)
 	# print(annRet)
 
+	annRet = annRet.drop(labels=["years", "months", "nextDayYear", "nextDayMonth"], axis=1)
+	# print(annRet)
+
 	for index, stock in enumerate(annRet):
-		print("{}, {}".format(index, stock))
+		# print("{}, {}".format(index, stock))
+		annRet = annRet.sort_values(by=stock.__str__(), axis=1, ascending=True)
+		print(annRet[stock])
 
 if __name__ == "__main__":
 	main()
