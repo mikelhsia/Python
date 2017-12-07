@@ -2,13 +2,14 @@
 Strategy name: 季节性交易策略
 Date: 2017/11/29
 Author: Michael Hsia
-Description:
+Description: 一月效应。前一年收益率最差的那些小盘股，在第二年一月的收益率会普遍高于前一年业绩最好的那些小盘股。
+			可能是因为税收原因，投资者喜欢在12月清算亏损，这会导致价格下行压力。当这种压力在一月消失的时候，
+			价格就会有一定程度的恢复。
 """
 import numpy as np
 import tushare as ts
 import datetime
 import pandas as pd
-from numpy.matlib import repmat
 
 """
 Tips:
