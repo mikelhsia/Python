@@ -17,8 +17,9 @@ Terms:
 """
 
 TESTING_FLAG = True
-TESTING_SCOPE = 3
+TESTING_SCOPE = 8
 
+TOPN = 10
 
 def main():
 
@@ -91,10 +92,21 @@ def main():
 	annRet = annRet.drop(labels=["years", "months", "nextDayYear", "nextDayMonth"], axis=1)
 	# print(annRet)
 
-	for index, stock in enumerate(annRet):
-		# print("{}, {}".format(index, stock))
-		annRet = annRet.sort_values(by=stock.__str__(), axis=1, ascending=True)
-		print(annRet[stock])
+	# How matlab strategy to sort all stocks, but don't think it applys to python
+	# for index, stock in enumerate(annRet):
+	# 	# print("{}, {}".format(index, stock))
+	# 	annRet = annRet.sort_values(by=stock.__str__(), axis=1, ascending=True)
+	# 	print(annRet[stock])
+	annAvgRet = annRet.mean(axis=0, skipna=True, numeric_only=True)
+	# print("{}:\n{}".format(type(annAvgRet), annAvgRet))
+	annAvgRet = annAvgRet.sort_values(axis=0, ascending=False)
+	# print("{}:\n{}".format(type(annAvgRet), annAvgRet))
+	topN = annAvgRet.head(n=TOPN)
+	# print("TopN:\n{}".format(annAvgRet.head(n=TOPN)))
+
+	# 组合收益率
+	# portRet = (smartMean(janRet(sortidx(:topN))) - smartMean(janRet(sortidx(end-topN:)))) / 2 - 2 * oneWayTransCost
+	# print("Last holding date: {}\n Portfolio return: {}".format(tday(lastDayOfDec+1), portRet))
 
 if __name__ == "__main__":
 	main()
