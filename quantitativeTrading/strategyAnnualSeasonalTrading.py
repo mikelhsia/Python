@@ -44,18 +44,22 @@ def main():
 				break
 
 	# 将日期index变成其中一个栏位
-	tickerPriceTable = tickerPriceTable.reset_index()
+	tickerPriceWithDateTable = tickerPriceTable.reset_index()
+	tickerPriceWithDateTable.iloc[:, 0] = tickerPriceWithDateTable.iloc[:, 0].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d"))
 
 	# 找到月底几天的指数
-	monthEnds = tickerPriceTable[isLastTradingDayOfMonth(tickerPriceTable.index)]
+	thisMonth = pd.DataFrame(tickerPriceWithDateTable.iloc[:-1, 0])
+	nextMonth = pd.DataFrame(tickerPriceWithDateTable.iloc[1:, 0])
 
-def isLastTradingDayOfMonth(index):
-	'''
-	Identify whether the trading day is the last trading day of the month
-	:param index: Trading date
-	:return: boolean True or False
-	'''
-	pass
+	print(type(nextMonth))
+	print(type(nextMonth.iloc[0,0]))
+	print(nextMonth)
+	print(thisMonth)
+
+	lastDays = thisMonth - nextMonth
+	print(lastDays)
+	# print(tickerPriceWithDateTable[lastDays])
+	# monthEnds = tickerPriceTable[isLastTradingDayOfMonth(tickerPriceTable.index)]
 
 if __name__ == "__main__":
 	main()
