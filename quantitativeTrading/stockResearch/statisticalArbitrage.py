@@ -13,46 +13,13 @@ import datetime
 import tushare as ts
 import seaborn as sns
 
-# 获取所有沪深300的股票里pe_ratio不为0的股票
-stocks300SH = get_index_stocks('000300.XSHG')
-stocks300SHDf = get_fundamentals(
-	query(valuation, income, balance).filter(valuation.code.in_(stocks300SH), valuation.pe_ratio > 0),
-	statDate='2017q3').sort('pe_ratio_lyr', ascending=False)
+list = ['600028.XSHG', '600104.XSHG', '601800.XSHG', '600704.XSHG', '000651.XSHE', '600011.XSHG', '600029.XSHG',
+ '600741.XSHG', '600688.XSHG', '600068.XSHG', '601633.XSHG', '600585.XSHG', '600900.XSHG', '000625.XSHE',
+ '600221.XSHG', '000876.XSHE', '600795.XSHG', '600023.XSHG', '601006.XSHG', '600886.XSHG', '600089.XSHG',
+ '600066.XSHG', '600383.XSHG', '002202.XSHE', '001979.XSHE', '002081.XSHE', '000402.XSHE', '000069.XSHE',
+ '600208.XSHG', '000776.XSHE', '600352.XSHG', '600177.XSHG', '601872.XSHG', '000623.XSHE', '600649.XSHG', '600674.XSHG']
 
-# stocks300SHDf = get_fundamentals(query(valuation, income, balance).filter(valuation.code.in_(stocks300SH), valuation.pe_ratio >0)).sort('pe_ratio', ascending=False)
-
-# 股票公司名字的DF
-stocks300SH = pd.DataFrame(stocks300SH, columns=['code'])
-stocks300SH['name'] = stocks300SH.code
-stocks300SH.name = stocks300SH.code.apply(lambda x: get_security_info(x).display_name)
-
-# Merge 名称的DF
-stocks300SHDf = pd.merge(stocks300SHDf, stocks300SH, on='code', how='inner')
-
-# 取pe_ratio最低的25%
-SH300PeRatioQuarter = stocks300SHDf.pe_ratio_lyr.quantile(0.25)
-stocks300SHDfPortfolio = stocks300SHDf[
-	(stocks300SHDf.pe_ratio_lyr < SH300PeRatioQuarter) & (stocks300SHDf.pe_ratio_lyr > 0)].sort('pe_ratio_lyr',
-                                                                                                ascending=False)
-stocks300SHDfPortfolio
-
-# 取debt_to_equity_ratio最低的上0%
-debtToEquityRatioDf = stocks300SHDfPortfolio['total_liability'] / stocks300SHDfPortfolio['total_sheet_owner_equities']
-stocks300SHDfPortfolio = stocks300SHDfPortfolio[debtToEquityRatioDf < debtToEquityRatioDf.quantile()]
-
-# 重新将名字排到id后面
-cols = stocks300SHDfPortfolio.columns.tolist()
-cols = [cols[1]] + [cols[-1]] + cols[2:-1]
-stocks300SHDfPortfolio = stocks300SHDfPortfolio[cols]
-stocks300SHDfPortfolio.reset_index(drop=True, inplace=True)
-
-# operating revenue 较高的拥有较高的交易执行权
-stocks300SHDfPortfolio = stocks300SHDfPortfolio.sort('total_operating_revenue', ascending=False)
-
-
-del portfolio
-
-for security in stocks300SHDfPortfolio.code.tolist():
+for security in list:
     if 'portfolio' not in dir():
         portfolio = pd.DataFrame(ts.get_hist_data(security[:6], start='2017-01-01', end='2018-01-01')['close'])
     else:
