@@ -54,7 +54,7 @@ class SilSpiderSpider(scrapy.Spider):
 	def spider_opened(self, spider):
 		# Selenium chrome web driver
 		global driver
-		driver = webdriver.PhantomJS()
+		driver = webdriver.PhantomJS(executable_path="/Users/puppylpy/Desktop/Python/pythonCrawler/phantomjs")
 
 		spider.logger.info('Spider opened signal received, and webdriver PhantomJS is opened')
 
