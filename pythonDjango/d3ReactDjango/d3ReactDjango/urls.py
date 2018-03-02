@@ -20,6 +20,7 @@ from d3ReactDjango import view
 
 urlpatterns = [
 	url(r'^home', view.goToHomeIndex),
+    url(r'^cssgrid', view.goToCSSGridIndex),
 	url(r'^dataset', view.goToHomeIndexDataSet),
     url(r'^admin/', admin.site.urls),
 ]

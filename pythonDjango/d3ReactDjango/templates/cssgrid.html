@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CSS Grid practice</title>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+ 	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static '/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
+	<!-- HTML5 Shim 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+    <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+    <!--[if lt IE 9]>
+    	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <style>
+    	.description {
+    		margin: 20px 20px 20px 20px;
+    	}
+
+    	.grid {
+ 			border: 2px solid #2b7c3b;
+			border-radius: 5px;
+  			background-color: #20612d;
+		}
+
+		.grid > div {
+  			border: 2px solid #8dd59c;
+  			border-radius: 5px;
+  			background-color: #68ae76;
+  			padding: 1em;
+  			color: #14dc3c;
+		}
+
+		/***********************************/
+    	.grid1 {
+    		display: grid;
+    	}
+
+		/***********************************/
+    	.grid2 {
+    		display: grid;
+    		grid-template-columns: 33.33% 33.33% 33.33%;
+    	}
+
+		/***********************************/
+    	.grid3 {
+    		display: grid;
+    		grid-template-columns: 90px 3fr 4fr;
+    	}
+
+		/***********************************/
+    	.grid4 {
+    		display: grid;
+    		/*grid-template-columns: repeat(3, 1fr);*/
+
+    		/*repeat() 可以只重复轨道中的一部分：*/
+			/*grid-template-columns: 70px repeat(3, 100px) 20px;*/
+
+			/*还可以创建一个多轨道模式的重复轨道列表：*/
+			grid-template-columns: repeat(3, 70px 2fr);
+    	}
+
+		/***********************************/
+    	.grid5 {
+    		display: grid;
+    		grid-template-columns: 2fr 3fr 4fr;
+    		grid-auto-rows: 100px; /* 默认创建网格行高度100px */
+    	}
+
+    	.height {
+    		height: 140px;
+    	}
+
+		/***********************************/
+    	.grid6 {
+    		display: grid;
+    		grid-template-columns: 2fr 3fr 4fr;
+    		grid-auto-rows: minmax(100px, auto);
+    	}
+
+		/***********************************/
+    	.grid7 {
+    		display: grid;
+    		grid-template-columns: 2fr 3fr 4fr;
+    		grid-auto-rows: 100px;
+    	}
+
+    	.one {
+    		grid-column-start: 1;
+    		grid-column-end: 4;
+    		grid-row-start: 1;
+    		grid-row-end: 3;
+    	}
+
+    	.two {
+    		grid-column-start: 1;
+    		grid-row-start: 3;
+    		grid-row-end: 5;
+    	}
+
+		/***********************************/
+    	.grid8 {
+    		display: grid;
+    		grid-template-columns: 2fr 3fr 4fr;
+    		grid-auto-rows: 100px;
+    		/*grid-columns-gap: 10px;
+    		grid-row-gap: 20px;*/
+    		grid-gap: 10px 20px;
+    	}
+		/***********************************/
+    	.grid9 {
+    		display: grid;
+    		grid-template-columns: 2fr 3fr 4fr;
+    		grid-auto-rows: 100px;
+    		grid-gap: 10px 20px;
+    	}
+
+    	.one9 {
+    		grid-column-start: 1;
+    		grid-column-end: 4;
+    		grid-row-start: 1;
+    		grid-row-end: 3;
+    		z-index: 2;
+    		background-color: #1e4c27;
+    		opacity: 0.8;
+    	}
+
+    	.two9 {
+    		grid-column-start: 1;
+    		grid-row-start: 2;
+    		grid-row-end: 5;
+    		z-index: 1;
+    	}
+		/***********************************/
+    	.cell {
+    		border:1px black solid;
+    	}
+    </style>
+</head>
+<body>
+	<div class='description'>
+		<h2>什么是网格？</h2>
+		网格是一组相交的水平线和垂直线，它定义了网格的列和行。我们可以将网格元素放置在与这些行和列相关的位置上。CSS网格布局具有以下特点：
+		<ul>
+		<li>固定或弹性的轨道尺寸</li>
+		:clipboard:你可以使用固定的轨道尺寸创建网格，比如使用像素单位。也可以使用比如百分比或者专门为此目的创建的新单位 fr来创建有弹性尺寸的网格。
+		定位项目
+		:clipboard:你可以使用行号、行名或者标定一个网格区域来精确定位项目。网格同时还使用一种算法来控制未给出明确网格位置的项目。
+
+		<li>创建额外的轨道来保存内容</li>
+		:clipboard:可以使用网格布局定义一个显式网格，但该规范还涉及在声明网格外添加的内容，如需要添加额外的行和列。包括添加“尽可能多的列，以适应容器”的功能。
+
+		<li>对齐控制</li>
+		:clipboard:网格包含对齐特征，以便我们可以控制一旦放置到网格区域中的物体对齐，以及整个网格如何对齐。
+
+		<li>控制重叠内容</li>
+		:clipboard:多个项目可以放置在网格单元格中，或者区域可以部分地彼此重叠。然后可以用这种分层进行控制z-index。
+		</ul>
+
+		<img src='{% static '/img/grid-terms-lines-rows-columns-cells-.svg' %}'>
+	</div>
+	<div class='description'>
+		<h2>网格基础 - 网格容器</h2>
+		<div class='grid grid1'>
+			<div class='cell'>One</div>
+			<div class='cell'>Two</div>
+			<div class='cell'>Three</div>
+			<div class='cell'>Four</div>
+			<div class='cell'>Five</div>
+		</div>
+	</div>
+	<div class='description'>
+		<h2>网格基础 - 网格轨道</h2>
+		<p>通过 grid-template-columns 和 grid-template-rows 属性来定义网格中的行和列。这些属性定义了网格的轨道。一个网格轨道就是网格中任意两条线之间的空间。</p>
+		<div class='grid grid2'>
+			<div class='cell'>One</div>
+			<div class='cell'>Two</div>
+			<div class='cell'>Three</div>
+			<div class='cell'>Four</div>
+			<div class='cell'>Five</div>
+		</div>
+		<h4>fr单位</h4>
+		<div class='grid grid3'>
+			<div class='cell'>One</div>
+			<div class='cell'>Two</div>
+			<div class='cell'>Three</div>
+			<div class='cell'>Four</div>
+			<div class='cell'>Five</div>
+		</div>
+		<h4>在网格轨道中使用repeat()</h4>
+		<div class='grid grid4'>
+			<div class='cell'>One</div>
+			<div class='cell'>Two</div>
+			<div class='cell'>Three</div>
+			<div class='cell'>Four</div>
+			<div class='cell'>Five</div>
+			<div class='cell'>Six</div>
+		</div>
+		<h4>关于显式和隐式网格</h4>
+		<p>所谓显式网格就是我们通过 grid-template-columns 和 grid-template-rows 属性中明确定义的行和列。 而隐式网格就是网格根据内容自动创建的行和列，默认地，这些轨道将自动定义尺寸，会根据它里面的内容改变尺寸。</p>
+		<div class='grid grid5'>
+			<div class='cell'>One</div>
+			<div class='cell'>Two</div>
+			<div class='cell'>Three</div>
+			<div class='cell'>Four</div>
+			<div class='cell'>Five</div>
+			<div class='cell'>Six</div>
+		</div>
+		<h4>minmax()</h4>
+		<p>minmax() 用来控制网格的最大最小尺寸。</p>
+		<div class='grid grid6'>
+			<div class='cell'>One</div>
+			<div class='cell'>Two</div>
+			<div class='cell'>Three
+				<p class="height">height: 140px</p>
+			</div>
+			<div class='cell'>Four</div>
+			<div class='cell'>Five</div>
+			<div class='cell'>Six</div>
+		</div>
+	</div>
+	<div class='description'>
+		<h2>网格线</h2>
+		<p>当我们创建网格时，网格会为网格线进行编号，以便我们通过网格线来定位每一个网格项目。 网格线的编号顺序取决于文章的书写模式。在从左至右书写的语言中，编号为 1 的网格线位于最左边。在从右至左书写的语言中，编号为 1 的网格线位于最右边。 <quote>
+		:warning:当我们定义网格时，我们定义的是网格轨道，不是网格线。</quote></p>
+
+		<h4>跨轨道放置网格项目</h4>
+		<p>当放置元素时，我们使用 网格线 定位，而非 网格轨道。 要实现跨轨道放置网格项目（有点像table 合并 cell），我们需要用到 grid-column-start, grid-column-end, grid-row-start 和 grid-row-end 属性，看一下示例：</p>
+		<div class='grid grid7'>
+			<div class='cell one'>One</div>
+			<div class='cell two'>Two</div>
+			<div class='cell'>Three</div>
+			<div class='cell'>Four</div>
+			<div class='cell'>Five</div>
+			<div class='cell'>Six</div>
+		</div>
+		<h4>网格间距</h4>
+		<p>在两两单元格之间，有时候我们需要为其设置间距。这个可以通过 grid-column-gap（网格纵向间距） 和 grid-row-gap（网格横向间距） 属性来设置，或者直接使用两个合并的缩写形式 grid-gap。</p>
+		<div class='grid grid8'>
+			<div class='cell one'>One</div>
+			<div class='cell two'>Two</div>
+			<div class='cell'>Three</div>
+			<div class='cell'>Four</div>
+			<div class='cell'>Five</div>
+			<div class='cell'>Six</div>
+		</div>
+		<h4>网格顺序</h4>
+		<p>在网格项目发生堆积时使用 z-index 属性控制堆积的顺序。</p>
+		<div class='grid grid9'>
+			<div class='cell one9'>One</div>
+			<div class='cell two9'>Two</div>
+			<div class='cell'>Three</div>
+			<div class='cell'>Four</div>
+			<div class='cell'>Five</div>
+			<div class='cell'>Six</div>
+		</div>
+	</div>
+</body>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="{% static '/js/jquery-3.2.1.js' %}"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="{% static '/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"> </script>
+<!-- D3.js JavaScript 文件 -->
+<script src="{% static '/d3/d3.js' %}"> </script>
+<script type="text/javascript">
+    /*
+     * 需要注意的是，我们如果直接这么做，传递到 js 的时候，网页的内容会被转义，得到的格式会报错。
+     * 访问时会得到 Uncaught SyntaxError: Unexpected token ILLEGAL
+     */
+    // var dataset = {{ byd_close_list | safe }};
+</script>
+</body>
+</html>

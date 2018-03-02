@@ -7,6 +7,9 @@ def goToHomeIndex(request):
 	print("We're in the page")
 	return render(request, 'home.html')
 
+def goToCSSGridIndex(request):
+    return render(request, 'cssgrid.html')
+
 
 def goToHomeIndexDataSet(request):
 	# print("We're in the ajax!")
