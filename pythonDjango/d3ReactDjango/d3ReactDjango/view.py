@@ -10,6 +10,8 @@ def goToHomeIndex(request):
 def goToCSSGridIndex(request):
     return render(request, 'cssgrid.html')
 
+def goToFlexBoxIndex(request):
+    return render(request, 'flexbox.html')
 
 def goToHomeIndexDataSet(request):
 	# print("We're in the ajax!")

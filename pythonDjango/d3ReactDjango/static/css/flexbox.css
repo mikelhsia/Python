@@ -1,0 +1,84 @@
+.description {
+	margin: 20px 20px 20px 20px;
+}
+
+.child.large {
+	width:200px;
+	opacity: 0.7;
+}
+
+.child.red {
+	background: red;
+}
+
+.child.grey {
+	background: grey;
+}
+
+.child.blue {
+	background: blue;
+}
+
+.parent.small {
+	width: 400px;
+}
+
+/* Flexbox display */
+.parent {
+	background: #88499C;
+}
+
+.child {
+	margin: 10px;
+	padding: 10px;
+	background: #E77F24;
+	text-align: center;
+	color: white;
+	overflow: hidden;
+}
+
+.parent.flex {
+	display: flex;
+}
+
+.parent.inline-flex {
+	display: inline-flex;
+}
+
+/* Flexbox flex-direction */
+.parent.flex-direction-column {
+	flex-direction: column; /* row | row-reverse | column | column-reverse */
+}
+
+/* Flexbox flex-wrap */
+.parent.flex-wrap {
+	flex-wrap: wrap; /* nowrap | wrap | wrap-reverse */
+}
+
+/* Flexbox order */
+.child.order-negative-1 {
+	order: -1;
+}
+
+.child.order-positive-1 {
+	order: 1;
+}
+
+/* Flexbox flex-grow */
+.child.flex-grow-1 {
+	flex-grow: 1;
+}
+
+.child.flex-grow-2 {
+	flex-grow: 2;
+}
+
+/* Flexbox flex-shrink */
+.child.flex-shrink-0 {
+	flex-shrink: 0;
+}
+
+/* Flexbox flex-basis */
+.child.flex-basis-0 {
+	flex-basis: 0;
+}

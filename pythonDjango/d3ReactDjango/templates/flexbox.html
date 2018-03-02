@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Flexbox practice</title>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+ 	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static '/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static '/css/flexbox.css' %}">
+	<!-- HTML5 Shim 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+    <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+    <!--[if lt IE 9]>
+    	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+	<div class='description'>
+		<h2>彻底理解Flexbox</h2>
+		<p>Flexbox布局旨在提供一种更有效的途径，来为容器内子元素进行布局、对齐和分配空间，即便它们的大小是未指定或动态变化的，也能够很好的适应。 Flexbox布局背后的原理是，赋予父容器更改子元素宽高(或顺序)的能力，来更好的填充可用的空间(主要使其适应各种显示设备和屏幕尺寸)。一个使用Flexbox布局的父容器会伸展每个子元素来填充可用的空间，或者压缩它们来阻止超出父容器。 最重要的是，Flexbox布局在方向上是不可预知的，这一点和常归布局不同(常规布局中块是基于竖直方向排列的，而内联是基于水平方向)。这些常规布局在页面中显示都没问题，但它们缺乏灵活性，难以支撑大型复杂应用的需求，特别是响应方向、大小、伸展、收缩等这些变化。 </p>
+	</div>	
+	<div class='description'>
+		<h1>父容器属性</h1>
+		<ul>
+			<li>
+				<h3>display</h3>
+				<p>display属性用来定义一个flex布局的容器，容器本身是inline还是block，这取决于display的值是flex还是inline-flex。一旦声明了flex，容器下面的直接子元素就得接受flex布局的管理。 需要注意的是，CSS中的多列布局不会影响flex布局的容器。 </p>
+				<h4>父容器设置了display:flex</h4>
+				<div class="parent flex">
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+				</div>
+				<span style="background: wheat;">我是个span元素 </span>
+				<h4>父容器设置了display:inline-flex</h4>
+				<div class="parent inline-flex">
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+				</div>
+				<span style="background: wheat;">我是个span元素 </span>
+			</li>
+			<li>
+				<h3>flex-direction</h3>
+				<p>flex-direction属性用于创建一个主轴，这个主轴规定了排列子元素的方向。Flexbox是单向排列的布局概念，除非我们额外使用了flex-wrap属性。Flexbox内部的子元素主要在水平方向排成一行或是在垂直方向排成一列。 一般常用的是flex-direction: row和flex-direction: column，而row-reverse和column-reverse从字面可以看出，是和前两个方向上是相反的。默认情况下，是从左到右排成一行，也就是flex-direction: row </p>
+				<h4>父容器添加了flex-direction: column</h4>
+				<div class="parent flex flex-direction-column">
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+				</div>
+			</li>
+			<li>
+				<h3>flex-wrap</h3>
+				<p>我们可以声明flex-wrap改变这个规定，允许一些子元素排列到下一行。默认情况下，flex-wrap属性的值是nowrap，我们可以声明wrap和wrap-reverse来改变它。需要注意的是wrap和wrap-reverse的方向是跟flex-direction关联的，使用时需灵活运用。</p>
+				<h4>父容器未指定flex-wrap, 默认nowrap</h4>
+				<div class="parent flex" style="width:300px">
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+				</div>
+				<h4>父容器指定了flex-wrap: wrap</h4>
+				<div class="parent flex flex-wrap" style="width: 300px;">
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+				</div>
+				<h4>父容器指定了flex-direction: row-reverse</h4>
+				<div class="parent flex flex-wrap" style="flex-direction: row-reverse; width: 300px;">
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+					<div class='child'>Child</div>
+				</div>
+			</li>
+			<li>
+				<h3>flex-flow</h3>
+				<p>flex-flow属性是flex-direction和flex-wrap的简写方式，例如上面的flex-direction:row和flex-wrap同时声明时我们可以用只用一个属性表示：flex-flow: row wrap;</p>
+			</li>
+		</ul>
+	</div>
+	<hr/>
+	<div class='description'>
+		<h1>子容器属性</h1>
+		<ul>
+			<li>
+				<h3>order</h3>
+				<p>默认情况下，Flexbox内的子元素会按照文档声明顺序排列，不过我们可以使用order属性控制子元素出现在父容器的顺序。默认情况下，order值为0。</p>
+				<h4>子元素设置了order，order值越小越靠前，默认值为0</h4>
+				<div class="parent flex">
+					<div class='child order-positive-1 large red'>Order 1</div>
+					<div class='child large blue'>default</div>
+					<div class='child order-negative-1 large grey'>Order -1</div>
+				</div>
+			</li>
+				<li>
+				<h3>flex-grow</h3>
+				<p>flex-grow属性赋予子元素在必要时伸展的能力，可指定一个不带单位的数值，作为父容器剩余空间的比例，它表示子元素在flex容器中可以分配多少可用的空间。 如果所有声明了flex-grow的子元素都指定flex-grow为1，那么父容器剩余的空间将会平均的分配到这些子元素上。如果其中一个flex-grow指定为2，那么容器将会试图为其分配一个空间，这个空间2倍于那些flex-grow为1的子元素。 </p>
+				<p>需要注意的是，我们说的剩余空间，是指除子元素内容以外的父容器可用空间，另外，父容器并不保证所有情况下都能均匀分配，但至少它会这样尝试。flex-grow的值不能为负。 </p>
+				<h4>设置了flex-grow:1 的子元素，会平均分配剩余空间</h4>
+				<div class="parent flex">
+					<div class='child'>default</div>
+					<div class='child flex-grow-1'>flex-grow: 1</div>
+					<div class='child flex-grow-1'>flex-grow: 1</div>
+				</div>
+				<h4>设置了flex-grow:2 的子元素，会平均分配剩余空间</h4>
+				<div class="parent flex">
+					<div class='child'>default</div>
+					<div class='child flex-grow-1'>flex-grow: 1</div>
+					<div class='child flex-grow-2'>flex-grow: 2</div>
+				</div>
+				<h4>理解剩余空间 & 父容器如何分配剩余空间</h4>
+				<div class="parent flex">
+					<div class='child flex-grow-1'>flex-grow: 1</div>
+					<div class='child flex-grow-1'>flex-grow: 1, but very looooooooooooooooooooong</div>
+					<div class='child flex-grow-1'>flex-grow: 1</div>
+				</div>
+				<span style='background: wheat;'>容器只是对文本以外的可用空间进行平均分配</span>
+			</li>
+			<li>
+				<h3>flex-shrink</h3>
+				<p>flex-shrink属性表示一个子元素在必要时是否收缩自己来适应当前的Flexbox，默认值是1。注意：flex-shrink不能为负值。 flex-shrink适合使用在固定尺寸的子元素上，默认情况下，固定大小的子元素并非始终保持设定的值，比如在父容器太小时，就会压缩子元素来适应，如果我们不想这些子元素被压缩，就可以使用flex-shrink，并设置其值为0。</p>
+				<h4>未设置flex-shrink的子元素，即使是固定宽度也会被强制压缩</h4>
+				<div class="parent flex small">
+					<div class='child'>default</div>
+					<div class='child flex-grow-1'>flex-grow: 1</div>
+					<div class='child' style='width: 300px;'>width: 300px</div>
+				</div>
+				<h4>设置了flex-shrink: 0的子元素，会保持其设定宽度不会收缩</h4>
+				<div class="parent flex small">
+					<div class='child'>default</div>
+					<div class='child flex-grow-1'>flex-grow: 1</div>
+					<div class='child flex-shrink-0' style='width: 300px;'>width: 300px</div>
+				</div>
+			</li>
+			<li>
+				<h3>flex-basis</h3>
+				<p>flex-basis属性告诉父容器，在剩余空间被分配之前先定义子元素的默认尺寸，可以指定为百分比或rem等长度单位或者auto关键字。如果设置为0，那么父容器分配分配之前，对每个子元素的默认尺寸都视之为0，剩余空间也就是父容器的全部空间，其结果是，直接按照flex-grow值的比例分配子元素整体的大小；如果设置为auto，那么父容器会将每个子元素中的内容作为子元素默认尺寸，然后再计算剩余空间，最后把剩余空间按照flex-grow值的比例平均分配到子元素除内容以外的空间，也就是”padding”。我们来看下面这张图</p>
+				<img src="{% static '/img/rel-vs-abs-flex.svg' %}">
+				<p>图中第一个视图子元素声明了flex-basis: 0，所以父容器会按照flex-grow值的比例，为每个子元素的整体分配空间。而第二个视图就不同了，子元素声明了flex-basis: auto，所以父容器会先把每个子元素的内容空间分配出去，然后对于除内容以外的剩余空间，再按照每个子元素flex-grow的比例进行分配。</p>
+				<h4>理解剩余空间 & 父容器如何分配剩余空间</h4>
+				<div class="parent flex small">
+				    <div class="child flex-grow-1">flex-grow: 1</div>
+				    <div class="child flex-grow-1">flex-grow: 1, but very loooooooong</div>
+				    <div class="child flex-grow-1">flex-grow: 1</div>
+				</div>
+				<h4>理解剩余空间 & 父容器如何分配剩余空间，添加完flex-basis: 0之后</h4>
+				<div class="parent flex small">
+				    <div class="child flex-grow-1 flex-basis-0">flex-grow: 1</div>
+				    <div class="child flex-grow-1 flex-basis-0">flex-grow: 1, but very loooooooong</div>
+				    <div class="child flex-grow-1 flex-basis-0">flex-grow: 1</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+</body>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="{% static '/js/jquery-3.2.1.js' %}"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="{% static '/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"> </script>
+<!-- D3.js JavaScript 文件 --><br>
+<script src="{% static '/d3/d3.js' %}"> </script>
+<script type="text/javascript">
+    /*
+     * 需要注意的是，我们如果直接这么做，传递到 js 的时候，网页的内容会被转义，得到的格式会报错。
+     * 访问时会得到 Uncaught SyntaxError: Unexpected token ILLEGAL
+     */
+    // var dataset = {{ byd_close_list | safe }};
+</script>
+</body>
+</html>
