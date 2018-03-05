@@ -158,7 +158,62 @@
 				    <div class="child flex-grow-1 flex-basis-0">flex-grow: 1, but very loooooooong</div>
 				    <div class="child flex-grow-1 flex-basis-0">flex-grow: 1</div>
 				</div>
+				<p>flex-basis默认值为auto，当子元素只声明flex-grow时，它会使用flex-basis: auto。 
+当然上面我们也提到，可以使用百分比或rem等长度单位明确告诉父容器，在剩余空间分配之前，我默认就应该占用多少比例，下面我们为其中一个子元素添加指定的flex-basis：</p>
+				<h4>为子元素设置flex-basis指定最基本的空间</h4>
+				<div class="parent flex">
+				    <div class="child flex-basis-50-percent">flex-basis: 50%</div>
+				    <div class="child flex-grow-1">flex-grow: 1</div>
+				    <div class="child flex-grow-1">flex-grow: 1</div>
+				</div>
 			</li>
+			<li>
+				<h3>flex</h3>
+				<p>flex属性是flex-grow, flex-shrink, flex-basis的简写方式，其中flex-shrink和flex-basis是可选的。默认情况下，flex的值是0 1 auto。 在Flexbox中，对齐也是一个非常重要的概念，它也涉及到很多属性，下面我们来介绍一下父容器的几个关于对齐的属性：</p>
+            </li>
+			<li>
+				<h3>justify-content</h3>
+				<p> justify-content属性定义了父容器沿主轴方向的对其方式。需要注意这里的主轴方向，如果flex-direction为row，则主轴方向就是水平方向从左到右，如果为column，则主轴方向就是竖直方向从上到下，如果为row-reverse或column-reverse，大家也可以推断。 当Flexbox中的子元素都是大小固定的，或者其中可伸缩的子元素已经达到最大尺寸时，justify-content可以对剩余的可用空间进行分配，在超出行内的子元素对齐方式上，它也会加以控制。 justify-content主要有以下几个值：</p>
+                    <ul>
+                        <li>flex-start: 从主轴起始位置开始，紧凑型排列</li>
+                        <li>flex-end: 从主轴末端位置开始，紧凑型排列</li>
+                        <li>center: 居中排列在主轴线上</li>
+                        <li>space-between: 子元素均匀分布在主轴线上，第一个子元素从起始位置开始，最后一个子元素从末端开始</li>
+                        <li>space-around: 子元素均匀分布在主轴线上，并且每个子元素都会均匀的被周围的空间包裹着</li>
+                    </ul>
+                    我们现在为父容器添加不同的属性值，看看它们是怎么影响Flexbox内的子元素的：
+                </p>
+				<h4>父容器设置了justify-content: flex-start</h4>
+				<div class="parent flex justify-content-flex-start">
+				    <div class="child width-150">width: 150px</div>
+				    <div class="child width-100">width: 100px</div>
+				    <div class="child width-200">width: 200px</div>
+				</div>
+				<h4>父容器设置了justify-content: flex-end</h4>
+				<div class="parent flex justify-content-flex-end">
+				    <div class="child width-150">width: 150px</div>
+				    <div class="child width-100">width: 100px</div>
+				    <div class="child width-200">width: 200px</div>
+				</div>
+				<h4>父容器设置了justify-content: flex-center</h4>
+				<div class="parent flex justify-content-center">
+				    <div class="child width-150">width: 150px</div>
+				    <div class="child width-100">width: 100px</div>
+				    <div class="child width-200">width: 200px</div>
+				</div>
+				<h4>父容器设置了justify-content: space-between</h4>
+				<div class="parent flex justify-content-space-between">
+				    <div class="child width-150">width: 150px</div>
+				    <div class="child width-100">width: 100px</div>
+				    <div class="child width-200">width: 200px</div>
+				</div>
+				<h4>父容器设置了justify-content: space-around</h4>
+				<div class="parent flex justify-content-space-around">
+				    <div class="child width-150">width: 150px</div>
+				    <div class="child width-100">width: 100px</div>
+				    <div class="child width-200">width: 200px</div>
+				</div>
+            </li>
 		</ul>
 	</div>
 </body>

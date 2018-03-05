@@ -82,3 +82,41 @@
 .child.flex-basis-0 {
 	flex-basis: 0;
 }
+
+.child.flex-basis-50-percent {
+    flex-basis: 50%;
+}
+
+
+/* flex justify-content */
+.parent.justify-content-flex-start {
+    justify-content: flex-start;
+}
+
+.parent.justify-content-flex-end {
+    justify-content: flex-end;
+}
+
+.parent.justify-content-center {
+    justify-content: center;
+}
+
+.parent.justify-content-space-between {
+    justify-content: space-between;
+}
+
+.parent.justify-content-space-around {
+    justify-content: space-around;
+}
+
+.child.width-100 {
+    width: 100px;
+}
+
+.child.width-150 {
+    width: 150px;
+}
+
+.child.width-200 {
+    width: 200px;
+}
