@@ -214,6 +214,137 @@
 				    <div class="child width-200">width: 200px</div>
 				</div>
             </li>
+			<li>
+				<h3>align-items</h3>
+				<p>align-items是在主轴的垂直方向进行对齐。所以如果我们使用flex-direction: row时，align-items会在竖直方向对元素加以控制，让其以某种方式对齐。 align-items和justify-content相似，都有flex-start，flex-end，center这几种对齐方式，不同的是，align-items有自己的stretch和baseline。 stretch表示父容器会尽可能在主轴的垂直方向上拉伸子元素，来填满容器垂直空间，但也要注意，它也会考虑子元素本身设定的宽度或高度等因素。baseline表示子元素会以它们的基线为准对齐。 </p>
+				<h4>父容器设置了align-items: flex-start</h4>
+				<div class="parent flex align-items-flex-start height-150">
+					<div class='child height-30'>height: 30px</div>
+					<div class='child'>child</div>
+					<div class='child height-50'>height: 50px</div>
+				</div>
+				<h4>父容器设置了align-items: flex-end</h4>
+				<div class="parent flex align-items-flex-end height-150">
+					<div class='child height-30'>height: 30px</div>
+					<div class='child'>child</div>
+					<div class='child height-50'>height: 50px</div>
+				</div>
+				<h4>父容器设置了align-items: center</h4>
+				<div class="parent flex align-items-center height-150">
+					<div class='child height-30'>height: 30px</div>
+					<div class='child'>child</div>
+					<div class='child height-50'>height: 50px</div>
+				</div>
+				<h4>父容器设置了align-items: stretch</h4>
+				<div class="parent flex align-items-stretch height-150">
+					<div class='child height-30'>height: 30px</div>
+					<div class='child'>child</div>
+					<div class='child height-50'>height: 50px</div>
+				</div>
+				<h4>父容器设置了align-items: baseline</h4>
+				<div class="parent flex align-items-baseline height-150">
+					<div class='child height-30'>height: 30px</div>
+					<div class='child'>child</div>
+					<div class='child height-50'>height: 50px</div>
+				</div>
+			</li>
+			<li>
+				<h3>align-content</h3>
+				<p>align-content主要用来对父容器内多个行在垂直方向上进行排列。该属性只针对父容器内多行的情况，如果父容器内只有一行子元素，则此属性无效。align-content也有几个不同的值：flex-start，flex-end，center，stretch，space-between，space-around。</p>
+				<h4>父容器设置了align-content: flex-start</h4>
+				<div class="parent flex flex-wrap align-content-flex-start height-200 small">
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+				</div>
+				<h4>父容器设置了align-content: flex-end</h4>
+				<div class="parent flex flex-wrap align-content-flex-end height-200 small">
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+				</div>
+				<h4>父容器设置了align-content: center</h4>
+				<div class="parent flex flex-wrap align-content-center height-200 small">
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+				</div>
+				<h4>父容器设置了align-content: stretch</h4>
+				<div class="parent flex flex-wrap align-content-stretch height-200 small">
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+				</div>
+				<h4>父容器设置了align-content: space-between</h4>
+				<div class="parent flex flex-wrap align-content-space-between height-200 small">
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+				</div>
+				<h4>父容器设置了align-content: space-around</h4>
+				<div class="parent flex flex-wrap align-content-space-around height-200 small">
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+				</div>
+				<h4>align-content属性对单行无效</h4>
+				<div class="parent flex flex-wrap align-content-flex-start height-200 small">
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+					<div class='child'>child</div>
+				</div>
+			</li>
+			<li>
+				<h3>align-self</h3>
+				<p>lign-self用来为子元素自身声明对齐方式，如果子元素声明了此属性，它会覆盖父容器施加在子元素上的对齐规则。我们可以为align-self属性指定下面这几个值：flex-start，flex-end，center，stretch和baseline，这与父容器的align-items一致。align-self默认值为auto。 </p>
+				<h4>父容器设置了align-items: flex-start，但第一个子元素设置了align-self: flex-end</h4>
+				<div class="parent flex align-items-flex-start height-150">
+					<div class='child height-30 align-self-flex-end'>height: 30px</div>
+					<div class='child'>child</div>
+					<div class='child height-50'>height: 50px</div>
+                    <p>从图中可以看到，子元素并不再按照父元素的对齐方式放置自己了，它覆盖了原有的规则</p>
+                    <p>需要注意的是，在使用flex布局时，float，clear，和vertical-align属性都会对容器内的子元素失去作用。</p>
+				</div>
+            </li>
 		</ul>
 	</div>
 </body>
