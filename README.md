@@ -11,6 +11,8 @@
 #blockChain             
 #publisher_and_observer 
 #pythonServer           
+#Stock analysis
+#python Machine Learning
 #rf_regressor.pkl
 #fin101                 
 #pythonCrawler          
