@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Students</title>
+</head>
+<body>
+	<h1>Add Students</h1>
+	<form method='POST' action="/add_students.html">
+		{% csrf_token %}
+		<p><input type="text" name="username" placeholder="Username"></p>
+		<p><input type="text" name="age" placeholder="Age"></p>
+		<p>
+			<input type="radio" name="gender" value="1">Male
+			<input type="radio" name="gender" value="0">Female
+		</p>
+		<p>
+			<select name="cs">
+				{% for row in cs_list %}
+				<option value="{{ row.id }}">{{ row.title }}</option>
+				{% endfor %}
+			</select>
+		</p>
+		<p><input type="submit" name="SUBMIT"></p>
+	</form>
+</body>
+</html>

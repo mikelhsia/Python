@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<style type='text/css'>
+		tr td {
+			border:1px solid #000;
+			text-align: center;
+		}
+	</style>
+    <meta charset="UTF-8">
+    <title>Student</title>
+</head>
+<body>
+	<div>
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Age</th>
+					<th>Gender</th>
+					<th>Class</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in stu_list %}
+				<tr nid="{{ row.id }}">
+					<td>{{ row.id }}</td>
+					<td>{{ row.username }}</td>
+					<td>{{ row.age }}</td>
+					<td>{{ row.gender }}</td>
+					<td>{{ row.cs.title }}</td>
+					<td>
+						<a href="/del_students.html?nid={{ row.id }}">DEL</a> |
+						<a onclick="removeStudent(this);" href="#">Ajax DEL</a> |
+						<a href="/edit_students.html?nid={{ row.id }}">EDIT</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div><a href="/add_students.html">ADD</a></div>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript">
+		function removeStudent(ths) {
+			var nid = $(ths).parent().parent().attr('nid');
+			$.ajax({
+				url:'/ajax4.html',
+				type:'GET',
+				data:{nid:nid},
+				success:function (arg) {
+					if (arg = 'Succeeded!') {
+						window.location.reload();
+						// alert(arg);
+					} else {
+						alert(arg);
+					}
+				}
+			})
+		}
+	</script>
+</body>
+</html>

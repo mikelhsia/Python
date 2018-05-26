@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Set Teachers</title>
+</head>
+<body>
+	<form action="/set_teachers.html" method="post">
+		<input type="hidden" name="nid" value="{{ nid }}">
+		{% csrf_token %}
+		<select multiple size="10" name="teacher_id">
+			{% for item in all_teacher_list %}
+				{% if item in cls_teacher_list %}
+				<option value="{{ item.id }}" selected="selected">{{ item.name }}</option>
+				{% else %}
+				<option value="{{ item.id }}">{{ item.name }}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+		<input type="submit" name="SUBMIT">
+	</form>
+</body>
+</html>

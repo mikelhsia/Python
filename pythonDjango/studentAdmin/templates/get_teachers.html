@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<style type="text/css">
+		tr td {
+			border: 1px solid #000;
+			text-align: center;
+		}
+	</style>
+    <meta charset="UTF-8">
+    <title>Teachers List</title>
+</head>
+<body>
+	<div>
+		<table width="300">
+			<thead>
+				<tr>
+					<th>ID</th> <th>Name</th> <th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in tch_list %}
+				<tr>
+					<td>{{ row.id }}</td>
+					<td>{{ row.name }}</td>
+					<td>
+						<a href="/del_teachers.html?nid={{ row.id }}">DEL</a> | 
+						<a href="/edit_teachers.html?nid={{ row.id }}">EDIT</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div>
+		<a href="/add_teachers.html">ADD</a>
+	</div>
+</body>
+</html>

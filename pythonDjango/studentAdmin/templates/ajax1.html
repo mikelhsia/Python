@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajax1</title>
+    <style type="text/css">
+        .btn {
+            display: inline-block;
+            padding: 5px 15px;
+            background-color: coral;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+	<input type="text" id="username" placeholder="Username">
+	<input type="password" id="password" placeholder="Password">
+	<div class="btn" onclick="submitForm();">SUBMIT</div>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript">
+		function submitForm() {
+			var u = $('#username').val();
+			var p = $('#password').val();
+
+			$.ajax({
+				url:'ajax2.html',
+				type:'GET',
+				data:{username:u, password:p},
+				success:function (arg) {
+					// Return
+					console.log(arg)
+				}
+			})
+		}
+	</script>
+</body>
+</html>
