@@ -8,7 +8,7 @@ class MemoryCollection:
         self.layout = layout
         self.layout_id_list = []
         self.caption = caption
-        self.memory = Memory(obj)
+        # self.memory = Memory(obj)
 
     def store(self):
         pass
