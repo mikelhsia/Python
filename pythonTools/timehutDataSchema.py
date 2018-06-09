@@ -3,8 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 
 __base = declarative_base()
 
-
-
 class Collection(__base):
 	__tablename__ = 'peekaboo_collection'
 
@@ -14,7 +12,7 @@ class Collection(__base):
 	months = Column(Integer)
 	days = Column(Integer)
 	memory_type = Column(Enum('collection', 'text'))
-	memory_id_list = Column(ARRAY)
+	memory_id_list = Column(ARRAY(Integer))
 	caption = Column(Text)
 
 class Memory(__base):
@@ -25,3 +23,5 @@ class Memory(__base):
 	content_type = Column(Enum('picture', 'text', 'video'))
 	content = Column(Text)
 	src_url = Column(String(1024))
+
+print("Module {} is loaded...".format(__file__))
