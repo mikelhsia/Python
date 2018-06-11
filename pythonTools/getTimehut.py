@@ -159,20 +159,28 @@ def createDB(dbName, base, loggingFlag):
 	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
-	engine.execute("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARSET utf8 COLLATE utf8_general_ci;".format(dbName))
-	logging.info("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARSET utf8 COLLATE utf8_general_ci;".format(dbName))
+	engine.execute("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci".format(dbName))
+	logging.info("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARSET utf8mb4 COLLATE utf8_general_ci;".format(dbName))
 
 	engine.execute("USE {}".format(dbName))
 	logging.info("USE {}".format(dbName))
 
+
 	# TODO: It's a stupid way to drop the table everytime. Needs improvement
 	engine.execute("DROP TABLE {}".format(timehutDataSchema.Collection.__tablename__))
-	logging.info("DROP TABLE {}".format(dbName))
+	logging.info("DROP TABLE {}".format(timehutDataSchema.Collection.__tablename__))
 
 	engine.execute("DROP TABLE {}".format(timehutDataSchema.Memory.__tablename__))
-	logging.info("DROP TABLE {}".format(dbName))
+	logging.info("DROP TABLE {}".format(timehutDataSchema.Memory.__tablename__))
 
 	base.metadata.create_all(engine)
+
+	engine.execute("ALTER DATABASE {} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;".format(dbName))
+	# engine.execute("ALTER TABLE {} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci".format(timehutDataSchema.Collection.__tablename__))
+	# engine.execute("ALTER TABLE {} MODIFY {} VARCHAR(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;".format(timehutDataSchema.Collection.__tablename__, 'caption'))
+	# engine.execute("ALTER TABLE {} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci".format(timehutDataSchema.Memory.__tablename__))
+	# engine.execute("ALTER TABLE {} MODIFY {} VARCHAR(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;".format(timehutDataSchema.Memory.__tablename__, 'content'))
+
 
 	engine.dispose()
 
@@ -182,7 +190,7 @@ def createEngine(dbName, base, loggingFlag):
 	createDB(dbName, base, loggingFlag)
 
 	# engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306', echo=loggingFlag)
-	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306/{}?charset=utf8'.format(dbName),
+	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306/{}?charset=utf8mb4'.format(dbName),
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine
