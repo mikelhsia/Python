@@ -195,7 +195,7 @@ def parseResponseBody(response_body):
 
 def createDB(dbName, base, loggingFlag):
 	# engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306', echo=loggingFlag)
-	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
+	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	engine.execute("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci".format(dbName))
@@ -228,7 +228,7 @@ def createEngine(dbName, base, loggingFlag):
 	createDB(dbName, base, loggingFlag)
 
 	# engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306', echo=loggingFlag)
-	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306/{}?charset=utf8mb4'.format(dbName),
+	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306/{}?charset=utf8mb4'.format(dbName),
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine
