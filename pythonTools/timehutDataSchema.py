@@ -6,11 +6,13 @@ class CollectionEnum(enum.Enum):
 	collection = 1
 	text = 2
 	picture = 3
+	video = 4
 
 class MemoryEnum(enum.Enum):
-	picture = 1
-	text = 2
-	video = 3
+	text = 1
+	rich_text = 2
+	picture = 3
+	video = 4
 
 base = declarative_base()
 

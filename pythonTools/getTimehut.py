@@ -62,7 +62,7 @@ def parseResponseBody(response_body):
 			data_list_detail = data_list[i]['layout_detail']
 
 			for j in range(0, len(data_list_detail)):
-				src_url =''
+				src_url = ''
 
 				if data_list_detail[j]['type'] == 'picture':
 					src_url = data_list_detail[j]['picture']
@@ -102,7 +102,7 @@ def parseResponseBody(response_body):
 			collection_list.append(c_rec)
 			print(c_rec)
 
-		elif data_list[i]['layout'] == 'picture':
+		elif data_list[i]['layout'] == 'picture' or data_list[i]['layout'] == 'video':
 			data_list_detail = data_list[i]['layout_detail']
 
 			src_url =''
@@ -124,7 +124,7 @@ def parseResponseBody(response_body):
 			# Add to return memory obj list
 			memory_list.append(m_rec)
 
-			# Add to memorry collection memory list
+			# Add to memory collection memory list
 			memory_id_list.append(data_list_detail[0]['id_str'])
 
 
@@ -147,9 +147,48 @@ def parseResponseBody(response_body):
 			print(c_rec)
 		elif data_list[i]['layout'] == 'text':
 			data_list_detail = data_list[i]['layout_detail']
-			pass
-		else:
+			if data_list_detail[0]['type'] == 'rich_text' or data_list_detail[0]['type'] == 'text':
+				m_rec = timehutDataSchema.Memory(mid=data_list_detail[0]['id_str'],
+												 created_at=timestampToDatetimeString(data_list_detail[0]['taken_at_gmt']),
+												 content_type=timehutDataSchema.MemoryEnum[data_list_detail[0]['type']].value,
+												 content=data_list_detail[0]['content'],
+												 src_url=None)
+
+				# Add to non-repeatable memory set
+				memorySet.add(m_rec.id)
+
+				# Add to return memory obj list
+				memory_list.append(m_rec)
+
+				# Add to memory collection memory list
+				memory_id_list.append(data_list_detail[0]['id_str'])
+
+
+				c_rec = timehutDataSchema.Collection(id=data_list[i]['id_str'],
+													 baby_id=data_list[i]['baby_id'],
+													 created_at=timestampToDatetimeString(data_list[i]['taken_at_gmt']),
+													 months=data_list[i]['months'],
+													 days=data_list[i]['days'],
+													 memory_type=timehutDataSchema.CollectionEnum[data_list[i]['layout']].value,
+													 memory_id_list=','.join(memory_id_list),
+													 caption=None)
+
+				# Add to non-repeatable collection set
+				memoryCollectionSet.add(c_rec.id)
+
+				# Add to return collection obj list
+				collection_list.append(c_rec)
+
+				print(m_rec)
+				print(c_rec)
+			else:
+				print(data_list_detail[0]['type'])
+				raise TypeError
+		elif data_list[i]['layout'] == 'milestone':
 			continue
+		else:
+			print(data_list[i])
+			raise TypeError
 
 	return collection_list, memory_list
 
@@ -176,11 +215,10 @@ def createDB(dbName, base, loggingFlag):
 	base.metadata.create_all(engine)
 
 	engine.execute("ALTER DATABASE {} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;".format(dbName))
-	# engine.execute("ALTER TABLE {} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci".format(timehutDataSchema.Collection.__tablename__))
-	# engine.execute("ALTER TABLE {} MODIFY {} VARCHAR(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;".format(timehutDataSchema.Collection.__tablename__, 'caption'))
-	# engine.execute("ALTER TABLE {} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci".format(timehutDataSchema.Memory.__tablename__))
-	# engine.execute("ALTER TABLE {} MODIFY {} VARCHAR(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;".format(timehutDataSchema.Memory.__tablename__, 'content'))
-
+	engine.execute("ALTER TABLE {} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci".format(timehutDataSchema.Collection.__tablename__))
+	engine.execute("ALTER TABLE {} MODIFY {} TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;".format(timehutDataSchema.Collection.__tablename__, 'caption'))
+	engine.execute("ALTER TABLE {} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci".format(timehutDataSchema.Memory.__tablename__))
+	engine.execute("ALTER TABLE {} MODIFY {} TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;".format(timehutDataSchema.Memory.__tablename__, 'content'))
 
 	engine.dispose()
 
@@ -198,7 +236,7 @@ def createEngine(dbName, base, loggingFlag):
 
 # main function()
 def main():
-	__before_day = 100
+	__before_day = 900
 	__baby_id = 537413380
 	__dbName = "peekaboo"
 	__logging = False
@@ -212,8 +250,6 @@ def main():
 		collection_list, memory_list = parseResponseBody(__response_body)
 		__session.add_all(collection_list)
 		__session.add_all(memory_list)
-		# TODO sqlalchemy.exc.InternalError: (pymysql.err.InternalError) (1366, "Incorrect string value:
-		# '\\xF0\\x9F\\xA4\\x98\\xF0\\x9F...' for column 'caption' at row 4")
 		__session.commit()
 		__session.close()
 
