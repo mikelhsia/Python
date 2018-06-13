@@ -8,7 +8,7 @@ class CollectionEnum(enum.Enum):
 	picture = 3
 	video = 4
 
-class MemoryEnum(enum.Enum):
+class MomentEnum(enum.Enum):
 	text = 1
 	rich_text = 2
 	picture = 3
@@ -24,8 +24,7 @@ class Collection(base):
 	created_at = Column(DateTime)
 	months = Column(Integer)
 	days = Column(Integer)
-	memory_type = Column(SmallInteger)
-	memory_id_list = Column(Text)
+	content_type = Column(SmallInteger)
 	caption = Column(Text)
 
 	def __repr__(self):
@@ -35,8 +34,7 @@ class Collection(base):
 		       'created_at: {}\n' \
 		       'months: {} \n' \
 		       'days: {} \n' \
-		       'memory_type: {}\n' \
-		       'memory_id_list: {}\n' \
+		       'content_type: {}\n' \
 		       'caption: {} \n' \
 		       '--------------------'\
 			.format(self.id,
@@ -44,35 +42,43 @@ class Collection(base):
 		         self.created_at,
 		         self.months,
 		         self.days,
-		         self.memory_type,
-		         self.memory_id_list,
+		         self.content_type,
 		         self.caption)
 
 
 
-class Memory(base):
-	__tablename__ = 'peekaboo_memory'
+class Moment(base):
+	__tablename__ = 'peekaboo_Moment'
 
-	id = Column(Integer, primary_key=True, autoincrement=True)
-	mid = Column(String(32), unique=True)
+	id = Column(String(32), primary_key=True)
+	event_id = Column(String(32))
+	baby_id = Column(String(32))
 	created_at = Column(DateTime)
 	content_type = Column(SmallInteger)
 	content = Column(Text)
-	src_url = Column(String(1024))
+	src_url = Column(String(512))
+	months = Column(Integer)
+	days = Column(Integer)
 
 	def __repr__(self):
-		return '------ Memory ------\n' \
+		return '------ Moment ------\n' \
 		       'id: {}\n' \
-		       'mid: {}\n' \
+		       'event_id: {}\n' \
+		       'baby_id: {}\n' \
 		       'created_at: {}\n' \
 		       'content_type: {}\n' \
 		       'content: {}\n' \
 		       'src_url: {}\n' \
+		       'months: {}\n' \
+		       'days: {}\n' \
 			.format(self.id,
-		            self.mid,
+		            self.event_id,
+                    self.baby_id,
 		            self.created_at,
 		            self.content_type,
 		            self.content,
-		            self.src_url)
+		            self.src_url,
+		            self.months,
+		            self.days)
 
 print("Module {} is loaded...".format(__file__))
