@@ -100,7 +100,7 @@ def parseCollectionBody(response_body):
 
 			# Add to return collection obj list
 			collection_list.append(c_rec)
-			# print(c_rec)
+			print(c_rec)
 
 		elif data['layout'] == 'milestone':
 			continue
@@ -151,11 +151,11 @@ def createDB(dbName, base, loggingFlag):
 
 
 	# TODO: It's a stupid way to drop the table everytime. Needs improvement
-	# engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-	# logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}"))
-	#
-	# engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
-	# logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
+	engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
+	logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
+	
+	engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
+	logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
 
 	base.metadata.create_all(engine)
 
@@ -185,25 +185,22 @@ def main():
 	__dbName = "peekaboo"
 	__logging = False
 	__engine = createEngine(__dbName, timehutDataSchema.base, __logging)
-	# DBSession = sessionmaker(bind=__engine)
-	# __session = DBSession()
+	DBSession = sessionmaker(bind=__engine)
+	__session = DBSession()
 
 	while (True):
 		__next_index, __response_body = getCollectionRequest(__baby_id, __before_day)
-
 		collection_list = parseCollectionBody(__response_body)
-		# __session.add_all(collection_list)
 
-		__response_body = getMomentRequest('589886134185628442')
-		moment_list = parseMomentBody(__response_body)
+		__session.add_all(collection_list)
+
 		for collection in collection_list:
-			# __response_body = getMomentRequest(collection.id)
-			# moment_list = parseMomentBody(__response_body)
-			# __session.add_all(moment_list)
-			pass
+			__response_body = getMomentRequest(collection.id)
+			moment_list = parseMomentBody(__response_body)
+			__session.add_all(moment_list)
 
-		# __session.commit()
-		# __session.close()
+		__session.commit()
+		__session.close()
 
 		if (__next_index is None):
 			break
