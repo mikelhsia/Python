@@ -48,13 +48,13 @@ def getCollectionRequest(baby_id, before_day):
 	}
 
 	try:
-		r = requests.get(url='http://peekaboomoments.com/events.json?baby_id={}&before={}&v=2&width=700&include_rt=true'.format(baby_id, before_day), headers=headers, timeout=30)
+		r = requests.get(url=f'http://peekaboomoments.com/events.json?baby_id={baby_id}&before={before_day}&v=2&width=700&include_rt=true', headers=headers, timeout=30)
 		r.raise_for_status()
 	except requests.RequestException as e:
 		logging.error(e)
 	else:
 		response_body = json.loads(r.text)
-		logging.info("Request fired = {}".format(response_body['next']))
+		logging.info(f"Request fired = {response_body['next']}")
 		return response_body['next'], response_body
 
 def getMomentRequest(collection_id):
@@ -70,7 +70,7 @@ def getMomentRequest(collection_id):
 	}
 
 	try:
-		r = requests.get(url='http://peekaboomoments.com/events/{}'.format(collection_id), headers=headers, timeout=30)
+		r = requests.get(url=f'http://peekaboomoments.com/events/{collection_id}', headers=headers, timeout=30)
 		r.raise_for_status()
 	except requests.RequestException as e:
 		logging.error(e)
@@ -140,31 +140,30 @@ def parseMomentBody(response_body):
 	return moment_list
 
 def createDB(dbName, base, loggingFlag):
-	# engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306', echo=loggingFlag)
 	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
-	engine.execute("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci".format(dbName))
-	logging.info("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARSET utf8mb4 COLLATE utf8_general_ci;".format(dbName))
+	engine.execute(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;")
+	logging.info(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8_general_ci;")
 
-	engine.execute("USE {}".format(dbName))
-	logging.info("USE {}".format(dbName))
+	engine.execute(f"USE {dbName}")
+	logging.info(f"USE {dbName}")
 
 
 	# TODO: It's a stupid way to drop the table everytime. Needs improvement
-	# engine.execute("DROP TABLE {}".format(timehutDataSchema.Collection.__tablename__))
-	# logging.info("DROP TABLE {}".format(timehutDataSchema.Collection.__tablename__))
+	# engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
+	# logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}"))
 	#
-	# engine.execute("DROP TABLE {}".format(timehutDataSchema.Moment.__tablename__))
-	# logging.info("DROP TABLE {}".format(timehutDataSchema.Moment.__tablename__))
+	# engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
+	# logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
 
 	base.metadata.create_all(engine)
 
-	engine.execute("ALTER DATABASE {} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;".format(dbName))
-	engine.execute("ALTER TABLE {} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci".format(timehutDataSchema.Collection.__tablename__))
-	engine.execute("ALTER TABLE {} MODIFY {} TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;".format(timehutDataSchema.Collection.__tablename__, 'caption'))
-	engine.execute("ALTER TABLE {} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci".format(timehutDataSchema.Moment.__tablename__))
-	engine.execute("ALTER TABLE {} MODIFY {} TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;".format(timehutDataSchema.Moment.__tablename__, 'content'))
+	engine.execute(f"ALTER DATABASE {dbName} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;")
+	engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+	engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} MODIFY caption TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
+	engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+	engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} MODIFY content TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
 
 	engine.dispose()
 
@@ -173,8 +172,7 @@ def createEngine(dbName, base, loggingFlag):
 
 	createDB(dbName, base, loggingFlag)
 
-	# engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306', echo=loggingFlag)
-	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306/{}?charset=utf8mb4'.format(dbName),
+	engine = create_engine(f'mysql+pymysql://root:hsia0521@127.0.0.1:3306/{dbName}?charset=utf8mb4',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine

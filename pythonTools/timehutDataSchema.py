@@ -30,22 +30,15 @@ class Collection(base):
 	caption = Column(Text)
 
 	def __repr__(self):
-		return '---- Collection ----\n' \
-		       'id: {}\n' \
-		       'baby_id: {}\n' \
-		       'created_at: {}\n' \
-		       'months: {} \n' \
-		       'days: {} \n' \
-		       'content_type: {}\n' \
-		       'caption: {} \n' \
-		       '--------------------'\
-			.format(self.id,
-		         self.baby_id,
-		         self.created_at,
-		         self.months,
-		         self.days,
-		         self.content_type,
-		         self.caption)
+		return (f'---- Collection ----\n' 
+		       f'id: {self.id}\n' 
+		       f'baby_id: {self.baby_id}\n' 
+		       f'created_at: {self.created_at}\n' 
+		       f'months: {self.months} \n' 
+		       f'days: {self.days} \n' 
+		       f'content_type: {self.content_type}\n' 
+		       f'caption: {caption} \n' 
+		       f'--------------------')
 
 
 
@@ -53,7 +46,7 @@ class Moment(base):
 	__tablename__ = 'peekaboo_moment'
 
 	id = Column(String(32), primary_key=True)
-	event_id = Column(String(32), ForeignKey('{}.id'.format(Collection.__tablename__))) 
+	event_id = Column(String(32), ForeignKey(f'{Collection.__tablename__}.id'))
 	collection = relationship("Collection", backref=__tablename__)
 	baby_id = Column(String(32))
 	created_at = Column(DateTime)
@@ -64,24 +57,16 @@ class Moment(base):
 	days = Column(Integer)
 
 	def __repr__(self):
-		return '------ Moment ------\n' \
-		       'id: {}\n' \
-		       'event_id: {}\n' \
-		       'baby_id: {}\n' \
-		       'created_at: {}\n' \
-		       'content_type: {}\n' \
-		       'content: {}\n' \
-		       'src_url: {}\n' \
-		       'months: {}\n' \
-		       'days: {}\n' \
-			.format(self.id,
-		            self.event_id,
-                    self.baby_id,
-		            self.created_at,
-		            self.content_type,
-		            self.content,
-		            self.src_url,
-		            self.months,
-		            self.days)
+		return (f'------ Moment ------\n'
+		       f'id: {self.id}\n'
+		       f'event_id: {self.event_id}\n'
+		       f'baby_id: {self.baby_id}\n'
+		       f'created_at: {self.created_at}\n'
+		       f'content_type: {self.content_type}\n'
+		       f'content: {self.content}\n'
+		       f'src_url: {self.src_url}\n'
+		       f'months: {self.months}\n'
+		       f'days: {self.days}\n'
+		       f'--------------------')
 
-print("Module {} is loaded...".format(__file__))
+print(f"Module {__file__} is loaded...")
