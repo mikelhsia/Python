@@ -1,5 +1,7 @@
 from sqlalchemy import Column, String, Integer, DateTime, Text, SmallInteger
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship, backref
 
 import enum
 class CollectionEnum(enum.Enum):
@@ -48,10 +50,11 @@ class Collection(base):
 
 
 class Moment(base):
-	__tablename__ = 'peekaboo_Moment'
+	__tablename__ = 'peekaboo_moment'
 
 	id = Column(String(32), primary_key=True)
-	event_id = Column(String(32))
+	event_id = Column(String(32), ForeignKey('{}.id'.format(Collection.__tablename__))) 
+	collection = relationship("Collection", backref=__tablename__)
 	baby_id = Column(String(32))
 	created_at = Column(DateTime)
 	content_type = Column(SmallInteger)
