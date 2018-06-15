@@ -151,12 +151,12 @@ def createDB(dbName, base, loggingFlag):
 
 
 	# TODO: It's a stupid way to drop the table everytime. Needs improvement
-	engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-	logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-	
 	engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
 	logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
 
+	engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
+	logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
+	
 	base.metadata.create_all(engine)
 
 	engine.execute(f"ALTER DATABASE {dbName} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;")
@@ -180,7 +180,7 @@ def createEngine(dbName, base, loggingFlag):
 
 # main function()
 def main():
-	__before_day = -200
+	__before_day = 400
 	__baby_id = 537413380
 	__dbName = "peekaboo"
 	__logging = False
@@ -200,12 +200,13 @@ def main():
 			__session.add_all(moment_list)
 
 		__session.commit()
-		__session.close()
 
 		if (__next_index is None):
 			break
 
 		__before_day = __next_index + 1
+		
+	__session.close()
 
 
 # check

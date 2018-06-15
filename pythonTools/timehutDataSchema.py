@@ -37,7 +37,7 @@ class Collection(base):
 		       f'months: {self.months} \n' 
 		       f'days: {self.days} \n' 
 		       f'content_type: {self.content_type}\n' 
-		       f'caption: {caption} \n' 
+		       f'caption: {self.caption} \n' 
 		       f'--------------------')
 
 
