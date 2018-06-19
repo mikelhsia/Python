@@ -35,6 +35,22 @@ def timestampToDatetimeString(ts):
 
 	return datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M%:%S")
 
+
+def DatetimeStringToTimeStamp(string):
+	"""
+	Convert datetime format into timestamp 
+	:param ts: string
+	:return: timestamp
+	"""
+	try: 
+		dt = datetime.strptime(string, "%Y-%m-%dT%H:%M:%S.%fZ")
+	except:
+		print(e)
+		raise e
+
+	return dt.timestamp()
+
+
 def getCollectionRequest(baby_id, before_day):
 	"""
 	Get collection information through GET request by before day, getting limited collection (around 20)
@@ -92,7 +108,8 @@ def parseCollectionBody(response_body):
 
 			c_rec = timehutDataSchema.Collection(id=data['id_str'],
 			                                   baby_id=data['baby_id'],
-			                                   created_at=timestampToDatetimeString(data['taken_at_gmt']),
+			                                   created_at=data['taken_at_gmt'],
+			                                   updated_at=data['updated_at_in_ts'],
 			                                   months=data['months'],
 			                                   days=data['days'],
 			                                   content_type=timehutDataSchema.CollectionEnum[data['layout']].value,
@@ -126,7 +143,8 @@ def parseMomentBody(response_body):
 		m_rec = timehutDataSchema.Moment(id=data['id_str'],
 		                                 event_id=data['event_id_str'],
 		                                 baby_id=data['baby_id'],
-		                                 created_at=timestampToDatetimeString(data['taken_at_gmt']),
+		                                 created_at=data['taken_at_gmt'],
+		                                 updated_at=DatetimeStringToTimeStamp(data['updated_at']),
 		                                 content_type=timehutDataSchema.MomentEnum[data['type']].value,
 		                                 content=data['content'],
 		                                 src_url=src_url,
@@ -151,6 +169,7 @@ def createDB(dbName, base, loggingFlag):
 
 
 	# TODO: It's a stupid way to drop the table everytime. Needs improvement
+	# TODO: Make sure the second call won't drop the previous table and update the old ones
 	engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
 	logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
 
@@ -179,9 +198,24 @@ def createEngine(dbName, base, loggingFlag):
 
 
 # main function()
-def main():
-	__before_day = 400
-	__baby_id = 537413380
+def main(baby, days):
+	try:
+		days = int(days)
+	except Exception as e:
+		__before_day = -200
+		# __before_day = 3000
+		logging.error(e)
+		# raise ValueError
+
+	__before_day = days
+
+	if baby != '1':
+		# Mui Mui Baby ID
+		__baby_id = 537776076
+	else:
+		# On On Baby ID
+		__baby_id = 537413380
+
 	__dbName = "peekaboo"
 	__logging = False
 	__engine = createEngine(__dbName, timehutDataSchema.base, __logging)
@@ -211,4 +245,6 @@ def main():
 
 # check
 if __name__ == "__main__":
-	main()
+	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
+	days = input(f'What days you would like to start with: \n -200 (default) ~ XXXXX:\n')
+	main(baby, days)

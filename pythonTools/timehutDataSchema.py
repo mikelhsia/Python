@@ -23,7 +23,8 @@ class Collection(base):
 
 	id = Column(String(32), primary_key=True)
 	baby_id = Column(String(32))
-	created_at = Column(DateTime)
+	created_at = Column(Integer)
+	updated_at = Column(Integer)
 	months = Column(Integer)
 	days = Column(Integer)
 	content_type = Column(SmallInteger)
@@ -34,6 +35,7 @@ class Collection(base):
 		       f'id: {self.id}\n' 
 		       f'baby_id: {self.baby_id}\n' 
 		       f'created_at: {self.created_at}\n' 
+		       f'updated_at: {self.updated_at}\n'
 		       f'months: {self.months} \n' 
 		       f'days: {self.days} \n' 
 		       f'content_type: {self.content_type}\n' 
@@ -49,7 +51,8 @@ class Moment(base):
 	event_id = Column(String(32), ForeignKey(f'{Collection.__tablename__}.id'))
 	collection = relationship("Collection", backref=__tablename__)
 	baby_id = Column(String(32))
-	created_at = Column(DateTime)
+	created_at = Column(Integer)
+	updated_at = Column(Integer)
 	content_type = Column(SmallInteger)
 	content = Column(Text)
 	src_url = Column(String(512))
@@ -62,6 +65,7 @@ class Moment(base):
 		       f'event_id: {self.event_id}\n'
 		       f'baby_id: {self.baby_id}\n'
 		       f'created_at: {self.created_at}\n'
+		       f'updated_at: {self.updated_at}\n'
 		       f'content_type: {self.content_type}\n'
 		       f'content: {self.content}\n'
 		       f'src_url: {self.src_url}\n'
