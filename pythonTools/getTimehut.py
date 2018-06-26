@@ -154,7 +154,7 @@ def parseMomentBody(response_body):
 	return moment_list
 
 def createDB(dbName, base, loggingFlag):
-	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
+	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	engine.execute(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;")
@@ -168,12 +168,12 @@ def createDB(dbName, base, loggingFlag):
 	# TODO: Make sure the second call won't drop the previous table and update the old ones
 	# engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
 	# timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
-
+	#
 	# engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
 	# timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-	
+	#
 	# base.metadata.create_all(engine)
-
+	#
 	# engine.execute(f"ALTER DATABASE {dbName} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;")
 	# engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
 	# engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} MODIFY caption TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
@@ -187,7 +187,7 @@ def createEngine(dbName, base, loggingFlag):
 
 	createDB(dbName, base, loggingFlag)
 
-	engine = create_engine(f'mysql+pymysql://root:hsia0521@127.0.0.1:3306/{dbName}?charset=utf8mb4',
+	engine = create_engine(f'mysql+pymysql://root:michael0512@127.0.0.1:3306/{dbName}?charset=utf8mb4',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine
@@ -231,8 +231,8 @@ def updateDBCollection(data_list, existed_index_list, last_updated_time, session
 		else: 
 			timehutLog.logging.error(f'[{sys._getframe().f_code.co_name}] Wrong Collection Type')
 			return False
-	# else:
-	# 	return purged_data_list
+	else:
+		session.commit()
 
 def updateDBMoment(data_list, existed_index_list, last_updated_time, session):
 	"""
@@ -258,6 +258,8 @@ def updateDBMoment(data_list, existed_index_list, last_updated_time, session):
 		else: 
 			timehutLog.logging.error(f'[{sys._getframe().f_code.co_name}] Wrong Moment Type')
 			return False
+	else:
+		session.commit()
 
 # main function()
 def main(baby, days):
@@ -304,8 +306,6 @@ def main(baby, days):
 			__response_body = getMomentRequest(collection.id)
 			moment_list = parseMomentBody(__response_body)
 			updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
-
-		__session.commit()
 
 		if (__next_index is None):
 			break
