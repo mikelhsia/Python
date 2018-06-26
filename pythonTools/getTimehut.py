@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 import timehutDataSchema
-import timehutQueue
+import timehutManageLastUpdate
 import timehutLog
 
 # functions
@@ -260,7 +260,7 @@ def updateDBMoment(data_list, existed_index_list, last_updated_time, session):
 			return False
 
 # main function()
-def main(baby, days, last_updated_time):
+def main(baby, days):
 	try:
 		__before_day = int(days)
 	except Exception as e:
@@ -278,9 +278,11 @@ def main(baby, days, last_updated_time):
 
 
 	try:
-		last_updated_time = float(last_updated_time)
+		last_updated_time = float(timehutManageLastUpdate.readLastUpdateTimeStamp())
 	except Exception as e:
+		timehutLog.logging.error(f'Failed to fetch the last updated time\n')
 		last_updated_time = 0.0
+
 
 	__dbName = "peekaboo"
 	__logging = False
@@ -312,11 +314,11 @@ def main(baby, days, last_updated_time):
 		
 	__session.close()
 
+	timehutManageLastUpdate.writeLastUpdateTimeStamp(datetime.now().timestamp())
+
 
 # Basic interactive interface
 if __name__ == "__main__":
 	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
 	days = input(f'What days you would like to start with: \n -200 (default) ~ XXXXX:\n')
-	#TODO: Should be improved by using a file to log the lasttime update time
-	last_updated_time = input(f'When did you run this script last time? (YYYY-MM-DDTHH:MM:SS.XXXZ)\n')
-	main(baby, days, last_updated_time)
+	main(baby, days)
