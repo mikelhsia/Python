@@ -1,6 +1,6 @@
 import requests
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -149,7 +149,7 @@ def parseMomentBody(response_body):
 
 		# Add to return collection obj list
 		moment_list.append(m_rec)
-		# print(m_rec)
+		print(m_rec)
 
 	return moment_list
 
@@ -309,7 +309,8 @@ def main(baby, days):
 		
 	__session.close()
 
-	last_update_manager.writeLastUpdateTimeStamp(datetime.now().timestamp(), __baby_id)
+	# Found out that actually the time that timehut using is actually UTC-0, therefore minus 8 hours
+	last_update_manager.writeLastUpdateTimeStamp((datetime.now() + timedelta(hours=-8)).timestamp(), __baby_id)
 
 
 # Basic interactive interface
