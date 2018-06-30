@@ -154,7 +154,7 @@ def parseMomentBody(response_body):
 	return moment_list
 
 def createDB(dbName, base, loggingFlag):
-	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
+	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	engine.execute(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;")
@@ -187,7 +187,7 @@ def createEngine(dbName, base, loggingFlag):
 
 	createDB(dbName, base, loggingFlag)
 
-	engine = create_engine(f'mysql+pymysql://root:michael0512@127.0.0.1:3306/{dbName}?charset=utf8mb4',
+	engine = create_engine(f'mysql+pymysql://root:hsia0521@127.0.0.1:3306/{dbName}?charset=utf8mb4',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine
@@ -271,20 +271,15 @@ def main(baby, days):
 		timehutLog.logging.error(e)
 
 
-	if baby != '1':
-		# Mui Mui Baby ID
-		__baby_id = 537776076
-	else:
+	if baby == '1' or baby == '':
 		# On On Baby ID
 		__baby_id = 537413380
+	else:
+		# Mui Mui Baby ID
+		__baby_id = 537776076
 
-
-	try:
-		last_updated_time = float(timehutManageLastUpdate.readLastUpdateTimeStamp())
-	except Exception as e:
-		timehutLog.logging.error(f'Failed to fetch the last updated time\n')
-		last_updated_time = 0.0
-
+	last_update_manager = timehutManageLastUpdate.LastUpdateTsManager() 
+	last_updated_time = last_update_manager.readLastUpdateTimeStamp(__baby_id)
 
 	__dbName = "peekaboo"
 	__logging = False
@@ -314,7 +309,7 @@ def main(baby, days):
 		
 	__session.close()
 
-	timehutManageLastUpdate.writeLastUpdateTimeStamp(datetime.now().timestamp())
+	last_update_manager.writeLastUpdateTimeStamp(datetime.now().timestamp(), __baby_id)
 
 
 # Basic interactive interface
