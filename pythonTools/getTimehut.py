@@ -149,7 +149,7 @@ def parseMomentBody(response_body):
 
 		# Add to return collection obj list
 		moment_list.append(m_rec)
-		print(m_rec)
+		# print(m_rec)
 
 	return moment_list
 
