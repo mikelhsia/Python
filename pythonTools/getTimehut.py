@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from sqlalchemy.exc import InternalError
+
 import timehutDataSchema
 import timehutManageLastUpdate
 import timehutLog
@@ -155,31 +157,35 @@ def parseMomentBody(response_body):
 	return moment_list
 
 def createDB(dbName, base, loggingFlag):
-	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
+	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
-	engine.execute(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-	timehutLog.logging.info(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8_general_ci;")
+	try:
+		engine.execute(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;")
+		timehutLog.logging.info(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8_general_ci;")
 
-	engine.execute(f"USE {dbName}")
-	timehutLog.logging.info(f"USE {dbName}")
+		engine.execute(f"USE {dbName}")
+		timehutLog.logging.info(f"USE {dbName}")
+
+		ans = input(f"Do you want to drop the previous saved table (y/N)")
+
+		if ans == 'y' or ans == 'Y':
+			engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
+			timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
+			
+			engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
+			timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
+
+	except InternalError as e:
+		base.metadata.create_all(engine)
+		
+		engine.execute(f"ALTER DATABASE {dbName} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;")
+		engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+		engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} MODIFY caption TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
+		engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+		engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} MODIFY content TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
 
 
-	# TODO: It's a stupid way to drop the table everytime. Needs improvement
-	# TODO: Make sure the second call won't drop the previous table and update the old ones
-	# engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
-	# timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
-	#
-	# engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-	# timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-	#
-	# base.metadata.create_all(engine)
-	#
-	# engine.execute(f"ALTER DATABASE {dbName} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;")
-	# engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-	# engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} MODIFY caption TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-	# engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-	# engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} MODIFY content TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
 
 	engine.dispose()
 
@@ -188,7 +194,7 @@ def createEngine(dbName, base, loggingFlag):
 
 	createDB(dbName, base, loggingFlag)
 
-	engine = create_engine(f'mysql+pymysql://root:michael0512@127.0.0.1:3306/{dbName}?charset=utf8mb4',
+	engine = create_engine(f'mysql+pymysql://root:hsia0521@127.0.0.1:3306/{dbName}?charset=utf8mb4',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine
