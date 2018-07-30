@@ -2,6 +2,11 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+# Create your manager here.
+class MomentManager(models.Manager):
+	def get_pic_moment(self):
+		return super(MomentManager, self).get_queryset().filter(content_type=3)
+
 # Create your models here.
 class Collection(models.Model):
 	COLLECTION_TYPE =  (
@@ -67,3 +72,9 @@ class Moment(models.Model):
 
 	def __str__(self):
 		return f"{self.baby_id} - {self.moment_id} - {self.event_id}"
+
+	# The default manager
+	objects = models.Manager()
+	# Our custom manager
+	# In Shell: Moment.getPictureContent.get_pic_moment()
+	getPictureContent = MomentManager()
