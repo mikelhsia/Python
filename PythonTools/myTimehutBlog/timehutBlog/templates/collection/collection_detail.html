@@ -1,0 +1,11 @@
+{% extends "collection_base.html" %}
+
+{% block title %} {{ collection.slug }} {% endblock %}
+
+{% block content %}
+    <h1>{{ collection.slug }}</h1>
+    <p class="date">
+        Published {{collection.created_at}} | Updated {{collection.updated_at}}
+    </p>
+    {{ collection.caption | linebreaks }}
+{% endblock %}

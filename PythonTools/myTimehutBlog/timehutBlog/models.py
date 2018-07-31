@@ -2,6 +2,9 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+# we will use the reverse() method that allows you to build URLs by their name and passing optional parameters.
+from django.urls import reverse
+
 # Create your manager here.
 class MomentManager(models.Manager):
 	def get_pic_moment(self):
@@ -15,6 +18,11 @@ class Collection(models.Model):
  		(3, 'Picture'),
  		(4, 'Video'),
 	)
+
+	# The convention in Django is to add a get_absolute_url() method to the model that returns the canonical URL of the object.
+	def get_absolute_url(self):
+		# reverse need to first have url pattern in urls.py named
+		return reverse('timehutBlog:collection_detail', args=[self.collection_id])
 
 	collection_id = models.CharField(max_length=32)
 	baby_id = models.CharField(max_length=32)
