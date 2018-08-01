@@ -77,7 +77,7 @@ class PeekabooMoment(models.Model):
 	)
 
 	id = models.CharField(primary_key=True, max_length=32)
-	event_id = models.ForeignKey(PeekabooCollection, on_delete=models.DO_NOTHING,
+	event = models.ForeignKey(PeekabooCollection, on_delete=models.DO_NOTHING,
 	                             related_name='event_id', blank=True, null=True)
 	baby_id = models.CharField(max_length=32, blank=True, null=True)
 	created_at = models.IntegerField(blank=True, null=True)

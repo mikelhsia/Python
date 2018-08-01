@@ -3,7 +3,7 @@
 {% block title %} {{ collection.slug }} {% endblock %}
 
 {% block content %}
-    <h1>{{ collection.slug }}</h1>
+    <h1>{{collection.baby_id}} - {{ collection.months }} months | {{ collection.days }} days</h1>
     <p class="date">
         Published {{collection.created_at}} | Updated {{collection.updated_at}}
     </p>

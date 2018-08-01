@@ -14,14 +14,14 @@ class CollectionAdmin(admin.ModelAdmin):
 	ordering = ['created_at', 'id']
 
 class MomentAdmin(admin.ModelAdmin):
-	list_display = ('id', 'event_id', 'baby_id', 'content_type',
+	list_display = ('id', 'event', 'baby_id', 'content_type',
 		'src_url', 'content', 'updated_at', 'created_at')
 	list_filter = ('content_type', 'updated_at', 'baby_id')
 	search_fields = ('content',)
 	# prepopulated_fields = {'slug': ('moment_id',)}
 
 	# Need to be a foreign key, this enable a better user-friendly foreign key search popup
-	raw_id_fields = ('event_id',)
+	raw_id_fields = ('event',)
 	
 	ordering = ['created_at', 'id']
 
