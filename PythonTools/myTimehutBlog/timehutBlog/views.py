@@ -3,6 +3,22 @@ from .models import PeekabooCollection, PeekabooMoment
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+from django.views.generic import ListView
+
+# This class-based view is analogous to the previous post_list view.
+class CollectionView(ListView):
+	'''
+		- Use a specific queryset instead of retrieving all objects. Instead of defining a queryset attribute, we could
+		have specified model = Post and Django would have built the generic Post.objects.all() queryset for us.
+		- Use the context variable posts for the query results. The default variable is object_list if we don't specify any context_object_name.
+		- Paginate the result displaying three objects per page.
+		- Use a custom template to render the page. If we don't set a default template, ListView will use blog/post_list.html.”
+	'''
+	queryset = PeekabooCollection.objects.all()
+	context_object_name = 'collections'
+	paginate_by = 5
+	template_name = 'collection/collection_list.html'
+
 # Create your views here.
 def collection_list(request):
 	collection_list = PeekabooCollection.objects.all()
@@ -20,8 +36,15 @@ def collection_list(request):
 	except EmptyPage:
 		# If page is out of range deliver last page of result
 		collections = paginator.page(paginator.num_pages)
+
+	# thumbnails = [PeekabooMoment.objects.filter(event=x.id)[0].src_url for x in collections]
+	# return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections, 'thumbnails': thumbnails})
+
 	return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections})
+
+
 
 def collection_detail(request, collection_id):
 	collection = get_object_or_404(PeekabooCollection, id=collection_id)
-	return render(request, 'collection/collection_detail.html', {'collection': collection})
+	moment_list = PeekabooMoment.objects.filter(event=collection_id)
+	return render(request, 'collection/collection_detail.html', {'collection': collection, 'moment_list': moment_list})

@@ -8,7 +8,13 @@
     {% for collection in collections %}
         <h2>
             <a href="{{ collection.get_absolute_url }}">
-                {{collection.baby_id}} - {{ collection.months }} months | {{ collection.days }} days
+                {% ifequal collection.baby_id '537413380' %}
+                    安安
+                {% endifequal %}
+                {% ifequal collection.baby_id '537776076' %}
+                    安柔
+                {% endifequal %}
+                 - {{ collection.months }} months | {{ collection.days }} days
             </a>
         </h2>
         <p class="date">
@@ -18,4 +24,5 @@
     {% endfor %}
 
     {% include "pagination.html" with page=collections %}
+    <!-- If using ListView class, then page = 'page_obj' -->
 {% endblock %}
