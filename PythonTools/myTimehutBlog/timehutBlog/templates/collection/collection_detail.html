@@ -17,10 +17,21 @@
     </p>
     {{ collection.caption | linebreaks }}
 
+    <p>
+        <!--
+            Remember that we are building the URL dynamically using the % url % template tag provided by Django.
+            We are using the namespace called blog and the URL named collection_share, and we are passing the
+            collection ID as parameter to build the absolute URL.
+        -->
+        <a href="{% url 'timehutBlog:collection_share' collection.id %}">
+            Share this post
+        </a>
+    </p>
+
     <div>
         {% for moment in moment_list %}
             {% ifequal moment.content_type 3 %}
-                <img width="20%" src="{{ moment.src_url }}" alt="{{moment.content}}">
+                <img width="20%" src="{{ moment.src_url }}" alt="{{ moment.content }}">
             {% endifequal %}
         {% endfor %}
     </div>

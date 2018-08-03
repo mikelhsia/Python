@@ -2,8 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from .models import PeekabooCollection, PeekabooMoment
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 from django.views.generic import ListView
+from .form import EmailCollectionForm
+from django.core.mail import send_mail
 
 # This class-based view is analogous to the previous post_list view.
 class CollectionView(ListView):
@@ -48,3 +49,29 @@ def collection_detail(request, collection_id):
 	collection = get_object_or_404(PeekabooCollection, id=collection_id)
 	moment_list = PeekabooMoment.objects.filter(event=collection_id)
 	return render(request, 'collection/collection_detail.html', {'collection': collection, 'moment_list': moment_list})
+
+
+def collection_share(request, collection_id):
+	# Retrieve collection by id
+	collection = get_object_or_404(PeekabooCollection, id=collection_id)
+	sent = False
+
+	if request.method == 'POST':
+		# Form was submitted
+		form = EmailCollectionForm(request.POST)
+
+		if form.is_valid():
+			# Form fields passed validation
+			cd = form.cleaned_data
+
+			# ... send email
+			# collection_url = request.build_absolute_uri(collection.get_absolute_url())
+			subject = f"{cd['name']} ({cd['email']}) recommends you reading {collection.id}"
+			message = f"{collection.caption}"
+			send_mail(subject, message, 'admin@myblog.com', [cd['to']])
+			sent = True
+	else:
+		form = EmailCollectionForm()
+
+	# TODO: SMTPServerDisconnected: Connection unexpectedly closed need to be resolved
+	return render(request, 'collection/share.html', {'collection': collection, 'form': form, 'sent': sent})
