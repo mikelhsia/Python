@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PeekabooCollection, PeekabooMoment
+from .models import PeekabooCollection, PeekabooMoment, PeekabooCollectionComment
 
 class CollectionAdmin(admin.ModelAdmin):
 	list_display = ('id', 'baby_id', 'content_type',
@@ -25,9 +25,15 @@ class MomentAdmin(admin.ModelAdmin):
 	
 	ordering = ['created_at', 'id']
 
+class CommentAdmin(admin.ModelAdmin):
+	list_display = ('name', 'email', 'collection', 'created_at', 'active')
+	list_filter = ('active', 'created_at', 'updated_at')
+	search_fields = ('name', 'email', 'body')
+
 # Register your models here.
 # admin.site.register(Collection)
 admin.site.register(PeekabooCollection, CollectionAdmin)
 # admin.site.register(Moment)
 admin.site.register(PeekabooMoment, MomentAdmin)
+admin.site.register(PeekabooCollectionComment, CommentAdmin)
 

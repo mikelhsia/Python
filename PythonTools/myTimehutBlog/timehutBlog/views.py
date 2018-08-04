@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from .models import PeekabooCollection, PeekabooMoment
+from .models import PeekabooCollection, PeekabooMoment, PeekabooCollectionComment
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .form import EmailCollectionForm
+from .form import EmailCollectionForm, CommentForm
 from django.core.mail import send_mail
 
 # This class-based view is analogous to the previous post_list view.
@@ -48,7 +48,25 @@ def collection_list(request):
 def collection_detail(request, collection_id):
 	collection = get_object_or_404(PeekabooCollection, id=collection_id)
 	moment_list = PeekabooMoment.objects.filter(event=collection_id)
-	return render(request, 'collection/collection_detail.html', {'collection': collection, 'moment_list': moment_list})
+
+	# List of active comments for this collection
+	comments = collection.comments.filter(active=True)
+
+	if request.method == 'POST':
+		# A comment is going to be posted
+		comment_form = CommentForm(data=request.POST)
+		if comment_form.is_valid():
+			# Create Comment object but don't save to database
+			new_comment = comment_form.save(commit=False)
+			# Assign collection to the comment
+			new_comment.collection = collection
+			# Save comment
+			new_comment.save()
+	else:
+		comment_form = CommentForm()
+
+	return render(request, 'collection/collection_detail.html', {'collection': collection, 'moment_list': moment_list,
+	                                                             'comments': comments, 'comment_form': comment_form})
 
 
 def collection_share(request, collection_id):
