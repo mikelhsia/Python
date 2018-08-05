@@ -24,7 +24,6 @@ sitemaps = {
 	'collections': CollectionSitemap,
 }
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('blog/', include('timehutBlog.urls', namespace='timehutBlog')),

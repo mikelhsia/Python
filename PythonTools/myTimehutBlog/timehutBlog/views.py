@@ -3,8 +3,11 @@ from .models import PeekabooCollection, PeekabooMoment, PeekabooCollectionCommen
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .form import EmailCollectionForm, CommentForm
+from .form import EmailCollectionForm, CommentForm, LoginForm
 from django.core.mail import send_mail
+
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login
 
 # This class-based view is analogous to the previous post_list view.
 class CollectionView(ListView):
@@ -94,5 +97,37 @@ def collection_share(request, collection_id):
 	else:
 		form = EmailCollectionForm()
 
-	# TODO: SMTPServerDisconnected: Connection unexpectedly closed need to be resolved
 	return render(request, 'collection/share.html', {'collection': collection, 'form': form, 'sent': sent})
+
+
+# -------------------------------------------------------
+# Login view
+def user_login(request):
+	if request.method == 'POST':
+		form = LoginForm(request.POST)
+
+		if form.is_valid():
+			cd = form.cleaned_data
+
+			# This method takes a username and a password and returns a User object if the user has
+			# been successfully authenticated, or None otherwise. If the user has not been authenticated,
+			# we return a raw HttpResponse displaying a message.
+			user = authenticate(username=cd['username'], password=cd['password'])
+
+			if user is not None:
+				# We check if user is an active user
+				if user.is_active:
+					login(request, user)
+
+					# We return a raw HttpResponse to display a message
+					return HttpResponseRedirect('/blog/collection')
+				else:
+					return HttpResponse('Disabled account')
+			else:
+				return HttpResponse('Invalid login')
+
+	else:
+		form = LoginForm()
+
+	return render(request, 'account/login.html', {'form': form})
+

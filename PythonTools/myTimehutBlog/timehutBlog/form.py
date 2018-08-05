@@ -20,3 +20,10 @@ class CommentForm(forms.ModelForm):
 		# Django introspects the model and builds the form dynamically for us
 		model = PeekabooCollectionComment
 		fields = ('name', 'email', 'body')
+
+
+# Log-in view form
+class LoginForm(forms.Form):
+	username = forms.CharField()
+	# PasswordInput widget to render its HTML input element, including type='password' attribute
+	password = forms.CharField(widget=forms.PasswordInput)

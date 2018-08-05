@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static '/css/base.css' %}">
+</head>
+<body>
+    <div id="header">
+        <span id="logo">
+            Hsia's timehutBlog
+        </span>
+    </div>
+    <div id="main_container">
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</body>
+</html>
