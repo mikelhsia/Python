@@ -44,12 +44,6 @@ class PeekabooCollection(models.Model):
 	content_type = models.SmallIntegerField(blank=True, null=True)
 	caption = models.TextField(blank=True, null=True)
 	'''
-		# auto_now_add here, the date will be saved automatically when creating an object
-		created = models.DateTimeField(auto_now_add=True)
-
-		# auto_now here, the date will be updated automatically when saving an object.
-		updated = models.DateTimeField(auto_now=True)
-
 		# unique_for_date parameter to this field so we can build URLs
 		# for posts using the date and slug of the post. Django will prevent from
 		# multiple posts having the same slug for the same date
@@ -93,11 +87,35 @@ class PeekabooMoment(models.Model):
 		db_table = 'peekaboo_moment'
 		ordering = ('-created_at',)
 
-	# def __str__(self):
-	# 	return f"{self.baby_id} - {self.id} - {self.event_id}"
-
 	# The default manager
 	objects = models.Manager()
 	# Our custom manager
 	# In Shell: Moment.getPictureContent.get_pic_moment()
 	getPictureContent = MomentManager()
+
+class PeekabooCollectionComment(models.Model):
+	# The related_name attribute allows us to name the attribute that we use for the relation from the related
+	# object back to this one. After defining this, we can
+	# 1. Retrieve the collection of a comment object using comment.collection and
+	# 2. Retrieve all comments of a post using collection.comments.all().
+	# If you don't define the related_name attribute, Django will use the undercase name of the model
+	# followed by _set (that is, comment_set) to name the manager of the related object back to this one.
+	collection = models.ForeignKey(PeekabooCollection, on_delete=models.DO_NOTHING, related_name='comments')
+	name = models.CharField(max_length=80)
+	email = models.EmailField()
+	body = models.TextField()
+
+	# auto_now_add here, the date will be saved automatically when creating an object
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	# auto_now here, the date will be updated automatically when saving an object.
+	updated_at = models.DateTimeField(auto_now=True)
+	active = models.BooleanField(default=True)
+
+	class Meta:
+		ordering = ('created_at',)
+		db_table = 'peekaboo_collection_comment'
+		managed = True
+
+	def __str__(self):
+		return f'Comment by {self.name} on {self.collection}'
