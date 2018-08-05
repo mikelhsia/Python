@@ -38,7 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'timehutBlog',
+    'django.contrib.sites',             # For generating the sitemap
+    'django.contrib.sitemaps',          #
 ]
+
+# Site ID
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -83,7 +88,7 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': 3306,
         'USER': 'root',
-        'PASSWORD': 'michael0512',
+        'PASSWORD': 'hsia0521',
     }
 }
 

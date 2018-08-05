@@ -16,8 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# Generating Site map format
+from django.contrib.sitemaps.views import sitemap
+from timehutBlog.sitemaps import CollectionSitemap
+
+sitemaps = {
+	'collections': CollectionSitemap,
+}
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('blog/', include('timehutBlog.urls', namespace='timehutBlog')),
+	path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
