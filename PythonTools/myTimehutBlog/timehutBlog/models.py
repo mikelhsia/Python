@@ -8,7 +8,6 @@
 from django.db import models
 
 # we will use the reverse() method that allows you to build URLs by their name and passing optional parameters.
-from django.db.models import CharField
 from django.urls import reverse
 
 # Create your manager here.

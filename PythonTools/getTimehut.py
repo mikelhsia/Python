@@ -41,8 +41,9 @@ def DatetimeStringToTimeStamp(string):
 	:return: timestamp
 	"""
 	string = string.split('+')[0]
-	try: 
-		dt = datetime.strptime(string, "%Y-%m-%dT%H:%M:%S.%fZ")
+	string = string.split('Z')[0]
+	try:
+		dt = datetime.strptime(string, "%Y-%m-%dT%H:%M:%S.%f")
 	except Exception as e:
 		print(e)
 		raise e
@@ -157,7 +158,7 @@ def parseMomentBody(response_body):
 	return moment_list
 
 def createDB(dbName, base, loggingFlag):
-	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
+	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	try:
@@ -194,7 +195,7 @@ def createEngine(dbName, base, loggingFlag):
 
 	createDB(dbName, base, loggingFlag)
 
-	engine = create_engine(f'mysql+pymysql://root:hsia0521@127.0.0.1:3306/{dbName}?charset=utf8mb4',
+	engine = create_engine(f'mysql+pymysql://root:michael0512@127.0.0.1:3306/{dbName}?charset=utf8mb4',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine

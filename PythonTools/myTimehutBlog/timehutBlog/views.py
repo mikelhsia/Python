@@ -62,6 +62,9 @@ def collection_detail(request, collection_id):
 			new_comment.collection = collection
 			# Save comment
 			new_comment.save()
+
+			# Clean the form after the data is saved
+			comment_form = CommentForm()
 	else:
 		comment_form = CommentForm()
 
