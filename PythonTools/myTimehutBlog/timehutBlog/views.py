@@ -9,6 +9,8 @@ from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 
+from django.contrib.auth.decorators import login_required
+
 # This class-based view is analogous to the previous post_list view.
 class CollectionView(ListView):
 	'''
@@ -24,6 +26,7 @@ class CollectionView(ListView):
 	template_name = 'collection/collection_list.html'
 
 # Create your views here.
+@login_required
 def collection_list(request):
 	collection_list = PeekabooCollection.objects.all()
 
@@ -44,10 +47,9 @@ def collection_list(request):
 	# thumbnails = [PeekabooMoment.objects.filter(event=x.id)[0].src_url for x in collections]
 	# return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections, 'thumbnails': thumbnails})
 
-	return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections})
+	return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections, 'section': 'people'})
 
-
-
+@login_required
 def collection_detail(request, collection_id):
 	collection = get_object_or_404(PeekabooCollection, id=collection_id)
 	moment_list = PeekabooMoment.objects.filter(event=collection_id)
@@ -72,9 +74,10 @@ def collection_detail(request, collection_id):
 		comment_form = CommentForm()
 
 	return render(request, 'collection/collection_detail.html', {'collection': collection, 'moment_list': moment_list,
-	                                                             'comments': comments, 'comment_form': comment_form})
+	                                                             'comments': comments, 'comment_form': comment_form,
+	                                                             'section': 'people'})
 
-
+@login_required
 def collection_share(request, collection_id):
 	# Retrieve collection by id
 	collection = get_object_or_404(PeekabooCollection, id=collection_id)
@@ -97,11 +100,12 @@ def collection_share(request, collection_id):
 	else:
 		form = EmailCollectionForm()
 
-	return render(request, 'collection/share.html', {'collection': collection, 'form': form, 'sent': sent})
+	return render(request, 'collection/share.html', {'collection': collection, 'form': form, 'sent': sent,
+	                                                 'section': 'people'})
 
 
 # -------------------------------------------------------
-# Login view
+# Login view: Now obsolete since using default auth.views
 def user_login(request):
 	if request.method == 'POST':
 		form = LoginForm(request.POST)
@@ -130,4 +134,15 @@ def user_login(request):
 		form = LoginForm()
 
 	return render(request, 'account/login.html', {'form': form})
+
+# -------------------------------------------------------
+# Login template view
+
+# The login_requred decorator checks if the current user is authenticated
+# if the user is authenticated, it executes the decorated view
+# if the user is not authenticated, it redirects him to the login URL with
+# the URL he was trying to access as a GET param named 'next'. Remember to add hidden input in the form
+@login_required
+def dashboard(request):
+	return render(request, 'registration/dashboard.html', {'section': 'dashboard'})
 

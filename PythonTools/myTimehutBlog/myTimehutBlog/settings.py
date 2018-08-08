@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -139,3 +140,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Tells Django which URL to redirect after login if the contrib.auth.views.login view gets no next parameter
+LOGIN_REDIRECT_URL = reverse_lazy('timehutBlog:dashboard')
+# Is the URL to redirect the user to log in (e.g. using the login_required decorator)
+LOGIN_URL = reverse_lazy('timehutBlog:login')
+# Is the URL to redirect the user to log out
+LOGOUT_URL = reverse_lazy('timehutBlog:logout')
