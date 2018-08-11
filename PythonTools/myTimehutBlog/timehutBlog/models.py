@@ -6,9 +6,9 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.conf import settings
 
 # we will use the reverse() method that allows you to build URLs by their name and passing optional parameters.
-from django.db.models import CharField
 from django.urls import reverse
 
 # Create your manager here.
@@ -17,6 +17,20 @@ class MomentManager(models.Manager):
 		return super(MomentManager, self).get_queryset().filter(content_type=3)
 
 # Create your models here.
+class Profile(models.Model):
+	'''
+	Extending User model
+	'''
+	# AUTH_USER_MODEL setting to refer to it when defining model's relations to the user model,
+	# instead of referring to the auth User model directly
+	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
+	date_of_birth = models.DateField(blank=True, null=True)
+	# You will need to install one of the Python packages to manage images, which are PIL (Python Imaging Library) or Pillow
+	photo = models.ImageField(upload_to='users/%Y/%m/%d', blank=True)
+
+	def __str__(self):
+		return f'Profile for user {self.user.username}'
+
 class PeekabooCollection(models.Model):
 
 	COLLECTION_TYPE =  (

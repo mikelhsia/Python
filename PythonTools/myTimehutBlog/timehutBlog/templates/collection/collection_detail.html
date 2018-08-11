@@ -1,4 +1,5 @@
 {% extends "collection_base.html" %}
+{% load blog_tags %}
 
 {% block title %} {{ collection.slug }} {% endblock %}
 
@@ -49,7 +50,7 @@
                     Comment {{ forloop.counter }} by {{ comment.name }}
                     {{ comment.created_at }}
                 </p>
-                {{ comment.body|linebreaks }}
+                {{ comment.body|markdown }}
             </div>
         {% empty %}
             <p>There are no comments yet.</p>
