@@ -14,9 +14,9 @@
             not authenticated. A non-authenticated user is set in the request as an instance of AnonymousUser.
             The best way to check if the current user is authenticated is by calling request.user.is_authenticated().
         -->
-        <span id="logo">
+        <div id="logo">
             Hsia's timehutBlog
-        </span>
+        </div>
         {% if request.user.is_authenticated %}
             <ul class="menu">
                 <li {% if section == 'dashboard' %} class="selected" {% endif %}>
@@ -40,6 +40,18 @@
             {% endif %}
         </span>
     </div>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">
+            {{ message | safe }}
+            <a href="#" class="close">x</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
     <div id="main_container">
         <div id="content">
             {% block content %}

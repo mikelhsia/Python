@@ -10,7 +10,9 @@
             Please try again.
         </p>
     {% else %}
-        <p>Please, use the following form to log-in:</p>
+        <p>
+            Please, use the following form to log in. If you don't have an account, <a href="{% url 'timehutBlog:register' %}">register here</a>
+        </p>
         <div class="login-form">
             <form action="{% url 'timehutBlog:login' %}" method="post">
                 {{ form.as_p }}

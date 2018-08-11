@@ -26,7 +26,9 @@ SECRET_KEY = 'r+0&8fg&-*7u*hr_3x(_g+wj1y00##*p=a+1r-^y%mh$6k!@2*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'hsia.timehut.blog.com',
+]
 
 
 # Application definition
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'timehutBlog',
     'django.contrib.sites',             # For generating the sitemap
     'django.contrib.sitemaps',          #
+	# 'social_django',                    # python social auth django framework
 ]
 
 # Site ID
@@ -148,3 +151,25 @@ LOGIN_REDIRECT_URL = reverse_lazy('timehutBlog:dashboard')
 LOGIN_URL = reverse_lazy('timehutBlog:login')
 # Is the URL to redirect the user to log out
 LOGOUT_URL = reverse_lazy('timehutBlog:logout')
+
+
+# Media folder for Pillow (PIL) python package
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+
+# Authentication backend settings
+# We keep the default ModelBackend that is used to authenticate with username and password, and we include
+# our own email-based authentication backend.
+# --------------------------------------------------------------------------------------------------------
+# http://python-social-auth.readthedocs.io/en/latest/configuration/django.html
+AUTHENTICATION_BACKENDS = {
+    # 'social_core.backends.open_id.OpenIdAuth',      # auth django backend
+    # 'social_core.backends.google.GoogleOpenId',     # auth django backend
+    # 'social_core.backends.google.GoogleOAuth2',     # auth django backend
+    # 'social_core.backends.google.GoogleOAuth',      # auth django backend
+    # 'social_core.backends.twitter.TwitterOAuth',    # auth django backend
+    # 'social_core.backends.yahoo.YahooOpenId',       # auth django backend
+    'django.contrib.auth.backends.ModelBackend',    # default auth backend
+    'timehutBlog.authentication.EmailAuthBackend',  # custom auth backend
+}

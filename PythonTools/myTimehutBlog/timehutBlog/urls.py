@@ -49,4 +49,10 @@ urlpatterns = [
 	path('collection/<int:collection_id>/', views.collection_detail, name='collection_detail'),
 	path('collection/<int:collection_id>/share/', views.collection_share, name='collection_share'),
 	path('feed/', LatestCollectionsFeed(), name='collection_feed'),
+
+	# Registration
+	path('register/', views.register, name='register'),
+
+	# Edit user and profile
+	path('edit/', views.edit, name='edit'),
 ]
