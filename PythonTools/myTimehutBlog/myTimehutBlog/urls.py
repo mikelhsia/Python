@@ -16,8 +16,29 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# Include media folder
+from django.conf import settings
+from django.conf.urls.static import static
+
+# Generating Site map format
+from django.contrib.sitemaps.views import sitemap
+from timehutBlog.sitemaps import CollectionSitemap
+
+
+sitemaps = {
+	'collections': CollectionSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('blog/', include('timehutBlog.urls', namespace='timehutBlog')),
+	path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+	# Edit /etc/hosts
+	# path('social-auth/', include('social_django.urls'), namespace='social')
 ]
+
+if settings.DEBUG:
+	# static(): Helper function to return a URL pattern for serving files in debug mode
+	# TODO The static() helper function is suitable for development but not for production use. Never serve your
+	# static files with Django in a production environment.
+	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

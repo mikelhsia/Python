@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +26,9 @@ SECRET_KEY = 'r+0&8fg&-*7u*hr_3x(_g+wj1y00##*p=a+1r-^y%mh$6k!@2*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'hsia.timehut.blog.com',
+]
 
 
 # Application definition
@@ -38,7 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'timehutBlog',
+    'django.contrib.sites',             # For generating the sitemap
+    'django.contrib.sitemaps',          #
+	# 'social_django',                    # python social auth django framework
 ]
+
+# Site ID
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -78,7 +87,7 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-	    'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'peekaboo',
         'HOST': '127.0.0.1',
         'PORT': 3306,
@@ -134,3 +143,33 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Tells Django which URL to redirect after login if the contrib.auth.views.login view gets no next parameter
+LOGIN_REDIRECT_URL = reverse_lazy('timehutBlog:dashboard')
+# Is the URL to redirect the user to log in (e.g. using the login_required decorator)
+LOGIN_URL = reverse_lazy('timehutBlog:login')
+# Is the URL to redirect the user to log out
+LOGOUT_URL = reverse_lazy('timehutBlog:logout')
+
+
+# Media folder for Pillow (PIL) python package
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+
+# Authentication backend settings
+# We keep the default ModelBackend that is used to authenticate with username and password, and we include
+# our own email-based authentication backend.
+# --------------------------------------------------------------------------------------------------------
+# http://python-social-auth.readthedocs.io/en/latest/configuration/django.html
+AUTHENTICATION_BACKENDS = {
+    # 'social_core.backends.open_id.OpenIdAuth',      # auth django backend
+    # 'social_core.backends.google.GoogleOpenId',     # auth django backend
+    # 'social_core.backends.google.GoogleOAuth2',     # auth django backend
+    # 'social_core.backends.google.GoogleOAuth',      # auth django backend
+    # 'social_core.backends.twitter.TwitterOAuth',    # auth django backend
+    # 'social_core.backends.yahoo.YahooOpenId',       # auth django backend
+    'django.contrib.auth.backends.ModelBackend',    # default auth backend
+    'timehutBlog.authentication.EmailAuthBackend',  # custom auth backend
+}

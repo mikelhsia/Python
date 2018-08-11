@@ -1,10 +1,17 @@
 from django.shortcuts import render, get_object_or_404
-from .models import PeekabooCollection, PeekabooMoment, PeekabooCollectionComment
+from .models import PeekabooCollection, PeekabooMoment, PeekabooCollectionComment, Profile
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .form import EmailCollectionForm, CommentForm
+from .form import EmailCollectionForm, CommentForm, LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
 from django.core.mail import send_mail
+
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login
+
+from django.contrib.auth.decorators import login_required
+
+from django.contrib import messages
 
 # This class-based view is analogous to the previous post_list view.
 class CollectionView(ListView):
@@ -21,6 +28,7 @@ class CollectionView(ListView):
 	template_name = 'collection/collection_list.html'
 
 # Create your views here.
+@login_required
 def collection_list(request):
 	collection_list = PeekabooCollection.objects.all()
 
@@ -41,10 +49,9 @@ def collection_list(request):
 	# thumbnails = [PeekabooMoment.objects.filter(event=x.id)[0].src_url for x in collections]
 	# return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections, 'thumbnails': thumbnails})
 
-	return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections})
+	return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections, 'section': 'people'})
 
-
-
+@login_required
 def collection_detail(request, collection_id):
 	collection = get_object_or_404(PeekabooCollection, id=collection_id)
 	moment_list = PeekabooMoment.objects.filter(event=collection_id)
@@ -62,13 +69,17 @@ def collection_detail(request, collection_id):
 			new_comment.collection = collection
 			# Save comment
 			new_comment.save()
+
+			# Clean the form after the data is saved
+			comment_form = CommentForm()
 	else:
 		comment_form = CommentForm()
 
 	return render(request, 'collection/collection_detail.html', {'collection': collection, 'moment_list': moment_list,
-	                                                             'comments': comments, 'comment_form': comment_form})
+	                                                             'comments': comments, 'comment_form': comment_form,
+	                                                             'section': 'people'})
 
-
+@login_required
 def collection_share(request, collection_id):
 	# Retrieve collection by id
 	collection = get_object_or_404(PeekabooCollection, id=collection_id)
@@ -91,5 +102,82 @@ def collection_share(request, collection_id):
 	else:
 		form = EmailCollectionForm()
 
-	# TODO: SMTPServerDisconnected: Connection unexpectedly closed need to be resolved
-	return render(request, 'collection/share.html', {'collection': collection, 'form': form, 'sent': sent})
+	return render(request, 'collection/share.html', {'collection': collection, 'form': form, 'sent': sent,
+	                                                 'section': 'people'})
+
+
+# -------------------------------------------------------
+# Login view: Now obsolete since using default auth.views
+def user_login(request):
+	if request.method == 'POST':
+		form = LoginForm(request.POST)
+
+		if form.is_valid():
+			cd = form.cleaned_data
+
+			# This method takes a username and a password and returns a User object if the user has
+			# been successfully authenticated, or None otherwise. If the user has not been authenticated,
+			# we return a raw HttpResponse displaying a message.
+			user = authenticate(username=cd['username'], password=cd['password'])
+
+			if user is not None:
+				# We check if user is an active user
+				if user.is_active:
+					login(request, user)
+
+					# We return a raw HttpResponse to display a message
+					return HttpResponseRedirect('/blog/collection')
+				else:
+					return HttpResponse('Disabled account')
+			else:
+				return HttpResponse('Invalid login')
+
+	else:
+		form = LoginForm()
+
+	return render(request, 'account/login.html', {'form': form})
+
+# -------------------------------------------------------
+# Login template view
+
+# The login_requred decorator checks if the current user is authenticated
+# if the user is authenticated, it executes the decorated view
+# if the user is not authenticated, it redirects him to the login URL with
+# the URL he was trying to access as a GET param named 'next'. Remember to add hidden input in the form
+@login_required
+def dashboard(request):
+	return render(request, 'registration/dashboard.html', {'section': 'dashboard'})
+
+
+def register(request):
+	if request.method == 'POST':
+		user_form = UserRegistrationForm(request.POST)
+		if user_form.is_valid():
+			new_user = user_form.save(commit=False)
+			new_user.set_password(user_form.cleaned_data['password'])
+			new_user.save()
+
+			# Create the user profile
+			profile = Profile.objects.create(user=new_user)
+			return render(request, 'registration/register_done.html', {'new_user': new_user})
+	else:
+		user_form = UserRegistrationForm()
+	return render(request, 'registration/register.html', {'user_form': user_form})
+
+@login_required
+def edit(request):
+	if request.method == 'POST':
+		user_form = UserEditForm(instance=request.user, data=request.POST)
+		profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
+
+		if user_form.is_valid() and profile_form.is_valid():
+			user_form.save()
+			profile_form.save()
+			messages.success(request, 'Profile updated successfully')
+		else:
+			messages.error(request, 'Error updating your profile')
+	else:
+		user_form = UserEditForm(instance=request.user)
+		profile_form = ProfileEditForm(instance=request.user.profile)
+
+	return render(request, 'registration/edit.html', {'user_form': user_form, 'profile_form': profile_form})
