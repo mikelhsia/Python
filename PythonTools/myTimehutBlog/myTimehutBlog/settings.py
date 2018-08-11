@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'timehutBlog',
     'django.contrib.sites',             # For generating the sitemap
     'django.contrib.sitemaps',          #
-	# 'social_django',                    # python social auth django framework
+	'social_django',                    # python social auth django framework
 ]
 
 # Site ID
@@ -164,12 +164,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # --------------------------------------------------------------------------------------------------------
 # http://python-social-auth.readthedocs.io/en/latest/configuration/django.html
 AUTHENTICATION_BACKENDS = {
-    # 'social_core.backends.open_id.OpenIdAuth',      # auth django backend
-    # 'social_core.backends.google.GoogleOpenId',     # auth django backend
-    # 'social_core.backends.google.GoogleOAuth2',     # auth django backend
-    # 'social_core.backends.google.GoogleOAuth',      # auth django backend
-    # 'social_core.backends.twitter.TwitterOAuth',    # auth django backend
-    # 'social_core.backends.yahoo.YahooOpenId',       # auth django backend
+    'social_core.backends.open_id.OpenIdAuth',      # auth django backend
+    'social_core.backends.google.GoogleOpenId',     # auth django backend
+    'social_core.backends.google.GoogleOAuth2',     # auth django backend
+    'social_core.backends.google.GoogleOAuth',      # auth django backend
+    'social_core.backends.twitter.TwitterOAuth',    # auth django backend
+    'social_core.backends.yahoo.YahooOpenId',       # auth django backend
     'django.contrib.auth.backends.ModelBackend',    # default auth backend
     'timehutBlog.authentication.EmailAuthBackend',  # custom auth backend
 }
