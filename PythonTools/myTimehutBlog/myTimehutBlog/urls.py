@@ -32,9 +32,10 @@ sitemaps = {
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('blog/', include('timehutBlog.urls', namespace='timehutBlog')),
+	path('images/', include('images.urls', namespace='images')),
 	path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 	# Edit /etc/hosts
-	path('social-auth/', include('social_django.urls'), namespace='social')
+	path('social-auth/', include('social_django.urls', namespace='social'))
 ]
 
 if settings.DEBUG:

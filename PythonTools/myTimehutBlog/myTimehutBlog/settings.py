@@ -27,6 +27,7 @@ SECRET_KEY = 'r+0&8fg&-*7u*hr_3x(_g+wj1y00##*p=a+1r-^y%mh$6k!@2*'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '127.0.0.1',
     'hsia.timehut.blog.com',
 ]
 
@@ -44,6 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.sites',             # For generating the sitemap
     'django.contrib.sitemaps',          #
 	'social_django',                    # python social auth django framework
+	'images',                           # Define a model to store images and their information.
+										# Create a form and a view to handle image uploads.
+										# Build a system for users to be able to post images they find in external websites.
 ]
 
 # Site ID
