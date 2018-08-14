@@ -177,3 +177,9 @@ AUTHENTICATION_BACKENDS = {
     'django.contrib.auth.backends.ModelBackend',    # default auth backend
     'timehutBlog.authentication.EmailAuthBackend',  # custom auth backend
 }
+
+# Specify an URL for a model is by adding the ABSOLUTE_URL_OVERRIDES settings to the project, to replace get_absolute_url()
+# Django adds a get_absolute_url() method dynamically to any models that appear in the ABSOLUTE_URL_OVERRIDES settings.
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda u: reverse_lazy('timehutBlog:user_detail', args=[u.username]),
+}

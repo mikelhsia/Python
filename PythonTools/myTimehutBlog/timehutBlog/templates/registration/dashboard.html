@@ -6,7 +6,7 @@
     <h1>Dashboard</h1>
 
     {% with total_images_created=request.user.images_created.count %}
-        <p>Welcome to your dashboard. You have bookmarked {{ total_images_created }} image {{ total_images_created | pluralize }}.</p>
+        <p>Welcome to your dashboard. You have bookmarked {{ total_images_created }} image{{ total_images_created | pluralize }}.</p>
     {% endwith %}
 
     <p>Drag the following button to your bookmarks toolbar to bookmark images from other website ->

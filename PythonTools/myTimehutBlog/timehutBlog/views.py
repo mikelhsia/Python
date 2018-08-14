@@ -1,15 +1,17 @@
 from django.shortcuts import render, get_object_or_404
-from .models import PeekabooCollection, PeekabooMoment, PeekabooCollectionComment, Profile
+from .models import PeekabooCollection, PeekabooMoment, PeekabooCollectionComment, Profile, User, Contact
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from .form import EmailCollectionForm, CommentForm, LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
 from django.core.mail import send_mail
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login
 
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from myTimehutBlog.common.decorators import ajax_required
 
 from django.contrib import messages
 
@@ -49,7 +51,7 @@ def collection_list(request):
 	# thumbnails = [PeekabooMoment.objects.filter(event=x.id)[0].src_url for x in collections]
 	# return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections, 'thumbnails': thumbnails})
 
-	return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections, 'section': 'people'})
+	return render(request, 'collection/collection_list.html', {'page': page, 'collections': collections, 'section': 'album'})
 
 @login_required
 def collection_detail(request, collection_id):
@@ -77,7 +79,7 @@ def collection_detail(request, collection_id):
 
 	return render(request, 'collection/collection_detail.html', {'collection': collection, 'moment_list': moment_list,
 	                                                             'comments': comments, 'comment_form': comment_form,
-	                                                             'section': 'people'})
+	                                                             'section': 'album'})
 
 @login_required
 def collection_share(request, collection_id):
@@ -103,7 +105,7 @@ def collection_share(request, collection_id):
 		form = EmailCollectionForm()
 
 	return render(request, 'collection/share.html', {'collection': collection, 'form': form, 'sent': sent,
-	                                                 'section': 'people'})
+	                                                 'section': 'album'})
 
 
 # -------------------------------------------------------
@@ -181,3 +183,36 @@ def edit(request):
 		profile_form = ProfileEditForm(instance=request.user.profile)
 
 	return render(request, 'registration/edit.html', {'user_form': user_form, 'profile_form': profile_form})
+
+@login_required
+def user_list(request):
+	users = User.objects.filter(is_active=True)
+
+	return render(request, 'user/list.html', {'section': 'people', 'users': users})
+
+
+@login_required
+def user_detail(request, username):
+	user = get_object_or_404(User, username=username, is_active=True)
+
+	return render(request, 'user/detail.html', {'section': 'people', 'user': user})
+
+@require_POST
+@ajax_required
+@login_required
+def user_follow(request):
+	user_id = request.POST.get('id')
+	action = request.POST.get('action')
+
+	if user_id and action:
+		try:
+			user = User.objects.get(id=user_id)
+			if action == 'follow':
+				Contact.objects.get_or_create(user_from=request.user, user_to=user)
+			else:
+				Contact.objects.filter(user_from=request.user, user_to=user).delete()
+			return JsonResponse({'status': 'ok'})
+		except User.DoesNotExist:
+			return JsonResponse({'status': 'ko'})
+
+	return JsonResponse({'status': 'ko'})

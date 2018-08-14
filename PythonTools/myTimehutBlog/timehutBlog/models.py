@@ -11,12 +11,38 @@ from django.conf import settings
 # we will use the reverse() method that allows you to build URLs by their name and passing optional parameters.
 from django.urls import reverse
 
+from django.contrib.auth.models import User
+
 # Create your manager here.
 class MomentManager(models.Manager):
 	def get_pic_moment(self):
 		return super(MomentManager, self).get_queryset().filter(content_type=3)
 
 # Create your models here.
+class Contact(models.Model):
+	user_from = models.ForeignKey(User, related_name='rel_from_set', on_delete=models.DO_NOTHING)
+	user_to = models.ForeignKey(User, related_name='rel_to_set', on_delete=models.DO_NOTHING)
+	created = models.DateTimeField(auto_now_add=True, db_index=True)
+
+	class Meta:
+		ordering = ('-created',)
+
+	def __str__(self):
+		return f"{self.user_from} follows {self.user_to}"
+
+User.add_to_class('following', models.ManyToManyField('self', through=Contact, related_name='followers', symmetrical=False))
+'''
+We can't alter the User class directly because it belongs to the django.contrib.auth application
+We are going to take a slightly different approach, by adding this field dynamically to the user model (Monkey-patch)
+- tell Django to use our custom intermediary model for the relationship by adding through=Contact to the ManyToManyField.
+------------------------------
+Keep in mind that in most cases, it is preferable to add fields to the Profile model we created before, 
+instead of monkey-patching the User model. Django also allows you to use custom user models.
+------------------------------
+Django forces the relationship to be symmetrical. In this case, we are setting symmetrical=False to define a 
+non-symmetric relation. This is, if I follow you, it doesn't mean you automatically follow me.
+'''
+
 class Profile(models.Model):
 	'''
 	Extending User model
@@ -27,6 +53,18 @@ class Profile(models.Model):
 	date_of_birth = models.DateField(blank=True, null=True)
 	# You will need to install one of the Python packages to manage images, which are PIL (Python Imaging Library) or Pillow
 	photo = models.ImageField(upload_to='users/%Y/%m/%d', blank=True)
+
+	@property
+	def has_profile_image(self):
+		if self.photo != "":
+			return True
+		return False
+
+	@property
+	def profile_image_url(self):
+		if self.photo and hasattr(self.photo, 'url'):
+			return self.photo.url
+		return None
 
 	def __str__(self):
 		return f'Profile for user {self.user.username}'
