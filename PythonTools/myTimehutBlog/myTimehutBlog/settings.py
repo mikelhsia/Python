@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 	'images',                           # Define a model to store images and their information.
 										# Create a form and a view to handle image uploads.
 										# Build a system for users to be able to post images they find in external websites.
+	'actions',
 ]
 
 # Site ID

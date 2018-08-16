@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import PeekabooCollection, PeekabooMoment, PeekabooCollectionComment, Profile, User, Contact
+from actions.models import Action
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
@@ -14,6 +15,8 @@ from django.views.decorators.http import require_POST
 from myTimehutBlog.common.decorators import ajax_required
 
 from django.contrib import messages
+
+from actions.utils import create_action
 
 # This class-based view is analogous to the previous post_list view.
 class CollectionView(ListView):
@@ -148,7 +151,21 @@ def user_login(request):
 # the URL he was trying to access as a GET param named 'next'. Remember to add hidden input in the form
 @login_required
 def dashboard(request):
-	return render(request, 'registration/dashboard.html', {'section': 'dashboard'})
+	# Display all actions by default
+
+	actions = Action.objects.exclude(user=request.user)
+	followings_ids = request.user.following.values_list('id', flat=True)
+
+	print(actions)
+	print(followings_ids)
+
+	if followings_ids:
+		# If user is following others, retrieve only their actions
+		# actions = actions.filter(user_id__in=followings_ids).select_related('user', 'user__profile').prefetch_related('target')
+		actions = actions.filter(user_id__in=followings_ids)
+		actions = actions[:10]
+
+	return render(request, 'registration/dashboard.html', {'section': 'dashboard', 'actions': actions})
 
 
 def register(request):
@@ -158,6 +175,8 @@ def register(request):
 			new_user = user_form.save(commit=False)
 			new_user.set_password(user_form.cleaned_data['password'])
 			new_user.save()
+			profile = Profile.objects.create(user=new_user)
+			create_action(new_user, 'has created an account')
 
 			# Create the user profile
 			profile = Profile.objects.create(user=new_user)
@@ -209,6 +228,7 @@ def user_follow(request):
 			user = User.objects.get(id=user_id)
 			if action == 'follow':
 				Contact.objects.get_or_create(user_from=request.user, user_to=user)
+				create_action(request.user, 'is following', user)
 			else:
 				Contact.objects.filter(user_from=request.user, user_to=user).delete()
 			return JsonResponse({'status': 'ok'})

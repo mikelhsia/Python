@@ -11,6 +11,8 @@ from myTimehutBlog.common.decorators import ajax_required
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+from actions.utils import create_action
+
 # Create your views here.
 @login_required
 def image_create(request):
@@ -26,6 +28,7 @@ def image_create(request):
 			# assign current user to the item
 			new_item.user = request.user
 			new_item.save()
+			create_action(request.user, 'bookmarked image', new_item)
 
 			messages.success(request, 'Image added successfully')
 
@@ -83,6 +86,7 @@ def image_like(request):
 			# Another many-to-many manager is clear(), which removes all objects from the related object set
 			if action == 'like':
 				image.users_like.add(request.user)
+				create_action(request.user, 'likes', image)
 			else:
 				image.users_like.remove(request.user)
 
