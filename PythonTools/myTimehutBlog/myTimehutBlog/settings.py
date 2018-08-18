@@ -184,3 +184,11 @@ AUTHENTICATION_BACKENDS = {
 ABSOLUTE_URL_OVERRIDES = {
     'auth.user': lambda u: reverse_lazy('timehutBlog:user_detail', args=[u.username]),
 }
+
+
+# The redis-py offers two classes for interacting with Redis: StrictRedis and Redis. Both offer the same functionality.
+# The StrictRedis class attempts to adhere to the official Redis command syntax.
+# The Redis class extends StrictRedis overriding some methods to provide backwards compatibility.
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0

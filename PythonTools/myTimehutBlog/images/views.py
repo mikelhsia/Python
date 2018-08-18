@@ -13,6 +13,14 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from actions.utils import create_action
 
+import redis
+from django.conf import settings
+
+# Connect to redis
+r = redis.StrictRedis(host=settings.REDIS_HOST,
+                      port=settings.REDIS_PORT,
+                      db=settings.REDIS_DB)
+
 # Create your views here.
 @login_required
 def image_create(request):
@@ -44,7 +52,17 @@ def image_create(request):
 
 def image_detail(request, id, slug):
 	image = get_object_or_404(Image, id=id, slug=slug)
-	return render(request, 'images/image/detail.html', {'section': 'images', 'image': image})
+
+	# increment total image views by 1
+	# and we build the Redis key by using notation by object-type:id:field (for ex: image:33:id)
+	total_views = r.incr(f'image:{image.id}:views')
+
+	# increment image ranking by 1
+	# We use the zincrby() to store image views in a sorted set with the key image:ranking
+	# Storing the image id, and a scor of 1 that will be added to the total score of this element in the sorted set
+	r.zincrby('image_ranking', image.id, 1)
+
+	return render(request, 'images/image/detail.html', {'section': 'images', 'image': image, 'total_views': total_views})
 
 
 @login_required
@@ -96,3 +114,15 @@ def image_like(request):
 		except:
 			pass
 	return JsonResponse({'status': 'ko'})
+
+@login_required
+def image_ranking(request):
+	# get image ranking dictionary
+	image_ranking = r.zrange('image_ranking', 0, -1, desc=True)[:10]
+	image_ranking_ids = [int(id) for id in image_ranking]
+
+	# get most viewed images
+	most_viewed = list(Image.objects.filter(id__in=image_ranking_ids))
+	most_viewed.sort(key=lambda x: image_ranking_ids.index(x.id))
+
+	return render(request, 'images/image/ranking.html', {'section': 'images', 'most_viewed': most_viewed})
