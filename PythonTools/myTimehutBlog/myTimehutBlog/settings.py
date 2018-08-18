@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 	'images',                           # Define a model to store images and their information.
 										# Create a form and a view to handle image uploads.
 										# Build a system for users to be able to post images they find in external websites.
+	'actions',
 ]
 
 # Site ID
@@ -177,3 +178,17 @@ AUTHENTICATION_BACKENDS = {
     'django.contrib.auth.backends.ModelBackend',    # default auth backend
     'timehutBlog.authentication.EmailAuthBackend',  # custom auth backend
 }
+
+# Specify an URL for a model is by adding the ABSOLUTE_URL_OVERRIDES settings to the project, to replace get_absolute_url()
+# Django adds a get_absolute_url() method dynamically to any models that appear in the ABSOLUTE_URL_OVERRIDES settings.
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda u: reverse_lazy('timehutBlog:user_detail', args=[u.username]),
+}
+
+
+# The redis-py offers two classes for interacting with Redis: StrictRedis and Redis. Both offer the same functionality.
+# The StrictRedis class attempts to adhere to the official Redis command syntax.
+# The Redis class extends StrictRedis overriding some methods to provide backwards compatibility.
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0

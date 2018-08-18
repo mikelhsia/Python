@@ -9,9 +9,14 @@
         <div class="image-info">
             <div>
                 <span class="count">
-                    <span class="total">
+                    <span class="total_likes">
                         {{ total_likes }}
                     </span> like{{ total_likes|pluralize }}
+                </span>
+                <span class="count">
+                    <span class="total_views">
+                        {{ total_views }}
+                    </span> view{{ total_views|pluralize }}
                 </span>
                 <a href="#" data-id="{{ image.id }}" data-action="{% if request.user in users_like %}un{% endif %}like" class="like button">
                     {% if request.user not in users_like %} Like {% else %} Unlike {% endif %}
@@ -51,8 +56,11 @@
                 $('a.like').text(previous_action == 'like' ? 'Unlike' : 'Like');
 
                 // update total_likes
-                var previous_likes = parseInt($('span.count .total').text());
-                $('span.count .total').text(previous_action == 'like' ? previous_likes + 1 : previous_likes - 1);
+                var previous_likes = parseInt($('span.count .total_likes').text());
+                $('span.count .total_likes').text(previous_action == 'like' ? previous_likes + 1 : previous_likes - 1);
+
+                var previous_views = parseInt($('span.count .total_views').text());
+                $('span.count .total_views').text(previous_action == 'like' ? previous_views + 1 : previous_views - 1);
             }
         });
     });
