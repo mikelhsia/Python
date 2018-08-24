@@ -19,8 +19,6 @@ class Category(models.Model):
 		return self.name
 
 
-# TODO: AttributeError at /admin/shop/product/add/
-# 'IntegerField' object has no attribute 'max_length'
 class Product(models.Model):
 	category = models.ForeignKey(Category, related_name='products', on_delete=models.PROTECT)
 	name = models.CharField(max_length=200, db_index=True)
@@ -29,7 +27,7 @@ class Product(models.Model):
 	description = models.TextField(blank=True)
 	# Always use DecimalField to avoid float rounding issues
 	price = models.DecimalField(max_digits=10, decimal_places=2)
-	stock = models.PositiveIntegerField()
+	stock = models.PositiveIntegerField(default=0)
 	available = models.BooleanField(default=True)
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)

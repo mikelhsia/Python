@@ -12,7 +12,7 @@ class ProductAdmin(admin.ModelAdmin):
 	list_filter = ['available', 'created', 'updated']
 	# Any field in list_editable must also be listed in the list_display attribute, since only the fields displayed can be edited.
 	list_editable = ['price', 'stock', 'available']
-	prepopulated_fields = {'stock': ('name',)}
+	prepopulated_fields = {'slug': ('name',)}
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
