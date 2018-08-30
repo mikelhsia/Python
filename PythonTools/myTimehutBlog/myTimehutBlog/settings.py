@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'timehutBlog',
     'django.contrib.sites',             # For generating the sitemap
     'django.contrib.sitemaps',          #
+    'haystack', 
 ]
 
 # Site ID
@@ -139,3 +140,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Haystack connection settings
+HAYSTACK_CONNECTIONS = {
+	'default': {
+		'ENGINE':  'haystack.backends.solr_backend.SolrEngine',
+    	'URL': 'http://127.0.0.1:8983/solr/blog'
+    },
+}
