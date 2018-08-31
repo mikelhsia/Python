@@ -27,4 +27,14 @@ def cart_remove(request, product_id):
 
 def cart_detail(request):
 	cart = Cart(request)
+
+	for item in cart:
+		# For each item we create a form and allow changing product quantities
+		# We initialize the form with the current item quantity, and set update to True
+		item['update_quantity_form'] = CartAddProductForm(initial={'quantity': item['quantity'], 'update': True})
+
 	return render(request, 'cart/detail.html', {'cart': cart})
+
+
+# TODO 1. Ajax add to cart
+# TODO 2. MiniCart popup

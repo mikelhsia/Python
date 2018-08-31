@@ -2,6 +2,11 @@ from decimal import Decimal
 from django.conf import settings
 from shop.models import Product
 
+import inspect
+
+def get_current_function_name():
+	return inspect.stack()[1][3]
+
 class Cart(object):
 	def __init__(self, request):
 		"""
@@ -11,6 +16,7 @@ class Cart(object):
 		# Save the session to make sure other function can access it
 		self.session = request.session
 		cart = self.session.get(settings.CART_SESSION_ID)
+		print(f'{get_current_function_name()}: {cart}')
 
 		if not cart:
 			# save an empty cart in the session
@@ -48,6 +54,7 @@ class Cart(object):
 
 
 	def get_total_price(self):
+		print(f'{get_current_function_name()}: Price')
 		return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
 
 
@@ -56,6 +63,7 @@ class Cart(object):
 		Remove cart from session
 		:return:
 		"""
+		print(f'{get_current_function_name()}: {self.session[settings.CART_SESSION_ID]}')
 		del self.session[settings.CART_SESSION_ID]
 
 		self.session.modified = True
@@ -71,6 +79,8 @@ class Cart(object):
 		product_id = str(product.id)
 		if product_id not in self.cart:
 			self.cart[product_id] = {'quantity': 0, 'price':str(product.price)}
+
+		print(f'{get_current_function_name()}: {self.cart[product_id]}')
 
 		if update_quantity:
 			self.cart[product_id]['quantity'] = quantity
