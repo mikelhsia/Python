@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+        path('paypal/', include('paypal.standard.ipn.urls')),
     path('admin/', admin.site.urls),
 	path('cart/', include('cart.urls', namespace='cart')),
 	path('orders/', include('orders.urls', namespace='orders')),

@@ -8,6 +8,7 @@ django = "*"
 pillow = "*"
 celery = "*"
 flower = "*"
+django-paypal = "*"
 
 [dev-packages]
 
