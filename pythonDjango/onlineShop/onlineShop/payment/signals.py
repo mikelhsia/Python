@@ -13,4 +13,4 @@ def payment_notification(sender, **kwargs):
         order.paid = True
         order.save()
 
-valid_received.connect(payment_notification)
+valid_ipn_received.connect(payment_notification)
