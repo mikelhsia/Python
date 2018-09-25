@@ -5,6 +5,9 @@ import csv
 import datetime
 from django.http import HttpResponse
 
+from django.urls import reverse
+from django.utils.html import format_html
+
 # Register your models here.
 # We use "ModelInline" for the OrderItem model to include it as an inline in the OrderAdmin class
 class OrderItemInline(admin.TabularInline):
@@ -40,8 +43,34 @@ def get_all_field(modeladmin, request, queryset):
 
 get_all_field.short_description = 'Print fields on Console'
 
+#####
+# Customize admin field
+def order_detail(obj):
+	reverse_url = reverse('orders:admin_order_detail', args=[obj.id])
+	return format_html('<a href="{}">View</a>'.format(reverse_url))
+
+def order_pdf(obi):
+	url = reserve('orders:admin_order_pdf', args=[obj.id])
+	# return format_html('<a href="{}"></a>'.format(url))
+	return format_html('<a href="{}" style="pointer-events: none; cursor: default;">Print Invoice</a>'.format(url))
+
+order_pdf.short_description = 'PDF bill'
+
+
 class OrderAdmin(admin.ModelAdmin):
-	list_display = ['id', 'first_name', 'last_name', 'email', 'address', 'postal_code', 'city', 'paid', 'created_at', 'updated_at']
+	list_display = ['id', 
+                'first_name', 
+                'last_name', 
+                'email', 
+                'address', 
+                'postal_code', 
+                'city', 
+                'paid', 
+                'created_at', 
+                'updated_at', 
+                order_detail, 
+                # order_pdf,
+                ]
 	list_filter = ['paid', 'created_at', 'updated_at']
 	# Inline allows you to include a model for appearing on the same edit page as the parent model
 	inlines = [OrderItemInline]

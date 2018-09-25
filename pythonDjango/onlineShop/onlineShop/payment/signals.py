@@ -3,6 +3,12 @@ from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
 from orders.models import Order
 
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from django.conf import settings
+# import weasyprint
+from io import BytesIO
+
 def payment_notification(sender, **kwargs):
     ipn_obj = sender
 
@@ -12,5 +18,23 @@ def payment_notification(sender, **kwargs):
         # Mark the order as paid
         order.paid = True
         order.save()
+        '''
+        # create invoice e-mail
+        subject = f'My Shop - Invoice no. {order.id}'
+        message = 'Please, find attached the invoice for your recent purchase.'
+        email = EmailMessage(subject, message, 'admin@myshop.com', [order.email])
+
+        # generate PDF
+        html = render_to_string('orders/order/pdf.html', {'order':order})
+        out = BytesIO()
+        stylesheets=[weasyprint.CSS(settings.STATIC_ROOT + 'css/pdf.css')]
+        weasyprint.HTML(string=html).write_pdf(out, stylesheets=stylesheets)
+
+        # attach PDF file
+        email.attach(f'order_{order.id}.pdf', out.getvalue(), 'application/pdf')
+
+        # send email
+        email.send()
+        '''
 
 valid_ipn_received.connect(payment_notification)
