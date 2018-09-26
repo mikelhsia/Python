@@ -39,11 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'shop',
-	'cart',
-	'orders',
+    'shop', 
+    'cart', 
+    'orders',
     'paypal.standard.ipn',
     'payment',
+    'coupons', 
 ]
 
 MIDDLEWARE = [
