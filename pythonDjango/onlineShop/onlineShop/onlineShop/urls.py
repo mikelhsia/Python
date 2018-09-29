@@ -15,13 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.i18n import i18n_patterns
 
-urlpatterns = [
-	path('coupons/', include('coupons.urls', namespace='coupons')),
-	path('paypal/', include('paypal.standard.ipn.urls')),
+urlpatterns = i18n_patterns(
+    path('rosetta/', include('rosetta.urls')),
+    path('coupons/', include('coupons.urls', namespace='coupons')),
+    path('paypal/', include('paypal.standard.ipn.urls')),
     path('admin/', admin.site.urls),
-	path('cart/', include('cart.urls', namespace='cart')),
-	path('orders/', include('orders.urls', namespace='orders')),
-	path('payment/', include('payment.urls', namespace='payment')),
-	path('', include('shop.urls', namespace='shop')),
-]
+    path('cart/', include('cart.urls', namespace='cart')),
+    path('orders/', include('orders.urls', namespace='orders')),
+    path('payment/', include('payment.urls', namespace='payment')),
+    path('', include('shop.urls', namespace='shop')),
+)

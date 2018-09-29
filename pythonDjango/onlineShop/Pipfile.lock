@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0720ca1bd49a81bc0289ba73d469a57153ee2e9d4291642347b9140011dd0576"
+            "sha256": "5c98eec419c57ff423ae1739ff82f46c67bfb66446a5c2712dcf187505191f72"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -45,11 +45,11 @@
         },
         "cairosvg": {
             "hashes": [
-                "sha256:0a29e694d7de5973433222dec08ee785a8d753459ddb9a1d8e0e1456927e8e4c",
-                "sha256:e512f555f576b6462b04b585c4ba4c09a43f3a8fec907b60ead21d7d00c550e9"
+                "sha256:93c5b3204478c4e20c4baeb33807db5311b4420c21db2f21034a6deda998cb14",
+                "sha256:f331e6024ee4c7f3eca3b0caa909dd893fa4d7414f50a6b206acbe2df20d95a9"
             ],
-            "markers": "python_version != '3.1.*' and python_version != '3.0.*' and python_version != '3.3.*' and python_version >= '2.7' and python_version != '3.2.*'",
-            "version": "==2.1.3"
+            "markers": "python_version != '3.0.*' and python_version != '3.3.*' and python_version != '3.2.*' and python_version != '3.1.*' and python_version >= '2.7'",
+            "version": "==2.2.1"
         },
         "celery": {
             "hashes": [
@@ -133,6 +133,14 @@
             "index": "pypi",
             "version": "==2.1.1"
         },
+        "django-parler": {
+            "hashes": [
+                "sha256:979295a977f8eb6a3567d3f08faa718ef6e66edc38bdaf5de23f6c7346ecb038",
+                "sha256:9f1508c75aca387d06ac21fb9bfffbb8fd12b04d268aa25b0c5e56a33909bcdd"
+            ],
+            "index": "pypi",
+            "version": "==1.9.2"
+        },
         "django-paypal": {
             "hashes": [
                 "sha256:03f82eafadd0edc78b59edc5985bdbd5f956c083d77d5f17ca787ead12b75618",
@@ -140,6 +148,13 @@
             ],
             "index": "pypi",
             "version": "==0.5.0"
+        },
+        "django-rosetta": {
+            "hashes": [
+                "sha256:7f1fa6808179fe82dde0dcee1cc5229affbc85d8e25296f09306a43a8187cded"
+            ],
+            "index": "pypi",
+            "version": "==0.9.0"
         },
         "flower": {
             "hashes": [
@@ -211,6 +226,13 @@
             ],
             "index": "pypi",
             "version": "==5.2.0"
+        },
+        "polib": {
+            "hashes": [
+                "sha256:93b730477c16380c9a96726c54016822ff81acfa553977fdd131f2b90ba858d7",
+                "sha256:fad87d13696127ffb27ea0882d6182f1a9cf8a5e2b37a587751166c51e5a332a"
+            ],
+            "version": "==1.1.0"
         },
         "pycparser": {
             "hashes": [

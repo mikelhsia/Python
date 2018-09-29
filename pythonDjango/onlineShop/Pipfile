@@ -10,6 +10,8 @@ celery = "*"
 flower = "*"
 django-paypal = "*"
 weasyprint = "*"
+django-rosetta = "*"
+django-parler = "*"
 
 [dev-packages]
 
