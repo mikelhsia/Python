@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load util_tags %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -17,8 +18,7 @@
             <ul class="languages">
                 {% for language in languages %}
                 <li>
-                    {# TODO: Need to make it dynamic to change the url by using request.path, and a template tag #}
-                    <a href="/{{ language.code }}/" {% if language.code == LANGUAGE_CODE %} class="selected" {% endif %}>
+                    <a href="/{{ language.code }}/{{ request.path | truncate_lan_code }}" {% if language.code == LANGUAGE_CODE %} class="selected" {% endif %}>
                         {{ language.name_local }}
                     </a>
                 </li>
