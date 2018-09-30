@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'payment',
     'coupons', 
     'rosetta',
+    'parler',
 ]
 
 MIDDLEWARE = [
@@ -130,6 +131,17 @@ USE_L10N = True
 
 USE_TZ = True
 
+PARLER_LANGUAGES = {
+    None: (
+        {'code': 'en'},
+        {'code': 'zh-hans'},
+        {'code': 'zh-hant'},
+    ),
+    'default': {
+        'fallback': 'en',
+        'hide_untranslated': False,
+    }
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
