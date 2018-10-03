@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -39,17 +39,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'shop',
-	'cart',
-	'orders',
+    'shop', 
+    'cart', 
+    'orders',
     'paypal.standard.ipn',
     'payment',
+    'coupons', 
+    'rosetta',
+    'parler',
+    'localflavor', 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'django.middleware.locale.LocaleMiddleware', # Needs to come after session middleware, since this relies on the session for default lang setting
+    'django.middleware.common.CommonMiddleware', # Also locale needs to be placed before common middleware, because needs an active language to resolve the request URL
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -111,7 +116,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = (
+    ('en', _('English')),
+    ('zh-hans', _('中文简体')),
+    ('zh-hant', _('中文繁體')),
+)
 
 TIME_ZONE = 'UTC'
 
@@ -121,6 +132,17 @@ USE_L10N = True
 
 USE_TZ = True
 
+PARLER_LANGUAGES = {
+    None: (
+        {'code': 'en'},
+        {'code': 'zh-hans'},
+        {'code': 'zh-hant'},
+    ),
+    'default': {
+        'fallback': 'en',
+        'hide_untranslated': False,
+    }
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -133,6 +155,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
+# Locale folder
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale/'),
+)
+
 # This is the key that we're going to use to store the cart in the user session
 CART_SESSION_ID = 'cart'
 
@@ -143,3 +170,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # This is the email of your PayPal account
 PAYPAL_RECEIVER_EMAIL = 'mikelhsia@hotmail.com'
 PAYPAL_TEST = True
+
+# Redis settings
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 1
