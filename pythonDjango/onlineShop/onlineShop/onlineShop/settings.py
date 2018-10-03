@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'coupons', 
     'rosetta',
     'parler',
+    'localflavor', 
 ]
 
 MIDDLEWARE = [
@@ -169,3 +170,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # This is the email of your PayPal account
 PAYPAL_RECEIVER_EMAIL = 'mikelhsia@hotmail.com'
 PAYPAL_TEST = True
+
+# Redis settings
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 1

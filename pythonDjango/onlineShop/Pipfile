@@ -12,6 +12,8 @@ django-paypal = "*"
 weasyprint = "*"
 django-rosetta = "*"
 django-parler = "*"
+django-localflavor = "*"
+redis = "*"
 
 [dev-packages]
 
