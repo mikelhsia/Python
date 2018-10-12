@@ -49,8 +49,8 @@ def order_detail(obj):
 	reverse_url = reverse('orders:admin_order_detail', args=[obj.id])
 	return format_html('<a href="{}">View</a>'.format(reverse_url))
 
-def order_pdf(obi):
-	url = reserve('orders:admin_order_pdf', args=[obj.id])
+def order_pdf(obj):
+	url = reverse('orders:admin_order_pdf', args=[obj.id])
 	# return format_html('<a href="{}"></a>'.format(url))
 	return format_html('<a href="{}" style="pointer-events: none; cursor: default;">Print Invoice</a>'.format(url))
 
