@@ -11,6 +11,13 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMix
 # PermissionRequiredMixin:  Grants access to the view to users that have a specific permission.
 #                           Remember that superusers automatically have all permissions
 
+from django.shortcuts import redirect, get_object_or_404
+from django.views.generic.base import TemplateResponseMixin, View
+# TemplateResponseMixin: rendering templates and returning an HTTP response. It requires a template_name to be rendered
+#                        and provides render_to_response() method to pass it a context and render the template
+# View: The vasic class-based view from Django
+from .forms import ModuleFormSet
+
 # Create your views here.
 
 '''
@@ -95,3 +102,60 @@ class CourseDeleteView(PermissionRequiredMixin, OwnerCourseMixin, DeleteView):
 	template_name = 'courses/manage/course/delete.html'
 	success_url = reverse_lazy('courses:manage_course_list')
 	permission_required = 'courses.delete_course'
+
+
+
+class CourseModuleUpdateView(TemplateResponseMixin, View):
+	'''
+	CourseModuleUpdateView handles the formset to add, update, and delete modules for a specific course
+	'''
+	template_name = 'courses/manage/module/formset.html'
+	course = None
+
+	def get_formset(self, data=None):
+		'''
+		To avoid repeating the code to build the formset.
+		:param data:
+		:return:
+		'''
+		return ModuleFormSet(instance=self.course, data=data)
+
+	def dispatch(self, request, pk):
+		'''
+		This method is provided by the View class. It takse an HTTP request and it's parameters and attempts
+		to delegate to a lowercase method that matches the HTTP method used. For ex:
+		A GET request is delegated to the get() method and a POST request to a post() method
+		:param request:
+		:param pk:
+		:return:
+		'''
+		self.course = get_object_or_404(Course, id=pk, owner=request.user)
+		return super(CourseModuleUpdateView, self).dispatch(request, pk)
+
+	def get(self, request, *args, **kwargs):
+		'''
+		Executed for GET request
+		:param request:
+		:param args:
+		:param kwargs:
+		:return:
+		'''
+		formset = self.get_formset()
+		return self.render_to_response({'course': self.course, 'formset': formset})
+
+	def post(self, request, *args, **kwargs):
+		'''
+		Executed for POST request we perform the following actions:
+		1. Build a ModuleFormSet instance using the submitted data
+		2. Execute the is_valid() to validate all of its forms
+		3. Save() and redirect to the template
+		:param request:
+		:param args:
+		:param kwargs:
+		:return:
+		'''
+		formset = self.get_formset(data=request.POST)
+		if formset.is_valid():
+			formset.save()
+			return redirect('courses:manage_course_list')
+		return self.render_to_response({'course': self.course, 'formset': formset})
