@@ -7,6 +7,10 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+
+from django.forms.models import modelform_factory
+from django.apps import apps
+from .models import Module, Content
 # LoginRequiredMixin:   Repllicates the login_required decorator's functionality
 # PermissionRequiredMixin:  Grants access to the view to users that have a specific permission.
 #                           Remember that superusers automatically have all permissions
@@ -159,3 +163,61 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
 			formset.save()
 			return redirect('courses:manage_course_list')
 		return self.render_to_response({'course': self.course, 'formset': formset})
+
+
+def ContentCreateUpdateView(TemplateResponseMixin, View):
+    module = None
+    model = None
+    obj = None
+    template_name = 'courses/manage/content/form.html'
+
+    def get_model(self, model_name):
+        '''
+         Here, we check that the given model name is one of the four content models: text, video, image, or file
+        '''
+        if model_name in ['text', 'video', 'image', 'file']:
+            return apps.get_model(app_label='courses', model_name=model_name)
+
+        return None
+
+    def get_form(self, model, *args, **kwargs):
+        '''
+        We build a dynamic form using the modelform_factory() function of the form's framework.
+        '''
+        Form = modelform_factory(model, exclude=['owner', 'order', 'created', 'updated'])
+        return Form(*args, **kwargs)
+
+    def dispatch(self, request, module_id, model_name, id=None):
+        '''
+        It receives the following URL parameters and stores the corresponding module, model, and content object as class attributes:
+        - module_id: The id for the module that the content is/will be associated with.
+        - model_name: The model name of the content to create/update.
+        - id: The id of the object that is being updated. It's None to create new objects.
+        '''
+        self.module = get_object_or_404(Module, id=module_id, course__owener=request,user)
+        self.model = self.get_model(model_name)
+
+        if id:
+            self.obj = get_object_or_404(self.model, id=id, owner=request.user)
+
+        return super(ContentCreateUpdateView, self).dispatch(request, module_id, model_name, id)
+
+    def get(self, request, module_id, model_name, id=None):
+        form = self.get_form(self.model, instance=self.obj)
+        return self.render_to_response({'form': form, 'object': self.obj})
+
+
+    def post(self, request, module_id, model_name, id=None):
+        form = self.get_form(self.model, instance=self.obj, data=request.POST, files=request.FILES)
+
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.owner = request.user
+            obj.save()
+
+            if not id:
+                # new content
+                Content.objects.create(module=self.module, item=obj)
+                return redirect('module_content_list', self.module.id)
+
+            return self.render_to_response({'form': form, 'object': self.obj)}
