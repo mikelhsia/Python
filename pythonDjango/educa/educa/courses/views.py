@@ -22,6 +22,8 @@ from django.views.generic.base import TemplateResponseMixin, View
 # View: The vasic class-based view from Django
 from .forms import ModuleFormSet
 
+from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
+
 # Create your views here.
 
 '''
@@ -32,7 +34,7 @@ class ManageCourseListView(ListView):
 
 	def get_queryset(self):
 		qs = super(ManageCourseListView, self).get_queryset()
-		return qs.filter(owner=self.request.user)
+		return qs.filter(owner=self.equest.user)
 '''
 
 # We will start creating a mixin class that includes a common behavior and use it for the courses' views
@@ -165,59 +167,138 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
 		return self.render_to_response({'course': self.course, 'formset': formset})
 
 
-def ContentCreateUpdateView(TemplateResponseMixin, View):
-    module = None
-    model = None
-    obj = None
-    template_name = 'courses/manage/content/form.html'
+class ContentCreateUpdateView(TemplateResponseMixin, View):
+	module = None
+	model = None
+	obj = None
+	template_name = 'courses/manage/content/form.html'
 
-    def get_model(self, model_name):
-        '''
-         Here, we check that the given model name is one of the four content models: text, video, image, or file
-        '''
-        if model_name in ['text', 'video', 'image', 'file']:
-            return apps.get_model(app_label='courses', model_name=model_name)
+	def get_model(self, model_name):
+		'''
+		Here, we check that the given model name is one of the four content models: text, video, image, or file
+		:param model_name:
+		:return:
+		'''
+		if model_name in ['text', 'video', 'image', 'file']:
+			return apps.get_model(app_label='courses', model_name=model_name)
 
-        return None
+		return None
 
-    def get_form(self, model, *args, **kwargs):
-        '''
-        We build a dynamic form using the modelform_factory() function of the form's framework.
-        '''
-        Form = modelform_factory(model, exclude=['owner', 'order', 'created', 'updated'])
-        return Form(*args, **kwargs)
+	def get_form(self, model, *args, **kwargs):
+		'''
+		We build a dynamic form using the modelform_factory() function of the form's framework.
+		:param model:
+		:param args:
+		:param kwargs:
+		:return:
+		'''
+		Form = modelform_factory(model, exclude=['owner', 'order', 'created', 'updated'])
+		return Form(*args, **kwargs)
 
-    def dispatch(self, request, module_id, model_name, id=None):
-        '''
-        It receives the following URL parameters and stores the corresponding module, model, and content object as class attributes:
-        - module_id: The id for the module that the content is/will be associated with.
-        - model_name: The model name of the content to create/update.
-        - id: The id of the object that is being updated. It's None to create new objects.
-        '''
-        self.module = get_object_or_404(Module, id=module_id, course__owener=request,user)
-        self.model = self.get_model(model_name)
+	def dispatch(self, request, module_id, model_name, id=None):
+		'''
+		It receives the following URL parameters and stores the corresponding module, model, and content object as class attributes:
+		:param request:
+		:param module_id: The id for the module that the content is/will be associated with.
+		:param model_name: The model name of the content to create/update.
+		:param id: The id of the object that is being updated. It's None to create new objects.
+		:return:
+		'''
+		self.module = get_object_or_404(Module, id=module_id, course__owner=request.user) # course__owner 跨表查询
+		self.model = self.get_model(model_name)
 
-        if id:
-            self.obj = get_object_or_404(self.model, id=id, owner=request.user)
+		if id:
+			self.obj = get_object_or_404(self.model, id=id, owner=request.user)
 
-        return super(ContentCreateUpdateView, self).dispatch(request, module_id, model_name, id)
-
-    def get(self, request, module_id, model_name, id=None):
-        form = self.get_form(self.model, instance=self.obj)
-        return self.render_to_response({'form': form, 'object': self.obj})
+		return super(ContentCreateUpdateView, self).dispatch(request, module_id, model_name, id)
 
 
-    def post(self, request, module_id, model_name, id=None):
-        form = self.get_form(self.model, instance=self.obj, data=request.POST, files=request.FILES)
+	def get(self, request, module_id, model_name, id=None):
+		'''
+		Build the model form for the Text, Video, Image, or File instance. Otherwise, we pass no instance to create a new
+		object, since self.obj is None if no id is provided
+		:param request:
+		:param module_id:
+		:param model_name:
+		:param id:
+		:return:
+		'''
+		form = self.get_form(self.model, instance=self.obj)
 
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.owner = request.user
-            obj.save()
+		return self.render_to_response({'form': form, 'object': self.obj})
 
-            if not id:
-                # new content
-                Content.objects.create(module=self.module, item=obj)
-                return redirect('module_content_list', self.module.id)
 
-            return self.render_to_response({'form': form, 'object': self.obj)}
+	def post(self, request, module_id, model_name, id=None):
+		'''
+		Pass any submitted data and files to the modelform.
+		:param request:
+		:param module_id:
+		:param model_name:
+		:param id:
+		:return:
+		'''
+		form = self.get_form(self.model, instance=self.obj, data=request.POST, files=request.FILES)
+
+		if form.is_valid():
+			obj = form.save(commit=False)
+			obj.owner = request.user
+			obj.save()
+
+			if not id:
+				# new content created
+				Content.objects.create(module=self.module, item=obj)
+			return redirect('module_content_list', self.module.id)
+
+		return self.render_to_response({'form': form, 'object': self.obj})
+
+
+class ContentDeleteView(View):
+	def post(self, request, id):
+		content = get_object_or_404(Content, id=id, module__course__owner=request.user)
+
+		module = content.module
+		content.item.delete()
+		content.delete()
+		return redirect('module_content_list', module.id)
+
+
+class ModuleContentListView(TemplateResponseMixin, View):
+	template_name = 'courses/manage/module/content_list.html'
+
+	def get(self, request, module_id):
+		module = get_object_or_404(Module, id=module_id, course__owner=request.user)
+
+		return self.render_to_response({'module': module})
+
+
+'''
+We create an empty modules_order dictionary. The keys for this dictionary will be the modules' id, 
+and the values will be the assigned order for each module. We iterate over the #module children elements. 
+We recalculate the displayed order for each module and get its data-id attribute, which contains the module's id. 
+We add the id as key of the modules_order dictionary and the new index of module as the value. We launch 
+an AJAX POST request to the content_order URL, including the serialized JSON data of modules_order in the request. 
+The corresponding ModuleOrderView takes care of updating the modules order.
+'''
+class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+	'''
+	Offer a simple way to re-roder course modules and their contents. We need a view that receives the new order of modules' id
+	encoded in JSON.
+	- Using CsrfExemptMixin to avoid checking for a CSRF token in POST requests. We need this to perform AJAX POST request
+	without having to generate csrf_token
+	- JsonRequestResponseMixin to parse the request data as JSON and serializes the response as JSON, and return HTTP response
+	'''
+	def post(self, request):
+		# print(self.request_json.items())
+		for id, order in self.request_json.items():
+			Module.objects.filter(id=id, course__owner=request.user).update(order=order)
+
+		return self.render_json_response({'saved': 'OK'})
+
+
+class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+	def post(self, request):
+		# print(self.request_json.items())
+		for id, order in self.request_json.items():
+			Content.objects.filter(id=id, module__course__owner=request.user).update(order=order)
+
+		return self.render_json_response({'saved': 'OK'})
