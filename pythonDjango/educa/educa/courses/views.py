@@ -33,6 +33,8 @@ from .models import Subject
 # Create detail view for displaying a single course overview
 from django.views.generic.detail import DetailView
 
+from students.forms import CourseEnrollForm
+
 # Create your views here.
 
 '''
@@ -334,3 +336,15 @@ class CourseDetailView(DetailView):
 	'''
 	model = Course
 	template_name = 'courses/course/detail.html'
+
+	def get_context_data(self, **kwargs):
+		'''
+		We use this method to include the enrollment form in the context for rendering the template.
+		We initialize the hidden course field of the form with the current Course object. so that i can be submitted directly.
+		:param kwargs:
+		:return:
+		'''
+		context = super(CourseDetailView, self).get_context_data(**kwargs)
+		context['enroll_form'] = CourseEnrollForm(initial={'course': self.object})
+
+		return context
