@@ -6,6 +6,9 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 
 from .fields import OrderField
 
+from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
+
 # Create your models here.
 class Subject(models.Model):
 	title = models.CharField(max_length=200)
@@ -95,6 +98,16 @@ class ItemBase(models.Model):
 
 	def __str__(self):
 		return self.title
+
+	def render(self):
+		'''
+		This method uses the render_to_string() for rendering a template and returning the rendered content as a string.
+		Each kind of content is rendered using a template named after the content model
+		We use self._meta.model_name to buil the appropriate template name for la.
+		:return:
+		'''
+		return render_to_string(f'courses/content/{self._meta.model_name}.html', {'item': self})
+
 
 
 class Text(ItemBase):
