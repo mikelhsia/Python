@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e79408df889943180bff5eb7b96992d61c3cb457d14d82601e6d87a45ca0e962"
+            "sha256": "e9c5239ed5f27e97c69b5f749d0b5906f30e158a0146753b43e6adb58f75893e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -53,6 +53,13 @@
             "index": "pypi",
             "version": "==1.2.0"
         },
+        "django-memcache-status": {
+            "hashes": [
+                "sha256:4e04cb219f81e0a7a343fbc5f4de69f48bf5b24b921ff5a7568d20776fdf0d9d"
+            ],
+            "index": "pypi",
+            "version": "==1.3"
+        },
         "idna": {
             "hashes": [
                 "sha256:156a6814fb5ac1fc6850fb002e0852d56c0c8d2531923a51032d1b70760e186e",
@@ -96,6 +103,20 @@
             "index": "pypi",
             "version": "==5.3.0"
         },
+        "python-memcached": {
+            "hashes": [
+                "sha256:4dac64916871bd3550263323fc2ce18e1e439080a2d5670c594cf3118d99b594",
+                "sha256:a2e28637be13ee0bf1a8b6843e7490f9456fd3f2a4cb60471733c7b5d5557e4f"
+            ],
+            "version": "==1.59"
+        },
+        "python3-memcached": {
+            "hashes": [
+                "sha256:7cbe5951d68eef69d948b7a7ed7decfbd101e15e7f5be007dcd1219ccc584859"
+            ],
+            "index": "pypi",
+            "version": "==1.51"
+        },
         "pytz": {
             "hashes": [
                 "sha256:31cb35c89bd7d333cd32c5f278fca91b523b0834369e757f4c5641ea252236ca",
@@ -105,10 +126,17 @@
         },
         "requests": {
             "hashes": [
-                "sha256:99dcfdaaeb17caf6e526f32b6a7b780461512ab3f1d992187801694cba42770c",
-                "sha256:a84b8c9ab6239b578f22d1c21d51b696dcfe004032bb80ea832398d6909d7279"
+                "sha256:65b3a120e4329e33c9889db89c80976c5272f56ea92d3e74da8a463992e3ff54",
+                "sha256:ea881206e59f41dbd0bd445437d792e43906703fff75ca8ff43ccdb11f33f263"
             ],
-            "version": "==2.20.0"
+            "version": "==2.20.1"
+        },
+        "six": {
+            "hashes": [
+                "sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9",
+                "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb"
+            ],
+            "version": "==1.11.0"
         },
         "urllib3": {
             "hashes": [
