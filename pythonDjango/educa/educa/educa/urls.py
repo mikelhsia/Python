@@ -27,6 +27,7 @@ urlpatterns = [
     path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(template_name='registration/logged_user_out.html'), name='logout'),
 	path('course/', include('courses.urls', namespace='courses')),
+	path('api/', include('courses.api.urls', namespace='api')),
 	path('students/', include('students.urls', namespace='students')),
     path('admin/', admin.site.urls),
 	path('', CourseListView.as_view(), name='course_list'),
