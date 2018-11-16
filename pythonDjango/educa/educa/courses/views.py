@@ -1,4 +1,5 @@
 from django.shortcuts import render
+<<<<<<< HEAD
 from django.views.generic.list import ListView
 from .models import Course
 
@@ -372,3 +373,7 @@ class CourseDetailView(DetailView):
 		context['enroll_form'] = CourseEnrollForm(initial={'course': self.object})
 
 		return context
+=======
+
+# Create your views here.
+>>>>>>> master
