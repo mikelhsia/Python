@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load cache %}
+
+{% block title %}
+    {{ object.title }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ module.title }}</h1>
+    <div class="contents">
+        <h3>Modules</h3>
+        <ul id="modules">
+            {% for m in object.modules.all %}
+                <li data-id="{{ m.id }}" {% if m == module %}class="selected"{% endif %}>
+                    <a href="{% url 'students:student_course_detail_module' object.id m.id %}">
+                        <span>
+                            Module <span class="order">{{ m.order|add:1 }}</span></span>
+                        <br> {{ m.title }}
+                    </a>
+                </li>
+            {% empty %}
+                <li>No modules yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="module">
+        {#
+            Caching template
+            We cache this template fragment using the name 'module_contents' and passing the current Module object to it
+            Thus, we uniquely identify the fragment. This is important to avoid caching a module's contents and serving
+            the wrong content when a different module is requested
+            Note:
+            If the USE_I18N setting is set to True, the per-site middleware cache will respect the active language.
+            If you use the {/% cache %/} template tag you have use one of the translation-specific variables available
+            in templates to achieve the same result, such as {/% cache 600 name request.LANGUAGE_CODE %/}.
+        #}
+        {% cache 600 module_contents module %}
+            {% for content in module.contents.all %}
+                {% with item=content.item %}
+                    <h2>{{ item.title }}</h2>
+                    {# Using item.render to display and access each item -> in models.py to implement render() #}
+                    {{ item.render }}
+                {% endwith %}
+            {% endfor %}
+        {% endcache %}
+    </div>
+{% endblock %}
