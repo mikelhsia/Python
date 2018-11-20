@@ -6,6 +6,11 @@ name = "pypi"
 [packages]
 django = "*"
 pillow = "*"
+django-braces = "*"
+django-embed-video = "*"
+"python3-memcached" = "*"
+django-memcache-status = "*"
+djangorestframework = "*"
 
 [dev-packages]
 
