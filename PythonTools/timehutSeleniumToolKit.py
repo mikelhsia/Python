@@ -53,8 +53,8 @@ class timehutSeleniumToolKit:
             WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
         except BaseException:
             return False
-
-        return True
+        else:
+            return True
 
     def whereami(self, str=''):
         # print(f'current url = {self.__driver.current_url}')
