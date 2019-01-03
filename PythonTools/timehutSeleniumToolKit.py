@@ -15,6 +15,7 @@ whereamiImagePath = '/Users/michael/Python/PythonTools/'
 class timehutSeleniumToolKit:
 
     def __init__(self, babyBoy, headlessFlag):
+        __slots__ = ['__driver', 'albumSet', 'baby_id']
 
         # An empty set that used for storing unique album list
         self.albumSet = set()
