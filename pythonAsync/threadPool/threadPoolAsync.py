@@ -20,8 +20,9 @@ if __name__ == '__main__':
 	for i in range(5):
 		# 异步调用
 		obj = p.submit(piao, f'safly {i}', i)
-		print('obj appended {}'.format(i))
+		print('obj submitted {}'.format(i))
 		objs.append(obj)
+		print('obj appended {}'.format(i))
 
 	p.shutdown(wait=True)
 	print('主', os.getpid())
