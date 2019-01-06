@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import os
+import re
 import time
 
 chromedriver = '/Users/michael/Python/PythonTools/chromedriver'
@@ -27,9 +28,6 @@ class timehutSeleniumToolKit:
             self.__driver = webdriver.Chrome(executable_path=chromedriver, options=option)
         else:
             self.__driver = webdriver.Chrome(executable_path=chromedriver)
-
-    def __parseTime(self, string):
-        return list()
 
     def loginTimehut(self, username, password):
         desktop_view_div = self.__driver.find_element_by_class_name('login')
@@ -61,7 +59,7 @@ class timehutSeleniumToolKit:
         return self.__driver.save_screenshot(f'{whereamiImagePath}whereami-{str}.png')
 
     def fetchTimehutPage(self, url):
-        self.__driver.get(url)
+        return self.__driver.get(url)
 
     def scrollDownTimehutPage(self):
         '''
@@ -82,8 +80,7 @@ class timehutSeleniumToolKit:
             wait.until(element_contains_text((By.CLASS_NAME, 'dropload-refresh'), 'more'))
         except BaseException:
             return False
-        finally:
-            # print('page loaded')
+        else:
             return True
 
     def getTimehutMoment(self):
@@ -99,33 +96,86 @@ class timehutSeleniumToolKit:
         days = Column(Integer)
         content_type = Column(SmallInteger)
         caption = Column(Text)
-        :return:
+        :return: collection_list
         '''
         album_elements = self.__driver.find_elements_by_class_name('main-list-item')
+        collection_list = list()
 
         for element in album_elements:
-            content_type = element.find_element_by_tag_name()
-            if content_type == 0:
-                pass
-            elif content_type == 1:
+            if len(element.find_elements_by_class_name('swiper-container')) > 0:
+                # This is a collection
+                date_str = element.find_element_by_tag_name('i').get_attribute('innerText')
+                regex = r'(\d*)Y\-(\d*)M\-(\d*).*'
+                result = re.match(regex, date_str)
+                y = result.group(1)
+                m = result.group(2)
+                d = result.group(3)
+
+                cid = element.find_element_by_class_name('swiper-slide').get_attribute('data-param')
+                baby_id = self.baby_id
+                created_at = ''
+                updated_at = ''
+                months = (int(y) * 12) + int(m)
+                days = int(d)
+                content_type = 1
+                caption = element.find_element_by_class_name('swiper-describe').find_element_by_tag_name('span').get_attribute('innerText')
+                # print(f'id = {cid}\n '
+                #       f'baby id = {baby_id}\n '
+                #       f'months = {months}\n '
+                #       f'days = {days} \n '
+                #       f'caption = {caption}\n'
+                #       f'===================\n')
+
+                collection_list.append([cid, baby_id, created_at, updated_at, months, days, content_type, caption])
+            elif len(element.find_elements_by_class_name('text')) > 0:
+                # This is a text
+                date_str = element.find_element_by_tag_name('i').get_attribute('innerText')
+                regex = r'(\d*)Y\-(\d*)M\-(\d*).*'
+                result = re.match(regex, date_str)
+                y = result.group(1)
+                m = result.group(2)
+                d = result.group(3)
+
+                cid = element.find_element_by_class_name('text-bottom').get_attribute('data-id')
+                baby_id = self.baby_id
+                created_at = ''
+                updated_at = ''
+                months = (int(y) * 12) + int(m)
+                days = int(d)
+                content_type = 2
+                caption = element.find_element_by_class_name('text-content').get_attribute('innerText')
+                # print(f'id = {cid}\n '
+                #       f'baby id = {baby_id}\n '
+                #       f'months = {months}\n '
+                #       f'days = {days} \n '
+                #       f'caption = {caption}\n'
+                #       f'===================\n')
+
+                collection_list.append([cid, baby_id, created_at, updated_at, months, days, content_type, caption])
+            elif len(element.find_elements_by_class_name('milestone')) > 0:
+                # This is a milestone
                 pass
             else:
-                pass
+                # There is something else
+                print('[Important]: Missing a type!!')
+        else:
+            return collection_list
 
     def getTimehutAlbumURLSet(self):
         album_elements = self.__driver.find_elements_by_class_name('swiper-detail-enter')
-        # TODO This is weird that you need time to fetch the element
-        time.sleep(0.5)
         # print(f'no of elements: {len(album_elements)}')
 
         for element in album_elements:
             # print(f'href: {element.get_attribute("href")}')
             self.albumSet.add(element.get_attribute('href'))
 
-
+        return len(self.albumSet)
 
     def quitTimehutPage(self):
         self.__driver.quit()
+
+    def cheatTimehut(self):
+        return self.__driver
 
 
 class element_contains_text(object):
