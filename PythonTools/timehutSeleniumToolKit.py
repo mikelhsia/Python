@@ -6,16 +6,15 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import os
 import re
-import time
 
 import json
 import requests
 
+import timehutLog
+
 chromedriver = '/Users/michael/Python/PythonTools/chromedriver'
 os.environ["webdriver.chrome.driver"] = chromedriver
 whereamiImagePath = '/Users/michael/Python/PythonTools/'
-
-# TODO Process pool or Queue to process multitask in the getTimehut main python file
 
 class timehutSeleniumToolKit:
 
@@ -56,13 +55,12 @@ class timehutSeleniumToolKit:
         try:
             WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
         except Exception as e:
-            print(f'Error happening: {e}')
+            timehutLog.logging.error(e)
             return False
         else:
             return True
 
     def whereami(self, str=''):
-        # print(f'current url = {self.__driver.current_url}')
         return self.__driver.save_screenshot(f'{whereamiImagePath}whereami-{str}.png')
 
     def fetchTimehutPage(self, url):
@@ -96,12 +94,11 @@ class timehutSeleniumToolKit:
     def getTimehutRecordedCollectionRequest(self):
         recorded_request_list = []
 
-        print('Called Request')
         for request in self.__driver.requests:
             if request.response and 'event' in request.path:
-                # print(request.path)
-                # print(f'Header: {request.headers}')
-                # print(f'Code: {request.response.status_code}')
+                timehutLog.logging.info(request.path)
+                timehutLog.logging.info(f'Header: {request.headers}')
+                timehutLog.logging.info(f'Code: {request.response.status_code}')
                 recorded_request_list.append([request.path, request.headers])
 
         return recorded_request_list
@@ -115,13 +112,11 @@ class timehutSeleniumToolKit:
                     r = requests.get(url=request[0], headers=request[1], timeout=30)
                     r.raise_for_status()
                 except requests.RequestException as e:
-                    print(f'error: {e}')
+                    timehutLog.logging.error('e')
                 else:
                     response_body = json.loads(r.text)
                     res_list.append(response_body)
-                    #print(f"Request stored!")
-                    print(f"Request fired = {response_body}")
-                    print(f"+++++++++++++++++++++++++++++++++++++++")
+                    timehutLog.logging.info(f"Request fired = {response_body}")
 
         return res_list
 
@@ -162,12 +157,6 @@ class timehutSeleniumToolKit:
                 days = int(d)
                 content_type = 1
                 caption = element.find_element_by_class_name('swiper-describe').find_element_by_tag_name('span').get_attribute('innerText')
-                # print(f'id = {cid}\n '
-                #       f'baby id = {baby_id}\n '
-                #       f'months = {months}\n '
-                #       f'days = {days} \n '
-                #       f'caption = {caption}\n'
-                #       f'===================\n')
 
                 collection_list.append([cid, baby_id, created_at, updated_at, months, days, content_type, caption])
             elif len(element.find_elements_by_class_name('text')) > 0:
@@ -187,12 +176,6 @@ class timehutSeleniumToolKit:
                 days = int(d)
                 content_type = 2
                 caption = element.find_element_by_class_name('text-content').get_attribute('innerText')
-                # print(f'id = {cid}\n '
-                #       f'baby id = {baby_id}\n '
-                #       f'months = {months}\n '
-                #       f'days = {days} \n '
-                #       f'caption = {caption}\n'
-                #       f'===================\n')
 
                 collection_list.append([cid, baby_id, created_at, updated_at, months, days, content_type, caption])
             elif len(element.find_elements_by_class_name('milestone')) > 0:
@@ -200,16 +183,14 @@ class timehutSeleniumToolKit:
                 pass
             else:
                 # There is something else
-                print('[Important]: Missing a type!!')
+                timehutLog.logging.info('[Important]: Missing a type!!')
         else:
             return collection_list
 
     def getTimehutAlbumURLSet(self):
         album_elements = self.__driver.find_elements_by_class_name('swiper-detail-enter')
-        # print(f'no of elements: {len(album_elements)}')
 
         for element in album_elements:
-            # print(f'href: {element.get_attribute("href")}')
             self.albumSet.add(element.get_attribute('href'))
 
         return len(self.albumSet)
@@ -240,3 +221,4 @@ class element_contains_text(object):
         else:
             return False
 
+print(f"Module {__file__} is loaded...")

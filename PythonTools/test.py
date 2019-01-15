@@ -88,7 +88,7 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
         collection_list = []
         for res in res_list:
-            collection_list.append(parseCollectionBody(res))
+            collection_list += parseCollectionBody(res)
 
         print(collection_list)
 

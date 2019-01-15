@@ -31,7 +31,7 @@ class Collection(base):
 	caption = Column(Text)
 
 	def __repr__(self):
-		return (f'---- Collection ----\n' 
+		return (f'\n---- Collection ----\n' 
 		       f'id: {self.id}\n' 
 		       f'baby_id: {self.baby_id}\n' 
 		       f'created_at: {self.created_at}\n' 
@@ -71,6 +71,6 @@ class Moment(base):
 		       f'src_url: {self.src_url}\n'
 		       f'months: {self.months}\n'
 		       f'days: {self.days}\n'
-		       f'--------------------')
+		       f'--------------------\n')
 
 print(f"Module {__file__} is loaded...")
