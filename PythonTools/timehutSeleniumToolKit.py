@@ -1,4 +1,5 @@
-from selenium import webdriver
+# from selenium import webdriver
+from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -6,6 +7,9 @@ from selenium.webdriver.support import expected_conditions as EC
 import os
 import re
 import time
+
+import json
+import requests
 
 chromedriver = '/Users/michael/Python/PythonTools/chromedriver'
 os.environ["webdriver.chrome.driver"] = chromedriver
@@ -22,12 +26,14 @@ class timehutSeleniumToolKit:
         self.albumSet = set()
         self.baby_id = '537776076' if not babyBoy else '537413380'
 
+        options = webdriver.ChromeOptions()
+        options.add_argument('--ignore-certificate-errors')
+
         if headlessFlag:
-            option = webdriver.ChromeOptions()
-            option.add_argument('--headless')
-            self.__driver = webdriver.Chrome(executable_path=chromedriver, options=option)
+            options.add_argument('--headless')
+            self.__driver = webdriver.Chrome(executable_path=chromedriver, options=options)
         else:
-            self.__driver = webdriver.Chrome(executable_path=chromedriver)
+            self.__driver = webdriver.Chrome(executable_path=chromedriver, options=options)
 
     def loginTimehut(self, username, password):
         desktop_view_div = self.__driver.find_element_by_class_name('login')
@@ -49,7 +55,8 @@ class timehutSeleniumToolKit:
 
         try:
             WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
-        except BaseException:
+        except Exception as e:
+            print(f'Error happening: {e}')
             return False
         else:
             return True
@@ -86,8 +93,44 @@ class timehutSeleniumToolKit:
     def getTimehutMoment(self):
         pass
 
+    def getTimehutRecordedCollectionRequest(self):
+        recorded_request_list = []
+
+        print('Called Request')
+        for request in self.__driver.requests:
+            if request.response and 'event' in request.path:
+                # print(request.path)
+                # print(f'Header: {request.headers}')
+                # print(f'Code: {request.response.status_code}')
+                recorded_request_list.append([request.path, request.headers])
+
+        return recorded_request_list
+
+    def replayTimehutRecordedCollectionRequest(self, req_list):
+        res_list = []
+
+        for request in req_list:
+            if request[0]:
+                try:
+                    r = requests.get(url=request[0], headers=request[1], timeout=30)
+                    r.raise_for_status()
+                except requests.RequestException as e:
+                    print(f'error: {e}')
+                else:
+                    response_body = json.loads(r.text)
+                    res_list.append(response_body)
+                    #print(f"Request stored!")
+                    print(f"Request fired = {response_body}")
+                    print(f"+++++++++++++++++++++++++++++++++++++++")
+
+        return res_list
+
+    def cleanTimehutRecordedCollectionRequest(self):
+        del self.__driver.requests
+
     def getTimehutCollection(self):
         '''
+        Could be obseleted later since Selenium-wire has been adopted to directly get the request
         id = Column(String(32), primary_key=True)
         baby_id = Column(String(32))
         created_at = Column(Integer)
