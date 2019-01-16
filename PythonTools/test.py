@@ -1,8 +1,25 @@
 import timehutSeleniumToolKit as tstk
 import timehutDataSchema
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import unittest
+import sys
+import math
+import os
+
+import pdb
+pdb.set_trace()
+
+def progressBar(cur, total):
+    percent = '{:.2%}'.format(cur / total)
+    sys.stdout.write('\r')
+    sys.stdout.write("[%-50s] %s" % ('=' * int(math.floor(cur * 50 / total)), percent))
+    sys.stdout.flush()
+
+
+def parseCollectionBody(response_body):
+    collection_list = []
+
+    data_list = response_body['list']
 
 from sqlalchemy.exc import InternalError
 
@@ -51,7 +68,10 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         self.timehut.fetchTimehutPage(timehutUrl)
         if not self.timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
             return False
-        self.timehut.whereami('logged in')
+
+        print('log in result: Success')
+
+        # self.timehut.whereami('logged in')
         # print('Done setting up for the test')
 
     def test_a_run(self):
@@ -81,22 +101,22 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         self.assertNotEqual(0, num)  # 测试用例
 
     def test_d_run(self):
-        print('\n### Testing behavior of fetching collection')
-        collection_list = self.timehut.getTimehutCollection()
+        print('\n### Testing behavior of scrolling down to trigger ajax call to get more content')
 
-        # print(collection_list)
+        self.timehut.scrollDownTimehutPage()
+        req_list = self.timehut.getTimehutRecordedCollectionRequest()
+        # res_list = self.timehut.replayTimehutRecordedCollectionRequest(req_list, 1007)
+        res_list = self.timehut.replayTimehutRecordedCollectionRequest(req_list)
+        self.timehut.cleanTimehutRecordedCollectionRequest()
 
-        c_rec = timehutDataSchema.Collection(id=collection_list[0][0],
-                                             baby_id=collection_list[0][1],
-                                             created_at=collection_list[0][2],
-                                             updated_at=collection_list[0][3],
-                                             months=collection_list[0][4],
-                                             days=collection_list[0][5],
-                                             content_type=collection_list[0][6],
-                                             caption=collection_list[0][7])
-        print(c_rec)
+        collection_list = []
 
-        self.assertNotEqual(0, len(collection_list))  # 测试用例
+        for res in res_list:
+            collection_list += parseCollectionBody(res)
+
+        print(collection_list)
+
+        self.assertEqual(0, 0)  # 测试用例
 
 
 if __name__ == '__main__':
