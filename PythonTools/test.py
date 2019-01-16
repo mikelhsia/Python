@@ -72,21 +72,25 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
         self.timehut.fetchTimehutPage(timehutUrl)
 
-        x = self.timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128')
-        print(f'log in result: {x}')
-        # if not self.timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
-        #     return False
+        if not self.timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
+            print('log in result: False')
+            return False
+
+        print('log in result: Success')
 
         # print('Done setting up for the test')
 
     def test_a_run(self):
         print('\n### Testing behavior of scrolling down to trigger ajax call to get more content')
 
+        self.timehut.scrollDownTimehutPage()
         req_list = self.timehut.getTimehutRecordedCollectionRequest()
+        # res_list = self.timehut.replayTimehutRecordedCollectionRequest(req_list, 1007)
         res_list = self.timehut.replayTimehutRecordedCollectionRequest(req_list)
         self.timehut.cleanTimehutRecordedCollectionRequest()
 
         collection_list = []
+
         for res in res_list:
             collection_list += parseCollectionBody(res)
 
