@@ -2,9 +2,18 @@ import timehutSeleniumToolKit as tstk
 import timehutDataSchema
 
 import unittest
+import sys
+import math
+import os
 
 import pdb
 pdb.set_trace()
+
+def progressBar(cur, total):
+    percent = '{:.2%}'.format(cur / total)
+    sys.stdout.write('\r')
+    sys.stdout.write("[%-50s] %s" % ('=' * int(math.floor(cur * 50 / total)), percent))
+    sys.stdout.flush()
 
 
 def parseCollectionBody(response_body):
@@ -78,9 +87,36 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
         print('log in result: Success')
 
+        # self.timehut.whereami('logged in')
         # print('Done setting up for the test')
 
     def test_a_run(self):
+        print('\n### Testing behavior of scrolling down to trigger ajax call to get more content')
+        test_result = 0
+        test_target = 0
+
+        # Testing Scrolling down to trigger another ajax
+        for i in range(0, test_target):
+            self.timehut.scrollDownTimehutPage()
+            if self.timehut.whereami(i):
+                test_result += 1
+            progressBar(test_result, test_target)
+
+        self.assertEqual(test_target, test_result)  # 测试用例
+
+    def test_b_run(self):
+        print('\n### Testing behavior of switching baby id')
+        mui_mui_homepage = 'http://47.75.157.88/en/home/537776076'
+        self.timehut.fetchTimehutPage(mui_mui_homepage)
+        self.assertEqual(True, self.timehut.whereami('mui_mui'))  # 测试用例
+
+    def test_c_run(self):
+        print('\n### Testing behavior of fetching album list')
+        num = self.timehut.getTimehutAlbumURLSet()
+
+        self.assertNotEqual(0, num)  # 测试用例
+
+    def test_d_run(self):
         print('\n### Testing behavior of scrolling down to trigger ajax call to get more content')
 
         self.timehut.scrollDownTimehutPage()
