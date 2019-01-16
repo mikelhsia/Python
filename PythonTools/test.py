@@ -1,45 +1,24 @@
 import timehutSeleniumToolKit as tstk
 import timehutDataSchema
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from sqlalchemy.exc import InternalError
+
 import unittest
+import sys
+import os
+import math
+# import pdb
+# pdb.set_trace()
 
-import pdb
-pdb.set_trace()
 
-
-def parseCollectionBody(response_body):
-    collection_list = []
-
-    data_list = response_body['list']
-
-    for data in data_list:
-
-        if data['layout'] == 'collection' or \
-                data['layout'] == 'picture' or \
-                data['layout'] == 'video' or \
-                data['layout'] == 'text':
-
-            c_rec = timehutDataSchema.Collection(id=data['id_str'],
-                                                 baby_id=data['baby_id'],
-                                                 created_at=data['taken_at_gmt'],
-                                                 updated_at=data['updated_at_in_ts'],
-                                                 months=data['months'],
-                                                 days=data['days'],
-                                                 content_type=timehutDataSchema.CollectionEnum[data['layout']].value,
-                                                 caption=data['caption'])
-
-            # Add to return collection obj list
-            collection_list.append(c_rec)
-        # print(c_rec)
-
-        elif data['layout'] == 'milestone':
-            continue
-
-        else:
-            print(data)
-            raise TypeError
-
-    return collection_list
+def progressBar(cur, total):
+    percent = '{:.2%}'.format(cur / total)
+    sys.stdout.write('\r')
+    sys.stdout.write("[%-50s] %s" % ('=' * int(math.floor(cur * 50 / total)), percent))
+    sys.stdout.flush()
 
 
 class MyTest(unittest.TestCase):  # 继承unittest.TestCase
@@ -66,37 +45,58 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         # 每个测试用例执行之前做操作
         # print('Setting up for the test ...')
         self.isHeadless = True
-        # self.isHeadless = False
         self.timehut = tstk.timehutSeleniumToolKit(True, self.isHeadless)
         timehutUrl = "https://www.shiguangxiaowu.cn/zh-CN"
 
         self.timehut.fetchTimehutPage(timehutUrl)
-
         if not self.timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
-            print('log in result: False')
             return False
-
-        print('log in result: Success')
-
+        self.timehut.whereami('logged in')
         # print('Done setting up for the test')
 
     def test_a_run(self):
         print('\n### Testing behavior of scrolling down to trigger ajax call to get more content')
+        test_result = 0
+        test_target = 0
 
-        self.timehut.scrollDownTimehutPage()
-        req_list = self.timehut.getTimehutRecordedCollectionRequest()
-        # res_list = self.timehut.replayTimehutRecordedCollectionRequest(req_list, 1007)
-        res_list = self.timehut.replayTimehutRecordedCollectionRequest(req_list)
-        self.timehut.cleanTimehutRecordedCollectionRequest()
+        # Testing Scrolling down to trigger another ajax
+        for i in range(0, test_target):
+            self.timehut.scrollDownTimehutPage()
+            if self.timehut.whereami(i):
+                test_result += 1
+            progressBar(test_result, test_target)
 
-        collection_list = []
+        self.assertEqual(test_target, test_result)  # 测试用例
 
-        for res in res_list:
-            collection_list += parseCollectionBody(res)
+    def test_b_run(self):
+        print('\n### Testing behavior of switching baby id')
+        mui_mui_homepage = 'http://47.75.157.88/en/home/537776076'
+        self.timehut.fetchTimehutPage(mui_mui_homepage)
+        self.assertEqual(True, self.timehut.whereami('mui_mui'))  # 测试用例
 
-        print(collection_list)
+    def test_c_run(self):
+        print('\n### Testing behavior of fetching album list')
+        num = self.timehut.getTimehutAlbumURLSet()
 
-        self.assertEqual(0, 0)  # 测试用例
+        self.assertNotEqual(0, num)  # 测试用例
+
+    def test_d_run(self):
+        print('\n### Testing behavior of fetching collection')
+        collection_list = self.timehut.getTimehutCollection()
+
+        # print(collection_list)
+
+        c_rec = timehutDataSchema.Collection(id=collection_list[0][0],
+                                             baby_id=collection_list[0][1],
+                                             created_at=collection_list[0][2],
+                                             updated_at=collection_list[0][3],
+                                             months=collection_list[0][4],
+                                             days=collection_list[0][5],
+                                             content_type=collection_list[0][6],
+                                             caption=collection_list[0][7])
+        print(c_rec)
+
+        self.assertNotEqual(0, len(collection_list))  # 测试用例
 
 
 if __name__ == '__main__':
