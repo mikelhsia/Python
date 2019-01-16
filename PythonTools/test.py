@@ -21,34 +21,21 @@ def parseCollectionBody(response_body):
 
     data_list = response_body['list']
 
-    for data in data_list:
+from sqlalchemy.exc import InternalError
 
-        if data['layout'] == 'collection' or \
-                data['layout'] == 'picture' or \
-                data['layout'] == 'video' or \
-                data['layout'] == 'text':
+import unittest
+import sys
+import os
+import math
+# import pdb
+# pdb.set_trace()
 
-            c_rec = timehutDataSchema.Collection(id=data['id_str'],
-                                                 baby_id=data['baby_id'],
-                                                 created_at=data['taken_at_gmt'],
-                                                 updated_at=data['updated_at_in_ts'],
-                                                 months=data['months'],
-                                                 days=data['days'],
-                                                 content_type=timehutDataSchema.CollectionEnum[data['layout']].value,
-                                                 caption=data['caption'])
 
-            # Add to return collection obj list
-            collection_list.append(c_rec)
-        # print(c_rec)
-
-        elif data['layout'] == 'milestone':
-            continue
-
-        else:
-            print(data)
-            raise TypeError
-
-    return collection_list
+def progressBar(cur, total):
+    percent = '{:.2%}'.format(cur / total)
+    sys.stdout.write('\r')
+    sys.stdout.write("[%-50s] %s" % ('=' * int(math.floor(cur * 50 / total)), percent))
+    sys.stdout.flush()
 
 
 class MyTest(unittest.TestCase):  # 继承unittest.TestCase
@@ -75,14 +62,11 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         # 每个测试用例执行之前做操作
         # print('Setting up for the test ...')
         self.isHeadless = True
-        # self.isHeadless = False
         self.timehut = tstk.timehutSeleniumToolKit(True, self.isHeadless)
         timehutUrl = "https://www.shiguangxiaowu.cn/zh-CN"
 
         self.timehut.fetchTimehutPage(timehutUrl)
-
         if not self.timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
-            print('log in result: False')
             return False
 
         print('log in result: Success')
