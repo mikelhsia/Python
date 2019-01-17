@@ -12,6 +12,8 @@ import requests
 
 import timehutLog
 
+# TODO + before_day logic in replayTimehutRecordedCollectionRequest
+
 chromedriver = '/Users/michael/Python/PythonTools/chromedriver'
 os.environ["webdriver.chrome.driver"] = chromedriver
 whereamiImagePath = '/Users/michael/Python/PythonTools/'
@@ -35,6 +37,7 @@ class timehutSeleniumToolKit:
             self.__driver = webdriver.Chrome(executable_path=chromedriver, options=options)
 
     def loginTimehut(self, username, password):
+        WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "login")))
         desktop_view_div = self.__driver.find_element_by_class_name('login')
         mobile_view_div = self.__driver.find_element_by_class_name('mobile-login')
         is_desktop_view = self.__driver.find_element_by_class_name('login').is_displayed()
@@ -73,6 +76,7 @@ class timehutSeleniumToolKit:
         2. the status/text change of 'dropload-refresh'
         :return: Boolean for checking whether the scroll is successful or not
         '''
+        WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
         js = 'document.getElementsByClassName("dropload-down")[0].scrollIntoView(true);'
         wait = WebDriverWait(self.__driver, 10)
 
@@ -103,20 +107,33 @@ class timehutSeleniumToolKit:
 
         return recorded_request_list
 
-    def replayTimehutRecordedCollectionRequest(self, req_list):
+    def replayTimehutRecordedCollectionRequest(self, req_list, before_day=-200):
         res_list = []
 
         for request in req_list:
-            if request[0]:
-                try:
-                    r = requests.get(url=request[0], headers=request[1], timeout=30)
-                    r.raise_for_status()
-                except requests.RequestException as e:
-                    timehutLog.logging.error('e')
-                else:
-                    response_body = json.loads(r.text)
-                    res_list.append(response_body)
-                    timehutLog.logging.info(f"Request fired = {response_body}")
+            regex = r'.*&before\=(\d*).*'
+            result = re.match(regex, request[0])
+
+            if result is not None:
+                before = int(result.group(1))
+            else:
+                before = 3000
+            print(request[0])
+            print(f'before = {before}')
+
+            if before < before_day:
+                break
+
+            try:
+                r = requests.get(url=request[0], headers=request[1], timeout=30)
+                r.raise_for_status()
+            except requests.RequestException as e:
+                timehutLog.logging.error('e')
+            else:
+                response_body = json.loads(r.text)
+                res_list.append(response_body)
+                timehutLog.logging.info(f"Request fired = {response_body}")
+                print('Request fired...')
 
         return res_list
 
