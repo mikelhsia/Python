@@ -47,3 +47,4 @@ class LastUpdateTsManager(object):
         finally:
             timehutLog.logging.info(f'Update last updated timestamp in file {last_update_ts_file}')
 
+print(f"Module {__file__} is loaded...")

@@ -5,8 +5,8 @@ import unittest
 import sys
 import os
 import math
-# import pdb
-# pdb.set_trace()
+import pdb
+pdb.set_trace()
 
 
 def progressBar(cur, total):
@@ -66,9 +66,9 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
     def tearDown(self):
         # 每个测试用例执行之后做操作
         # print('Tearing down the test env ...')
+        os.system('rm -rf ./*.png')
         self.timehut.quitTimehutPage()
         # print('Done tearing down the test env')
-        # os.system('rm -rf ./*.png')
 
     def setUp(self):
         # 每个测试用例执行之前做操作

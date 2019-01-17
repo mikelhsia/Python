@@ -31,7 +31,7 @@ class Collection(base):
 	caption = Column(Text)
 
 	def __repr__(self):
-		return (f'---- Collection ----\n' 
+		return (f'\n---- Collection ----\n' 
 		       f'id: {self.id}\n' 
 		       f'baby_id: {self.baby_id}\n' 
 		       f'created_at: {self.created_at}\n' 
@@ -60,7 +60,7 @@ class Moment(base):
 	days = Column(Integer)
 
 	def __repr__(self):
-		return (f'------ Moment ------\n'
+		return (f'\n------ Moment ------\n'
 		       f'id: {self.id}\n'
 		       f'event_id: {self.event_id}\n'
 		       f'baby_id: {self.baby_id}\n'

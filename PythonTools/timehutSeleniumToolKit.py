@@ -1,14 +1,15 @@
-from selenium import webdriver
+# from selenium import webdriver
+from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-import os
-import re
 import timehutLog
 
-import requests
+import os
 import re
+import requests
+import json
 
 chromedriver = '/Users/michael/Python/PythonTools/chromedriver'
 os.environ["webdriver.chrome.driver"] = chromedriver
@@ -247,3 +248,4 @@ class element_contains_text(object):
         else:
             return False
 
+print(f"Module {__file__} is loaded...")
