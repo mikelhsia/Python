@@ -106,6 +106,7 @@ class timehutSeleniumToolKit:
 
     def replayTimehutRecordedCollectionRequest(self, req_list, before_day=-200):
         res_list = []
+        next_flag = True
 
         for request in req_list:
             regex = r'.*&before\=(\d*).*'
@@ -119,6 +120,7 @@ class timehutSeleniumToolKit:
             print(f'before = {before}')
 
             if before < before_day:
+                next_flag = False
                 break
 
             try:
@@ -132,7 +134,7 @@ class timehutSeleniumToolKit:
                 timehutLog.logging.info(f"Request fired = {response_body}")
                 print('Request fired...')
 
-        return res_list
+        return res_list, next_flag
 
     def cleanTimehutRecordedCollectionRequest(self):
         del self.__driver.requests

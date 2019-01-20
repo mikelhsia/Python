@@ -116,7 +116,23 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         self.timehut.scrollDownTimehutPage()
 
         req_list = self.timehut.getTimehutRecordedCollectionRequest()
-        res_list = self.timehut.replayTimehutRecordedCollectionRequest(req_list)
+        res_list, next = self.timehut.replayTimehutRecordedCollectionRequest(req_list)
+        # res_list = self.timehut.replayTimehutRecordedCollectionRequest(req_list, 1007)
+        self.timehut.cleanTimehutRecordedCollectionRequest()
+
+        collection_list = []
+        for res in res_list:
+            collection_list += parseCollectionBody(res)
+
+        print(collection_list)
+
+        self.assertEqual(0, 0)  # 测试用例
+
+    def test_e_run(self):
+        self.timehut.scrollDownTimehutPage()
+
+        req_list = self.timehut.getTimehutRecordedCollectionRequest()
+        res_list, next_flag = self.timehut.replayTimehutRecordedCollectionRequest(req_list)
         # res_list = self.timehut.replayTimehutRecordedCollectionRequest(req_list, 1007)
         self.timehut.cleanTimehutRecordedCollectionRequest()
 
@@ -130,4 +146,13 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
 
 if __name__ == '__main__':
-    unittest.main()  # 运行所有的测试用例
+    # unittest.main()  # 运行所有的测试用例
+
+    # unittest.main() # 使用main()直接运行时，将按case的名称顺序执行
+    suite = unittest.TestSuite()
+    # suite.addTest(MyTest('test_a_run'))  # 将需要执行的case添加到Test Suite中，没有添加的不会被执行
+    # suite.addTest(MyTest('test_b_run'))
+    # suite.addTest(MyTest('test_c_run'))
+    suite.addTest(MyTest('test_d_run'))
+    # suite.addTest(MyTest('test_e_run'))
+    unittest.TextTestRunner().run(suite)  # 将根据case添加的先MyTest后顺序执行
