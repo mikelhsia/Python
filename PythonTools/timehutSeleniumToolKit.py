@@ -89,17 +89,14 @@ class timehutSeleniumToolKit:
         else:
             return True
 
-    def getTimehutMoment(self):
-        pass
-
     def getTimehutRecordedCollectionRequest(self):
         recorded_request_list = []
 
         for request in self.__driver.requests:
             if request.response and 'event' in request.path:
-                timehutLog.logging.info(request.path)
-                timehutLog.logging.info(f'Header: {request.headers}')
-                timehutLog.logging.info(f'Code: {request.response.status_code}')
+                # timehutLog.logging.info(request.path)
+                # timehutLog.logging.info(f'Header: {request.headers}')
+                # timehutLog.logging.info(f'Code: {request.response.status_code}')
                 recorded_request_list.append([request.path, request.headers])
 
         return recorded_request_list
@@ -127,16 +124,15 @@ class timehutSeleniumToolKit:
                 r = requests.get(url=request[0], headers=request[1], timeout=30)
                 r.raise_for_status()
             except requests.RequestException as e:
-                timehutLog.logging.error('e')
+                timehutLog.logging.error(e)
             else:
                 response_body = json.loads(r.text)
                 res_list.append(response_body)
-                timehutLog.logging.info(f"Request fired = {response_body}")
-                print('Request fired...')
+                # timehutLog.logging.info(f"Request fired = {response_body}")
 
         return res_list, next_flag
 
-    def cleanTimehutRecordedCollectionRequest(self):
+    def cleanTimehutRecordedRequest(self):
         del self.__driver.requests
 
     def getTimehutCollection(self):
@@ -216,13 +212,42 @@ class timehutSeleniumToolKit:
 
     def getTimehutAlbumURLSet(self):
         album_elements = self.__driver.find_elements_by_class_name('swiper-detail-enter')
-        # print(f'no of elements: {len(album_elements)}')
 
         for element in album_elements:
-            # print(f'href: {element.get_attribute("href")}')
             self.albumSet.add(element.get_attribute('href'))
 
-        return len(self.albumSet)
+        return self.albumSet
+
+    def getTimehutRecordedMomeryRequest(self):
+        recorded_request_list = []
+
+        for request in self.__driver.requests:
+            if request.response and 'events/' in request.path:
+                # timehutLog.logging.info(request.path)
+                # timehutLog.logging.info(f'Header: {request.headers}')
+                # timehutLog.logging.info(f'Code: {request.response.status_code}')
+                recorded_request_list.append([request.path, request.headers])
+
+        return recorded_request_list
+
+    def replayTimehutRecordedMemoryRequest(self, req_list):
+        res_list = []
+
+        for request in req_list:
+            print(request[0])
+
+            try:
+                r = requests.get(url=request[0], headers=request[1], timeout=30)
+                r.raise_for_status()
+            except requests.RequestException as e:
+                timehutLog.logging.error(e)
+            else:
+                response_body = json.loads(r.text)
+                res_list.append(response_body)
+                # timehutLog.logging.info(f"Request fired = {response_body}")
+                # print(f"Request fired = {response_body}")
+
+        return res_list
 
     def quitTimehutPage(self):
         self.__driver.quit()

@@ -322,7 +322,7 @@ def main(baby, days):
 
 		__before_day = __next_index + 1
 	'''
-	__isHeadless = True
+	__isHeadless = False
 	__timehutUrl = "https://www.shiguangxiaowu.cn/zh-CN"
 
 	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(True, __isHeadless)
@@ -340,16 +340,26 @@ def main(baby, days):
 		__cont_flag = True
 
 		while __cont_flag:
+			print('start scroll down')
 			__timehut.scrollDownTimehutPage()
+			print('Done scroll down')
 
+			print('start record')
 			__req_list = __timehut.getTimehutRecordedCollectionRequest()
+			print('done record')
+			print('start replay')
 			__res_list, __cont_flag = __timehut.replayTimehutRecordedCollectionRequest(__req_list, __before_day)
+			print('done replay')
 			__timehut.cleanTimehutRecordedCollectionRequest()
 
+			print('start parsing')
 			for __res in __res_list:
 				__collection_list += parseCollectionBody(__res)
+			print('done parsing')
 
+			print('start update DB')
 			updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
+			print('Done update DB')
 
 	__timehut.quitTimehutPage()
 	__session.close()
