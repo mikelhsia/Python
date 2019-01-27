@@ -193,10 +193,10 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
         global req_list
 
-        for memoryLink in albumSet:
-            self.timehut.fetchTimehutPage(memoryLink)
-            req_list = self.timehut.getTimehutRecordedMomeryRequest()
-            self.timehut.cleanTimehutRecordedRequest()
+        # for memoryLink in albumSet:
+        #     self.timehut.fetchTimehutPage(memoryLink)
+        #     req_list = self.timehut.getTimehutRecordedMomeryRequest()
+        #     self.timehut.cleanTimehutRecordedRequest()
 
         res_list = self.timehut.replayTimehutRecordedMemoryRequest(req_list)
 

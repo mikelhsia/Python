@@ -162,7 +162,7 @@ def parseMomentBody(response_body):
 
 
 def createDB(dbName, base, loggingFlag):
-	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
+	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	try:
@@ -199,7 +199,7 @@ def createEngine(dbName, base, loggingFlag):
 
 	createDB(dbName, base, loggingFlag)
 
-	engine = create_engine(f'mysql+pymysql://root:hsia0521@127.0.0.1:3306/{dbName}?charset=utf8mb4',
+	engine = create_engine(f'mysql+pymysql://root:michael0512@127.0.0.1:3306/{dbName}?charset=utf8mb4',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine
@@ -350,7 +350,7 @@ def main(baby, days):
 			print('start replay')
 			__res_list, __cont_flag = __timehut.replayTimehutRecordedCollectionRequest(__req_list, __before_day)
 			print('done replay')
-			__timehut.cleanTimehutRecordedCollectionRequest()
+			__timehut.cleanTimehutRecordedRequest()
 
 			print('start parsing')
 			for __res in __res_list:

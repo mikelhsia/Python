@@ -21,6 +21,3 @@ progressBar(3.3, 100)
 time.sleep(0.5)
 progressBar(70.3, 100)
 
-import seaborn as sns
-sns.tsplot()
-sns.pointplot()

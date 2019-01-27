@@ -11,9 +11,11 @@ import re
 import requests
 import json
 
-chromedriver = '/Users/michael/Python/PythonTools/chromedriver'
+# chromedriver = '/Users/michael/Python/PythonTools/chromedriver'
+chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/chromedriver'
 os.environ["webdriver.chrome.driver"] = chromedriver
-whereamiImagePath = '/Users/michael/Python/PythonTools/'
+# whereamiImagePath = '/Users/michael/Python/PythonTools/'
+whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/'
 
 # TODO Process pool or Queue to process multitask in the getTimehut main python file
 
@@ -54,7 +56,8 @@ class timehutSeleniumToolKit:
 
         try:
             WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
-        except BaseException:
+        except BaseException as e:
+            print(e)
             return False
         else:
             return True
