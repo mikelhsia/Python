@@ -191,17 +191,17 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
     def test_e_run(self):
         albumSet = self.timehut.getTimehutAlbumURLSet()
 
-        global req_list
+        memoryLink = albumSet.pop()
 
-        # for memoryLink in albumSet:
-        #     self.timehut.fetchTimehutPage(memoryLink)
-        #     req_list = self.timehut.getTimehutRecordedMomeryRequest()
-        #     self.timehut.cleanTimehutRecordedRequest()
+        self.timehut.fetchTimehutPage(memoryLink)
+        req_list = self.timehut.getTimehutRecordedMomeryRequest()
+        self.timehut.cleanTimehutRecordedRequest()
 
         res_list = self.timehut.replayTimehutRecordedMemoryRequest(req_list)
 
-        memory_list = parseMomentBody(res_list)
-        print(memory_list)
+        for memory in res_list:
+            memory_list = parseMomentBody(memory)
+            print(memory_list)
 
         self.assertEqual(0, 0)  # 测试用例
 
