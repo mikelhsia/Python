@@ -54,20 +54,34 @@ class timehutSeleniumToolKit:
         pw_field.send_keys(password)
         button.click()
 
-        try:
-            WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
-        except BaseException as e:
-            print(e)
-            return False
-        else:
-            return True
+        # try:
+        #     WebDriverWait(self.__driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
+        # except BaseException as e:
+        #     print(e)
+        #     return False
+        # else:
+        #     return True
+        return self.isContentPage()
 
     def whereami(self, str=''):
         # print(f'current url = {self.__driver.current_url}')
         return self.__driver.save_screenshot(f'{whereamiImagePath}whereami-{str}.png')
 
-    def fetchTimehutPage(self, url):
+    def fetchTimehutLoginPage(self, url):
         return self.__driver.get(url)
+
+    def fetchTimehutContentPage(self, url):
+        self.__driver.get(url)
+        return self.isContentPage()
+
+    def isContentPage(self):
+        try:
+            WebDriverWait(self.__driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
+        except BaseException as e:
+            print(e)
+            return False
+        finally:
+            return True
 
     def scrollDownTimehutPage(self):
         '''

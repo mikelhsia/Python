@@ -13,7 +13,6 @@ import timehutManageLastUpdate
 import timehutLog
 import timehutSeleniumToolKit
 
-
 # functions
 def timestampToDatetimeString(ts):
 	"""
@@ -276,8 +275,9 @@ def updateDBMoment(data_list, existed_index_list, last_updated_time, session):
 	else:
 		session.commit()
 
-# main function()
+
 def main(baby, days):
+	# main function()
 	try:
 		__before_day = int(days)
 	except Exception as e:
@@ -285,7 +285,6 @@ def main(baby, days):
 		# __before_day = 3000
 
 	if baby == '1' or baby == '':
-		# On On Baby ID
 		__baby_id = 537413380
 	else:
 		# Mui Mui Baby ID
@@ -327,7 +326,7 @@ def main(baby, days):
 
 	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(True, __isHeadless)
 
-	__timehut.fetchTimehutPage(__timehutUrl)
+	__timehut.fetchTimehutLoginPage(__timehutUrl)
 
 	if not __timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
 		timehutLog.logging.info('Login failed')
@@ -335,6 +334,13 @@ def main(baby, days):
 	else:
 		timehutLog.logging.info('Login success')
 		print('Login success')
+
+		if baby == '1' or baby == '':
+			print('Going to Onon')
+		else:
+			print('Going to MuiMui')
+			mui_mui_homepage = 'http://47.75.157.88/en/home/537776076'
+			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
 		__collection_list = []
 		__cont_flag = True
@@ -352,14 +358,14 @@ def main(baby, days):
 			print('done replay')
 			__timehut.cleanTimehutRecordedRequest()
 
-			print('start parsing')
 			for __res in __res_list:
-				__collection_list += parseCollectionBody(__res)
-			print('done parsing')
+				print('start parsing')
+				__collection_list = parseCollectionBody(__res)
+				print('done parsing')
 
-			print('start update DB')
-			updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
-			print('Done update DB')
+				print('start update DB')
+				updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
+				print('Done update DB')
 
 	__timehut.quitTimehutPage()
 	__session.close()
@@ -371,5 +377,5 @@ def main(baby, days):
 # Basic interactive interface
 if __name__ == "__main__":
 	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
-	days = input(f'What days you would like to start with: \n -200 (default) ~ XXXXX:\n')
+	days = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
 	main(baby, days)
