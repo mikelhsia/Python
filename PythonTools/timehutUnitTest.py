@@ -199,9 +199,11 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
         res_list = self.timehut.replayTimehutRecordedMemoryRequest(req_list)
 
+        memory_list = []
         for memory in res_list:
-            memory_list = parseMomentBody(memory)
-            print(memory_list)
+            memory_list += parseMomentBody(memory)
+
+        print(memory_list)
 
         self.assertEqual(0, 0)  # 测试用例
 
