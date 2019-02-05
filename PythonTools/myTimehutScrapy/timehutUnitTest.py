@@ -193,7 +193,7 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
         memoryLink = albumSet.pop()
 
-        self.timehut.fetchTimehutPage(memoryLink)
+        self.timehut.fetchTimehutContentPage(memoryLink)
         req_list = self.timehut.getTimehutRecordedMomeryRequest()
         self.timehut.cleanTimehutRecordedRequest()
 

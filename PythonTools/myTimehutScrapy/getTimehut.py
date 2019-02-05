@@ -161,7 +161,7 @@ def parseMomentBody(response_body):
 
 
 def createDB(dbName, base, loggingFlag):
-	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
+	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	try:
@@ -198,7 +198,7 @@ def createEngine(dbName, base, loggingFlag):
 
 	createDB(dbName, base, loggingFlag)
 
-	engine = create_engine(f'mysql+pymysql://root:michael0512@127.0.0.1:3306/{dbName}?charset=utf8mb4',
+	engine = create_engine(f'mysql+pymysql://root:hsia0521@127.0.0.1:3306/{dbName}?charset=utf8mb4',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine
@@ -313,8 +313,8 @@ def main(baby, days):
 
 		for collection in collection_list:
 			__response_body = getMomentRequest(collection.id)
-			# moment_list = parseMomentBody(__response_body)
-			# updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
+			moment_list = parseMomentBody(__response_body)
+			updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
 
 		if (__next_index is None):
 			break
@@ -343,6 +343,7 @@ def main(baby, days):
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
 		__collection_list = []
+		memory_set = set()
 		__cont_flag = True
 
 		while __cont_flag:
@@ -356,7 +357,6 @@ def main(baby, days):
 			print('start replay')
 			__res_list, __cont_flag = __timehut.replayTimehutRecordedCollectionRequest(__req_list, __before_day)
 			print('done replay')
-			__timehut.cleanTimehutRecordedRequest()
 
 			for __res in __res_list:
 				print('start parsing')
@@ -366,6 +366,24 @@ def main(baby, days):
 				print('start update DB')
 				updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
 				print('Done update DB')
+
+			memory_set = __timehut.getTimehutAlbumURLSet()
+			__timehut.cleanTimehutRecordedRequest()
+
+		print('\n-------------------------------\nDone updating collection')
+		# Start dumping all memories after finish updating Collection
+		print('parsing memory set')
+		for memory_link in memory_set:
+			__timehut.fetchTimehutContentPage(memory_link)
+			__req_list = __timehut.getTimehutRecordedMomeryRequest()
+			__timehut.cleanTimehutRecordedRequest()
+
+			__res_list = __timehut.replayTimehutRecordedMemoryRequest(__req_list)
+
+			for memory in __res_list:
+				moment_list = parseMomentBody(memory)
+				updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
+				print(moment_list)
 
 	__timehut.quitTimehutPage()
 	__session.close()
