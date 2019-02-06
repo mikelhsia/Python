@@ -119,8 +119,9 @@ class timehutSeleniumToolKit:
         return recorded_request_list
 
     def replayTimehutRecordedCollectionRequest(self, req_list, before_day=-200):
+
         res_list = []
-        next_flag = True
+        next_flag = False
 
         for request in req_list:
             regex = r'.*&before\=(\d*).*'
@@ -130,10 +131,11 @@ class timehutSeleniumToolKit:
                 before = int(result.group(1))
             else:
                 before = 3000
-            print(request[0])
-            print(f'before = {before}')
 
-            if before < before_day:
+            print(f'before: {before}, before_day: {before_day}')
+            if before >= before_day:
+                next_flag = True
+            else:
                 next_flag = False
                 break
 
