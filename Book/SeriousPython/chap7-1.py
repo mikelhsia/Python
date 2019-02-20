@@ -154,3 +154,121 @@ class Store(object):
 
 ##########################################################################################
 # Extracting Relevant Information with inspect
+# Build a smarter version of decorator that can look at the decorated function's arguments
+# and pull out what it needs
+import functools
+import inspect
+
+def check_is_admin(f):
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        func_args = inspect.getcallargs(f, *args, *kwargs)
+        # returns a dictionary containing the names and values of the arguments as key-value pairs.
+        # In our example, this function returns {'username': 'admin','type': 'chocolate'}.
+        # That means that our decorator does not have to check whether the username parameter
+        # is a positional or a keyword argument; all the decorator has to do is look for
+        # username in the dictionary.
+        if func_args.get('username') != 'admin':
+            raise Exception("This user is not allowed to get food")
+        return f(*args, **kwargs)
+    return wrapper
+
+@check_is_admin
+def get_food(username, type='chocolate'):
+    return type + " nom nom nom!"
+
+
+##########################################################################################
+# Static methods
+# Class methods
+# Abstract methods
+class Pizza(object):
+    cheese = 1
+    vegetables = 2
+    radius = 42
+
+    def __init__(self, ingre=""):
+        self.ingre = ingre
+
+    @classmethod
+    def from_fridge(cls, fridge):
+        return cls(fridge.get_cheese() + fridge.get_vegetables())
+
+    @classmethod
+    def get_radius(cls):
+        return cls.radius
+
+    @staticmethod
+    def mix_ingredients(x, y):
+        return x + y
+
+    def cook(self):
+        return self.mix_ingredients(self.cheese, self.vegetables)
+
+import abc
+
+class BasePizza(object, metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def get_radius(self):
+        """
+        Method that should do something
+        :return:
+        """
+
+class SpecificPizza(BasePizza):
+    def get_radius(self):
+        print("Now you can see")
+
+
+##########################################################################################
+# Mixing Static, Class, Abstract methods
+import abc
+
+
+class BasePizza(object, metaclass=abc.ABCMeta):
+    ingredients = ['cheese']
+
+    @abc.abstractmethod
+    def get_ingredients(self):
+        """Returns the ingredient list."""
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def get_ingredients_list(cls):
+        """Return the ingredient list"""
+        return cls.ingredients
+
+class Calzone(BasePizza):
+    def get_ingredients(self, with_egg=False):
+        egg = Egg() if with_egg else None
+        return self.ingredients + [egg]
+
+
+class DietPizza(BasePizza):
+    @staticmethod
+    def get_ingredients():
+        return None
+
+    # def get_ingredients(self):
+    #     return 123
+
+##########################################################################################
+# Putting implementations in Abstract Methods
+# You can put code in the abstract method, and in the subclass, you can use super() to call it
+import abc
+
+
+class BasePizza(object, metaclass=abc.ABCMeta):
+    default_ingredients = ['cheese']
+
+    @classmethod
+    @abc.abstractmethod
+    def get_ingredients(cls):
+        """Returns the default ingredient list."""
+        return cls.default_ingredients
+
+
+class DietPizza(BasePizza):
+    def get_ingredients(self):
+        return [Egg()] + super(DietPizza, self).get_ingredients()
