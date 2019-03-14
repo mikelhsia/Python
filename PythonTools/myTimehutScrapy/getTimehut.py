@@ -303,7 +303,9 @@ def main(baby, days):
 	__session = DBSession()
 
 	'''
+	###
 	# These are the old codes that are not valid anymore, as timehut applied token to their APIs
+	###
 	while (True):
 		# Getting original response body and next_index to decide what's the next request to submit
 		__next_index, __response_body = getCollectionRequest(__baby_id, __before_day)
@@ -346,6 +348,7 @@ def main(baby, days):
 		memory_set = set()
 		__cont_flag = True
 
+		# TODO Using Queue instead of using while loop
 		while __cont_flag:
 			print('start scroll down')
 			__timehut.scrollDownTimehutPage()

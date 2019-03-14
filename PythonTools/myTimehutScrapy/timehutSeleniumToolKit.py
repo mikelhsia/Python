@@ -10,6 +10,7 @@ import os
 import re
 import requests
 import json
+import functools
 
 chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
 # chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
@@ -268,6 +269,7 @@ class timehutSeleniumToolKit:
 
         return res_list
 
+    # TODO: Use 'partial' instead of this?
     def quitTimehutPage(self):
         self.__driver.quit()
 
