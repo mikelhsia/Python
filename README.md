@@ -1,21 +1,5 @@
 # python
 
-- pythonTools
-  - Get timehut data (New)
-- IEXApiPractice         
-- package_runoob         
-- pythonMachineLearning  
-- quantitativeTrading
-- pip3BatchUpdate.py     
-- pythonPractice         
-- blockChain             
-- publisher_and_observer 
-- pythonServer           
-- Stock analysis
-- python Machine Learning
-- fin101                 
-- pythonCrawler          
-- pythonThread
-- numpyPractice          
-- pythonDjango           
-- pythonTools
+Rule of thumb:
+
+The rule of thumb in Python is to use threads only for I/O-intensive workloads and to switch to multiple processes as soon as a CPU-intensive workload is on the table. 
