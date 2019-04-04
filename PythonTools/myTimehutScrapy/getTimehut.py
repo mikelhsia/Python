@@ -13,6 +13,10 @@ import timehutManageLastUpdate
 import timehutLog
 import timehutSeleniumToolKit
 
+# TODO: Checking RabbitMQ is running or not
+# TODO: Implement RabbitMQ with direct exchange type
+# TODO: TBD
+
 # functions
 def timestampToDatetimeString(ts):
 	"""
