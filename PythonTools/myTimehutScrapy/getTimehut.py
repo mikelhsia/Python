@@ -13,6 +13,7 @@ import timehutManageLastUpdate
 import timehutLog
 import timehutSeleniumToolKit
 
+# TODO: Refactoring const
 # TODO: Checking RabbitMQ is running or not
 # TODO: Implement RabbitMQ with direct exchange type
 # TODO: TBD
@@ -165,7 +166,7 @@ def parseMomentBody(response_body):
 
 
 def createDB(dbName, base, loggingFlag):
-	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
+	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	try:
@@ -202,7 +203,7 @@ def createEngine(dbName, base, loggingFlag):
 
 	createDB(dbName, base, loggingFlag)
 
-	engine = create_engine(f'mysql+pymysql://root:hsia0521@127.0.0.1:3306/{dbName}?charset=utf8mb4',
+	engine = create_engine(f'mysql+pymysql://root:michael0512@127.0.0.1:3306/{dbName}?charset=utf8mb4',
 	                       encoding='utf-8', echo=loggingFlag)
 
 	return engine

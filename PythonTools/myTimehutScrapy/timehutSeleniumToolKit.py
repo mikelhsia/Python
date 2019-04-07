@@ -12,11 +12,11 @@ import requests
 import json
 import functools
 
-chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
-# chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
+# chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
+chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
 os.environ["webdriver.chrome.driver"] = chromedriver
-whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
-# whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
+# whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
+whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
 
 # TODO Process pool or Queue to process multitask in the getTimehut main python file
 
