@@ -25,10 +25,7 @@ def check_rabbit_exist():
 
     f.close()
 
-    if not rabbit_result:
-        return False
-
-    return True
+    return False if not rabbit_result else True
 
 
 if __name__ == "__main__":
