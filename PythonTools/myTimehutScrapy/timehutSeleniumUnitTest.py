@@ -104,7 +104,7 @@ def fetchMemory(memory_link, timehut):
     # TODO Is there a way to skip the login step?
 
     # Fetch the album detail
-    timehut.fetchTimehutPage(memory_link)
+    timehut.fetchTimehutContentPage(memory_link)
 
     # TODO quit and delete selenium driver
 
@@ -126,7 +126,7 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
     def tearDown(self):
         # 每个测试用例执行之后做操作
         # print('Tearing down the test env ...')
-        os.system('rm -rf ./*.png')
+        # os.system('rm -rf ./*.png')
         self.timehut.quitTimehutPage()
         # print('Done tearing down the test env')
 
@@ -137,7 +137,7 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         self.timehut = tstk.timehutSeleniumToolKit(True, self.isHeadless)
         timehutUrl = "https://www.shiguangxiaowu.cn/zh-CN"
 
-        self.timehut.fetchTimehutPage(timehutUrl)
+        self.timehut.fetchTimehutContentPage(timehutUrl)
 
         if not self.timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
             print('Login failed')
@@ -162,8 +162,11 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
     def test_b_run(self):
         print('\n### Testing behavior of switching baby id')
-        mui_mui_homepage = 'http://47.75.157.88/en/home/537776076'
-        self.timehut.fetchTimehutPage(mui_mui_homepage)
+        ONON_ID = 537413380
+        MUIMUI_ID = 537776076
+
+        mui_mui_homepage = self.timehut.getTimehutPageUrl().replace(ONON_ID.__str__(), MUIMUI_ID.__str__())
+        self.timehut.fetchTimehutContentPage(mui_mui_homepage)
         self.assertEqual(True, self.timehut.whereami('mui_mui'))  # 测试用例
 
     def test_c_run(self):
@@ -214,8 +217,8 @@ if __name__ == '__main__':
     # unittest.main() # 使用main()直接运行时，将按case的名称顺序执行
     suite = unittest.TestSuite()
     # suite.addTest(MyTest('test_a_run'))  # 将需要执行的case添加到Test Suite中，没有添加的不会被执行
-    # suite.addTest(MyTest('test_b_run'))
+    suite.addTest(MyTest('test_b_run'))
     # suite.addTest(MyTest('test_c_run'))
     # suite.addTest(MyTest('test_d_run'))
-    suite.addTest(MyTest('test_e_run'))
+    # suite.addTest(MyTest('test_e_run'))
     unittest.TextTestRunner().run(suite)  # 将根据case添加的先MyTest后顺序执行

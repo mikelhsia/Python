@@ -155,81 +155,6 @@ class timehutSeleniumToolKit:
     def cleanTimehutRecordedRequest(self):
         del self.__driver.requests
 
-    def getTimehutCollection(self):
-        '''
-        id = Column(String(32), primary_key=True)
-        baby_id = Column(String(32))
-        created_at = Column(Integer)
-        updated_at = Column(Integer)
-        months = Column(Integer)
-        days = Column(Integer)
-        content_type = Column(SmallInteger)
-        caption = Column(Text)
-        :return: collection_list
-        '''
-        album_elements = self.__driver.find_elements_by_class_name('main-list-item')
-        collection_list = list()
-
-        for element in album_elements:
-            if len(element.find_elements_by_class_name('swiper-container')) > 0:
-                # This is a collection
-                date_str = element.find_element_by_tag_name('i').get_attribute('innerText')
-                regex = r'(\d*)Y\-(\d*)M\-(\d*).*'
-                result = re.match(regex, date_str)
-                y = result.group(1)
-                m = result.group(2)
-                d = result.group(3)
-
-                cid = element.find_element_by_class_name('swiper-slide').get_attribute('data-param')
-                baby_id = self.baby_id
-                created_at = ''
-                updated_at = ''
-                months = (int(y) * 12) + int(m)
-                days = int(d)
-                content_type = 1
-                caption = element.find_element_by_class_name('swiper-describe').find_element_by_tag_name('span').get_attribute('innerText')
-                # print(f'id = {cid}\n '
-                #       f'baby id = {baby_id}\n '
-                #       f'months = {months}\n '
-                #       f'days = {days} \n '
-                #       f'caption = {caption}\n'
-                #       f'===================\n')
-
-                collection_list.append([cid, baby_id, created_at, updated_at, months, days, content_type, caption])
-            elif len(element.find_elements_by_class_name('text')) > 0:
-                # This is a text
-                date_str = element.find_element_by_tag_name('i').get_attribute('innerText')
-                regex = r'(\d*)Y\-(\d*)M\-(\d*).*'
-                result = re.match(regex, date_str)
-                y = result.group(1)
-                m = result.group(2)
-                d = result.group(3)
-
-                cid = element.find_element_by_class_name('text-bottom').get_attribute('data-id')
-                baby_id = self.baby_id
-                created_at = ''
-                updated_at = ''
-                months = (int(y) * 12) + int(m)
-                days = int(d)
-                content_type = 2
-                caption = element.find_element_by_class_name('text-content').get_attribute('innerText')
-                # print(f'id = {cid}\n '
-                #       f'baby id = {baby_id}\n '
-                #       f'months = {months}\n '
-                #       f'days = {days} \n '
-                #       f'caption = {caption}\n'
-                #       f'===================\n')
-
-                collection_list.append([cid, baby_id, created_at, updated_at, months, days, content_type, caption])
-            elif len(element.find_elements_by_class_name('milestone')) > 0:
-                # This is a milestone
-                pass
-            else:
-                # There is something else
-                print('[Important]: Missing a type!!')
-        else:
-            return collection_list
-
     def getTimehutAlbumURLSet(self):
         album_elements = self.__driver.find_elements_by_class_name('swiper-detail-enter')
 
@@ -272,6 +197,9 @@ class timehutSeleniumToolKit:
     # TODO: Use 'partial' instead of this?
     def quitTimehutPage(self):
         self.__driver.quit()
+
+    def getTimehutPageUrl(self):
+        return self.__driver.current_url
 
     def cheatTimehut(self):
         return self.__driver

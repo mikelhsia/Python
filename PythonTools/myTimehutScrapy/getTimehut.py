@@ -13,6 +13,9 @@ import timehutManageLastUpdate
 import timehutLog
 import timehutSeleniumToolKit
 
+ONON_ID = 537413380
+MUIMUI_ID = 537776076
+
 # TODO: Refactoring const
 # TODO: Checking RabbitMQ is running or not
 # TODO: Implement RabbitMQ with direct exchange type
@@ -290,10 +293,10 @@ def main(baby, days):
 		# __before_day = 3000
 
 	if baby == '1' or baby == '':
-		__baby_id = 537413380
+		__baby_id = ONON_ID
 	else:
 		# Mui Mui Baby ID
-		__baby_id = 537776076
+		__baby_id = MUIMUI_ID
 
 	last_update_manager = timehutManageLastUpdate.LastUpdateTsManager()
 	last_updated_time = last_update_manager.readLastUpdateTimeStamp(__baby_id)
@@ -346,7 +349,7 @@ def main(baby, days):
 			print('Going to Onon')
 		else:
 			print('Going to MuiMui')
-			mui_mui_homepage = 'http://47.75.157.88/en/home/537776076'
+			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(ONON_ID.__str__(), MUIMUI_ID.__str__())
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
 		__collection_list = []
