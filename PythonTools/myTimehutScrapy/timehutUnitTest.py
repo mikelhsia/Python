@@ -55,9 +55,12 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
         connection = pika.BlockingConnection(pika.ConnectionParameters(RABBIT_SERVICE_DEV_URL))
         channel = connection.channel()
-
         channel.queue_declare(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, durable=True)
-        message = 'Test'
+
+
+        message = '{"header": "Test", "request": "1"}'
+        
+        
         channel.basic_publish(exchange='', routing_key=TIMEHUT_RABBITMQ_QUEUE_NAME,
                               body=message,
                               properties=pika.BasicProperties(delivery_mode=2))

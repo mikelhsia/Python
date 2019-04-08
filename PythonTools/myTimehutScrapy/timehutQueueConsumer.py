@@ -1,5 +1,6 @@
 import pika
 import time
+import json
 
 RABBIT_SERVICE_DEV_URL = 'localhost'
 TIMEHUT_RABBITMQ_QUEUE_NAME = 'timehut_queue'
@@ -7,7 +8,9 @@ TIMEHUT_RABBITMQ_QUEUE_NAME = 'timehut_queue'
 
 def callback(ch, method, properties, body):
 	print(f' [x] Receive {body}')
-	time.sleep(body.count(b'.'))
+	text = json.loads(body)
+	print(f' [x] Receive {text["header"]}')
+	time.sleep(int(text["request"]))
 	print(f' [x] Done')
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 

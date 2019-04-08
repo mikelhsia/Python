@@ -378,6 +378,7 @@ def main(baby, days):
 				updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
 				print('Done update DB')
 
+                        # TODO: Replace the old set with the new set? Need to check
 			memory_set = __timehut.getTimehutAlbumURLSet()
 			__timehut.cleanTimehutRecordedRequest()
 
