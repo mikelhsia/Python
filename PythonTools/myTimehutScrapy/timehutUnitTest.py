@@ -3,6 +3,7 @@ import sys
 
 import unittest
 import sys
+import json
 import os
 # import pdb
 # pdb.set_trace()
@@ -58,12 +59,12 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         channel.queue_declare(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, durable=True)
 
 
-        message = '{"header": "Test", "request": "3"}'
+        message = {"header": "Test", "request": 3}
         
         
         channel.basic_publish(exchange='', routing_key=TIMEHUT_RABBITMQ_QUEUE_NAME,
-                              body=message,
-                              properties=pika.BasicProperties(delivery_mode=2))
+                              body=json.dumps(message).encode('UTF-8'),
+                              properties=pika.BasicProperties(delivery_mode=2, content_type='application/json', content_encoding='UTF-8'))
 
         print(f' [x] Message sent')
         connection.close()
