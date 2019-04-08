@@ -14,7 +14,7 @@ TIMEHUT_RABBITMQ_QUEUE_NAME = 'timehut_queue'
 
 def check_rabbit_exist():
     rabbit_result = ''
-    sys.stdout.write(f'Checking RabbitMQ ... ')
+    sys.stdout.write(f'Checking RabbitMQ ... \n')
     with os.popen(RABBITMQ_PS_CMD, "r") as f:
         rabbit_result = f.read()
     f.close()
@@ -48,9 +48,9 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
     def test_rabbitMQ_publish(self):
         print('\n### Testing behavior of scrolling down to trigger ajax call to get more content')
         if check_rabbit_exist():
-            sys.stdout.write(f'RabbitMQ is running ... ')
+            sys.stdout.write(f'RabbitMQ is running ... \n')
         else:
-            sys.stdout.write(f"Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first")
+            sys.stdout.write(f"Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
             self.assertEqual(0, 1)  # 测试用例
 
         connection = pika.BlockingConnection(pika.ConnectionParameters(RABBIT_SERVICE_DEV_URL))
@@ -58,7 +58,7 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         channel.queue_declare(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, durable=True)
 
 
-        message = '{"header": "Test", "request": "1"}'
+        message = '{"header": "Test", "request": "3"}'
         
         
         channel.basic_publish(exchange='', routing_key=TIMEHUT_RABBITMQ_QUEUE_NAME,
