@@ -16,8 +16,10 @@ import timehutSeleniumToolKit
 PEEKABOO_ONON_ID = 537413380
 PEEKABOO_MUIMUI_ID = 537776076
 PEEKABOO_DB_NAME= "peekaboo"
+PEEKABOO_LOGIN_PAGE_URL= "https://www.shiguangxiaowu.cn/zh-CN"
+PEEKABOO_HEADLESS_MODE= False
 
-ENABLE_LOGGING = False
+ENABLE_DB_LOGGING = False
 
 # functions
 def timestampToDatetimeString(ts):
@@ -223,6 +225,8 @@ def generateIndexList(engine):
 	for row in __session.query(timehutDataSchema.Moment):
 		__momentIndexList.append(row.id)
 
+	__session.close()
+
 	return __collectionIndexList, __momentIndexList
 
 
@@ -299,7 +303,7 @@ def main(baby, days):
 	last_update_manager = timehutManageLastUpdate.LastUpdateTsManager()
 	last_updated_time = last_update_manager.readLastUpdateTimeStamp(__baby_id)
 
-	__engine = createEngine(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_LOGGING)
+	__engine = createEngine(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_DB_LOGGING)
 
 	collection_index_list, moment_index_list = generateIndexList(__engine)
 
@@ -327,12 +331,9 @@ def main(baby, days):
 
 		__before_day = __next_index + 1
 	'''
-	__isHeadless = False
-	__timehutUrl = "https://www.shiguangxiaowu.cn/zh-CN"
+	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(True, PEEKABOO_HEADLESS_MODE)
 
-	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(True, __isHeadless)
-
-	__timehut.fetchTimehutLoginPage(__timehutUrl)
+	__timehut.fetchTimehutLoginPage(PEEKABOO_LOGIN_PAGE_URL)
 
 	if not __timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
 		timehutLog.logging.info('Login failed')
@@ -345,7 +346,7 @@ def main(baby, days):
 			print('Going to Onon')
 		else:
 			print('Going to MuiMui')
-			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(ONON_ID.__str__(), MUIMUI_ID.__str__())
+			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(PEEKABOO_ONON_ID.__str__(), PEEKABOO_MUIMUI_ID.__str__())
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
 		__collection_list = []

@@ -2,6 +2,12 @@ import pika
 import time
 import json
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import InternalError
+
+import timehutDataSchema
+
 RABBIT_SERVICE_DEV_URL = 'localhost'
 TIMEHUT_RABBITMQ_QUEUE_NAME = 'timehut_queue'
 
