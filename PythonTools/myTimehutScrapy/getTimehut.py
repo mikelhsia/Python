@@ -13,13 +13,11 @@ import timehutManageLastUpdate
 import timehutLog
 import timehutSeleniumToolKit
 
-ONON_ID = 537413380
-MUIMUI_ID = 537776076
+PEEKABOO_ONON_ID = 537413380
+PEEKABOO_MUIMUI_ID = 537776076
+PEEKABOO_DB_NAME= "peekaboo"
 
-# TODO: Refactoring const
-# TODO: Checking RabbitMQ is running or not
-# TODO: Implement RabbitMQ with direct exchange type
-# TODO: TBD
+ENABLE_LOGGING = False
 
 # functions
 def timestampToDatetimeString(ts):
@@ -293,17 +291,15 @@ def main(baby, days):
 		# __before_day = 3000
 
 	if baby == '1' or baby == '':
-		__baby_id = ONON_ID
+		__baby_id = PEEKABOO_ONON_ID
 	else:
 		# Mui Mui Baby ID
-		__baby_id = MUIMUI_ID
+		__baby_id = PEEKABOO_MUIMUI_ID
 
 	last_update_manager = timehutManageLastUpdate.LastUpdateTsManager()
 	last_updated_time = last_update_manager.readLastUpdateTimeStamp(__baby_id)
 
-	__dbName = "peekaboo"
-	__logging = False
-	__engine = createEngine(__dbName, timehutDataSchema.base, __logging)
+	__engine = createEngine(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_LOGGING)
 
 	collection_index_list, moment_index_list = generateIndexList(__engine)
 
@@ -378,7 +374,7 @@ def main(baby, days):
 				updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
 				print('Done update DB')
 
-                        # TODO: Replace the old set with the new set? Need to check
+			# TODO: Replace the old set with the new set? Need to check
 			memory_set = __timehut.getTimehutAlbumURLSet()
 			__timehut.cleanTimehutRecordedRequest()
 

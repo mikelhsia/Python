@@ -14,6 +14,12 @@ import timehutManageLastUpdate
 import timehutLog
 import timehutSeleniumToolKit
 
+
+# TODO: Refactoring const
+# TODO: Checking RabbitMQ is running or not
+# TODO: Implement RabbitMQ with direct exchange type
+# TODO: TBD
+
 RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | awk '{print $2}'"
 
 

@@ -46,7 +46,7 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
         print('Done setting up for the test')
 
-    def test_rabbitMQ_publish(self):
+    def test_rabbitMQ_publish_collection(self):
         print('\n### Testing behavior of scrolling down to trigger ajax call to get more content')
         if check_rabbit_exist():
             sys.stdout.write(f'RabbitMQ is running ... \n')
@@ -58,18 +58,43 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         channel = connection.channel()
         channel.queue_declare(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, durable=True)
 
-
-        message = {"header": "Test", "request": 3}
-        
+        message = {"type": "collection", "header": "Test", "request": 3}
         
         channel.basic_publish(exchange='', routing_key=TIMEHUT_RABBITMQ_QUEUE_NAME,
                               body=json.dumps(message).encode('UTF-8'),
-                              properties=pika.BasicProperties(delivery_mode=2, content_type='application/json', content_encoding='UTF-8'))
+                              properties=pika.BasicProperties(delivery_mode=2,
+                                                              content_type='application/json',
+                                                              content_encoding='UTF-8'))
 
         print(f' [x] Message sent')
         connection.close()
-        # publish_task()
-        # insert_to_db()
+        # check_db()
+        # delete_to_db()
+        self.assertEqual(0, 0)  # 测试用例
+
+    def test_rabbitMQ_publish_moment(self):
+        print('\n### Testing behavior of scrolling down to trigger ajax call to get more content')
+        if check_rabbit_exist():
+            sys.stdout.write(f'RabbitMQ is running ... \n')
+        else:
+            sys.stdout.write(f"Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
+            self.assertEqual(0, 1)  # 测试用例
+
+        connection = pika.BlockingConnection(pika.ConnectionParameters(RABBIT_SERVICE_DEV_URL))
+        channel = connection.channel()
+        channel.queue_declare(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, durable=True)
+
+        message = {"type":"moment", "header": "Test", "request": 3}
+
+        channel.basic_publish(exchange='', routing_key=TIMEHUT_RABBITMQ_QUEUE_NAME,
+                              body=json.dumps(message).encode('UTF-8'),
+                              properties=pika.BasicProperties(delivery_mode=2,
+                                                              content_type='application/json',
+                                                              content_encoding='UTF-8'))
+
+        print(f' [x] Message sent')
+        connection.close()
+        # check_db()
         # delete_to_db()
         self.assertEqual(0, 0)  # 测试用例
 
