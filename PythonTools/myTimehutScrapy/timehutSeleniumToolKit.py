@@ -22,12 +22,11 @@ whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/
 
 class timehutSeleniumToolKit:
 
-    def __init__(self, babyBoy, headlessFlag):
-        __slots__ = ['__driver', 'albumSet', 'baby_id']
+    def __init__(self, headlessFlag):
+        __slots__ = ['__driver', 'albumSet']
 
         # An empty set that used for storing unique album list
         self.albumSet = set()
-        self.baby_id = '537776076' if not babyBoy else '537413380'
 
         if headlessFlag:
             option = webdriver.ChromeOptions()

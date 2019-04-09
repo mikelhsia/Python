@@ -1,3 +1,5 @@
+import sys
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import InternalError
@@ -40,14 +42,11 @@ def createDB(dbName, base, loggingFlag):
 		engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
 		engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} MODIFY content TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
 
+	finally:
+		engine.dispose()
 
 
-	engine.dispose()
-
-
-def createEngine(dbName, base, loggingFlag):
-
-	createDB(dbName, base, loggingFlag)
+def createEngine(dbName, loggingFlag):
 
 	engine = create_engine(f'mysql+pymysql://{DB_ACCOUNT}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{dbName}?charset=utf8mb4',
 	                       encoding=DB_ENCODING, echo=loggingFlag)

@@ -1,20 +1,17 @@
 import requests
 import json
-import sys
 from datetime import datetime, timedelta
 
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from sqlalchemy.exc import InternalError
 
 import timehutDataSchema
 import timehutManageLastUpdate
 import timehutLog
 import timehutSeleniumToolKit
+import timehutManageDB
 
-PEEKABOO_ONON_ID = 537413380
-PEEKABOO_MUIMUI_ID = 537776076
+PEEKABOO_ONON_ID = "537413380"
+PEEKABOO_MUIMUI_ID = "537776076"
 PEEKABOO_DB_NAME= "peekaboo"
 PEEKABOO_LOGIN_PAGE_URL= "https://www.shiguangxiaowu.cn/zh-CN"
 PEEKABOO_HEADLESS_MODE= False
@@ -168,124 +165,6 @@ def parseMomentBody(response_body):
 	return moment_list
 
 
-def createDB(dbName, base, loggingFlag):
-	engine = create_engine('mysql+pymysql://root:michael0512@127.0.0.1:3306',
-	                       encoding='utf-8', echo=loggingFlag)
-
-	try:
-		engine.execute(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-		timehutLog.logging.info(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8_general_ci;")
-
-		engine.execute(f"USE {dbName}")
-		timehutLog.logging.info(f"USE {dbName}")
-
-		ans = input(f"Do you want to drop the previous saved table (y/N)")
-
-		if ans == 'y' or ans == 'Y':
-			engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
-			timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
-
-			engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-			timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-
-	except InternalError as e:
-		base.metadata.create_all(engine)
-
-		engine.execute(f"ALTER DATABASE {dbName} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;")
-		engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-		engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} MODIFY caption TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-		engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-		engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} MODIFY content TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-
-
-
-	engine.dispose()
-
-
-def createEngine(dbName, base, loggingFlag):
-
-	createDB(dbName, base, loggingFlag)
-
-	engine = create_engine(f'mysql+pymysql://root:michael0512@127.0.0.1:3306/{dbName}?charset=utf8mb4',
-	                       encoding='utf-8', echo=loggingFlag)
-
-	return engine
-
-
-def generateIndexList(engine):
-	DBSession = sessionmaker(bind=engine)
-	__session = DBSession()
-
-	__collectionIndexList = []
-	__momentIndexList = []
-
-	for row in __session.query(timehutDataSchema.Collection):
-		__collectionIndexList.append(row.id)
-
-	for row in __session.query(timehutDataSchema.Moment):
-		__momentIndexList.append(row.id)
-
-	__session.close()
-
-	return __collectionIndexList, __momentIndexList
-
-
-def updateDBCollection(data_list, existed_index_list, last_updated_time, session):
-	"""
-
-	:param data_list
-	:return: 
-	"""
-	if not isinstance(data_list, list):
-		# If it's an single object, then put it in the list to simplify the following logic
-		data_list = [data_list]
-
-	for data in data_list:
-		if isinstance(data, timehutDataSchema.Collection):
-			if data.id not in existed_index_list:
-				# Insert collection object
-				session.add(data)
-			elif data.updated_at > last_updated_time:
-				# Update collection object
-				session.query(timehutDataSchema.Collection)\
-						.filter(timehutDataSchema.Collection.id == data.id)\
-						.update({timehutDataSchema.Collection.updated_at: data.updated_at,
-								timehutDataSchema.Collection.caption: data.caption})
-		else:
-			timehutLog.logging.error(f'[{sys._getframe().f_code.co_name}] Wrong Collection Type')
-			return False
-	else:
-		session.commit()
-
-
-def updateDBMoment(data_list, existed_index_list, last_updated_time, session):
-	"""
-
-	:param data_list
-	:return: 
-	"""
-	if not isinstance(data_list, list):
-		# If it's an single object, then put it in the list to simplify the following logic
-		data_list = [data_list]
-
-	for data in data_list:
-		if isinstance(data, timehutDataSchema.Moment):
-			if data.id not in existed_index_list:
-				# Insert collection object
-				session.add(data)
-			elif data.updated_at > last_updated_time:
-				# Update collection object
-				session.query(timehutDataSchema.Moment)\
-						.filter(timehutDataSchema.Moment.id == data.id)\
-						.update({timehutDataSchema.Moment.updated_at: data.updated_at,
-								timehutDataSchema.Moment.content: data.content})
-		else:
-			timehutLog.logging.error(f'[{sys._getframe().f_code.co_name}] Wrong Moment Type')
-			return False
-	else:
-		session.commit()
-
-
 def main(baby, days):
 	# main function()
 	try:
@@ -303,35 +182,15 @@ def main(baby, days):
 	last_update_manager = timehutManageLastUpdate.LastUpdateTsManager()
 	last_updated_time = last_update_manager.readLastUpdateTimeStamp(__baby_id)
 
-	__engine = createEngine(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_DB_LOGGING)
+	timehutManageDB.createDB(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_DB_LOGGING)
+	__engine = timehutManageDB.createEngine(PEEKABOO_DB_NAME, ENABLE_DB_LOGGING)
 
-	collection_index_list, moment_index_list = generateIndexList(__engine)
+	collection_index_list, moment_index_list = timehutManageDB.generateIndexList(__engine)
 
 	DBSession = sessionmaker(bind=__engine)
 	__session = DBSession()
 
-	'''
-	###
-	# These are the old codes that are not valid anymore, as timehut applied token to their APIs
-	###
-	while (True):
-		# Getting original response body and next_index to decide what's the next request to submit
-		__next_index, __response_body = getCollectionRequest(__baby_id, __before_day)
-
-		collection_list = parseCollectionBody(__response_body)
-		updateDBCollection(collection_list, collection_index_list, last_updated_time, __session)
-
-		for collection in collection_list:
-			__response_body = getMomentRequest(collection.id)
-			moment_list = parseMomentBody(__response_body)
-			updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
-
-		if (__next_index is None):
-			break
-
-		__before_day = __next_index + 1
-	'''
-	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(True, PEEKABOO_HEADLESS_MODE)
+	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(PEEKABOO_HEADLESS_MODE)
 
 	__timehut.fetchTimehutLoginPage(PEEKABOO_LOGIN_PAGE_URL)
 
@@ -346,7 +205,7 @@ def main(baby, days):
 			print('Going to Onon')
 		else:
 			print('Going to MuiMui')
-			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(PEEKABOO_ONON_ID.__str__(), PEEKABOO_MUIMUI_ID.__str__())
+			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(PEEKABOO_ONON_ID, PEEKABOO_MUIMUI_ID)
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
 		__collection_list = []
@@ -372,13 +231,12 @@ def main(baby, days):
 				print('done parsing')
 
 				print('start update DB')
-				updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
+				timehutManageDB.updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
 				print('Done update DB')
 
 			# TODO: Replace the old set with the new set? Need to check
 			memory_set = __timehut.getTimehutAlbumURLSet()
 			__timehut.cleanTimehutRecordedRequest()
-
 
 		# Start dumping all memories after finish updating Collection
 		print('\n-------------------------------\nDone updating collection\nparsing memory set')
@@ -400,7 +258,7 @@ def main(baby, days):
 				moment_list = parseMomentBody(memory)
 				print('done parsing')
 				print('start update DB')
-				updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
+				timehutManageDB.updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
 				print('done update DB')
 				# print(moment_list)
 
