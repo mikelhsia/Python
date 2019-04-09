@@ -2,8 +2,6 @@ import requests
 import json
 from datetime import datetime, timedelta
 
-from sqlalchemy.orm import sessionmaker
-
 import timehutDataSchema
 import timehutManageLastUpdate
 import timehutLog
@@ -184,14 +182,10 @@ def main(baby, days):
 
 	timehutManageDB.createDB(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_DB_LOGGING)
 	__engine = timehutManageDB.createEngine(PEEKABOO_DB_NAME, ENABLE_DB_LOGGING)
-
-	collection_index_list, moment_index_list = timehutManageDB.generateIndexList(__engine)
-
-	DBSession = sessionmaker(bind=__engine)
-	__session = DBSession()
+	__session = timehutManageDB.createSession(__engine)
+	collection_index_list, moment_index_list = timehutManageDB.generateIndexList(__session)
 
 	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(PEEKABOO_HEADLESS_MODE)
-
 	__timehut.fetchTimehutLoginPage(PEEKABOO_LOGIN_PAGE_URL)
 
 	if not __timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
@@ -263,7 +257,7 @@ def main(baby, days):
 				# print(moment_list)
 
 	__timehut.quitTimehutPage()
-	__session.close()
+	timehutManageDB.closeSession(__session)
 
 	# Found out that actually the time that timehut using is actually UTC-0, therefore minus 8 hours
 	last_update_manager.writeLastUpdateTimeStamp((datetime.now() + timedelta(hours=-8)).timestamp(), __baby_id)

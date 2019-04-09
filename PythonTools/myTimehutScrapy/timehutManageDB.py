@@ -54,20 +54,26 @@ def createEngine(dbName, loggingFlag):
 	return engine
 
 
-def generateIndexList(engine):
+def createSession(engine):
 	DBSession = sessionmaker(bind=engine)
-	__session = DBSession()
+	session = DBSession()
 
+	return session
+
+
+def closeSession(session):
+	session.close()
+
+
+def generateIndexList(session):
 	__collectionIndexList = []
 	__momentIndexList = []
 
-	for row in __session.query(timehutDataSchema.Collection):
+	for row in session.query(timehutDataSchema.Collection):
 		__collectionIndexList.append(row.id)
 
-	for row in __session.query(timehutDataSchema.Moment):
+	for row in session.query(timehutDataSchema.Moment):
 		__momentIndexList.append(row.id)
-
-	__session.close()
 
 	return __collectionIndexList, __momentIndexList
 
