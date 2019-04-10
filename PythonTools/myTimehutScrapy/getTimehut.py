@@ -1,5 +1,7 @@
 import requests
 import json
+import sys
+import os
 from datetime import datetime, timedelta
 
 import timehutDataSchema
@@ -14,8 +16,12 @@ PEEKABOO_DB_NAME= "peekaboo"
 PEEKABOO_LOGIN_PAGE_URL= "https://www.shiguangxiaowu.cn/zh-CN"
 PEEKABOO_HEADLESS_MODE= False
 
+RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | awk '{print $2}'"
+
 ENABLE_DB_LOGGING = False
 
+
+# TODO Move these codes to consumer
 # functions
 def timestampToDatetimeString(ts):
 	"""
@@ -55,49 +61,6 @@ def DatetimeStringToTimeStamp(string):
 
 	return dt.timestamp()
 
-
-def getCollectionRequest(baby_id, before_day):
-	"""
-	Get collection information through GET request by before day, getting limited collection (around 20)
-	:param baby_id: baby ID
-	:param before_day: the days of the collection and moment
-	:return: Response body of collection information
-	"""
-	headers = {
-		'Accept': 'application/json, text/javascript, */*; q=0.01',
-		'Cookie': 'locale=en;user_session=BAhJIj1qcF81MzY5MjMzNjNfM0JyZDJlNV9LbkJ1OGtqdkRqSHM4UmZyVk1CVUk4a3BrY1JRME9ZVzc1dwY6BkVU--fcb138d8ae1fcb3290cbbd7c4b35101f61d8b40e',
-	}
-
-	try:
-		r = requests.get(url=f'http://peekaboomoments.com/events.json?baby_id={baby_id}&before={before_day}&v=2&width=700&include_rt=true', headers=headers, timeout=30)
-		r.raise_for_status()
-	except requests.RequestException as e:
-		timehutLog.logging.error(e)
-	else:
-		response_body = json.loads(r.text)
-		timehutLog.logging.info(f"Request fired = {response_body['next']}")
-		return response_body['next'], response_body
-
-def getMomentRequest(collection_id):
-	"""
-	Get moment information through GET request by single collection id
-	:param collection_id: collection id
-	:return: Response body of moments that belong to the same collection
-	"""
-	headers = {
-		'Accept': 'application/json, text/javascript, */*; q=0.01',
-		'Cookie': 'locale=en;user_session=BAhJIj1qcF81MzY5MjMzNjNfM0JyZDJlNV9LbkJ1OGtqdkRqSHM4UmZyVk1CVUk4a3BrY1JRME9ZVzc1dwY6BkVU--fcb138d8ae1fcb3290cbbd7c4b35101f61d8b40e',
-		'X-Requested-With': 'XMLHttpRequest'
-	}
-
-	try:
-		r = requests.get(url=f'http://peekaboomoments.com/events/{collection_id}', headers=headers, timeout=30)
-		r.raise_for_status()
-	except requests.RequestException as e:
-		timehutLog.logging.error(e)
-	else:
-		response_body = json.loads(r.text)
-		return response_body
 
 def parseCollectionBody(response_body):
 	collection_list = []
@@ -263,8 +226,38 @@ def main(baby, days):
 	last_update_manager.writeLastUpdateTimeStamp((datetime.now() + timedelta(hours=-8)).timestamp(), __baby_id)
 
 
+# TODO: Refactoring const
+# TODO: Checking RabbitMQ is running or not
+# TODO: Implement RabbitMQ with direct exchange type
+# TODO: TBD
+
+def check_rabbit_exist():
+	rabbit_result = ''
+	timehutLog.logging.info(f'Checking RabbitMQ ... ')
+	with os.popen(RABBITMQ_PS_CMD, "r") as f:
+		rabbit_result = f.read()
+
+	f.close()
+
+	return False if not rabbit_result else True
+
+
 # Basic interactive interface
 if __name__ == "__main__":
+
+	if check_rabbit_exist():
+		timehutLog.logging.info(f'RabbitMQ is running ... ')
+	else:
+		sys.stdout.write(f"Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first")
+		timehutLog.logging.error(f'Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first')
+		sys.exit(1)
+
+	'''
+	lauch_receiver_worker()
+
+	main_logic_with_sending_to_queue()
+	'''
+
 	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
 	days = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
 	main(baby, days)

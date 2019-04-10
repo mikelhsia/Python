@@ -92,7 +92,7 @@ mock_collection = '''
             "caption": null,
             "like": false,
             "red_like": false
-        },
+        }
     ],
     "next": 1096,
     "reverse": false
