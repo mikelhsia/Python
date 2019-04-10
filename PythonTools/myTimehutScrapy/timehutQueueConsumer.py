@@ -9,7 +9,7 @@ TIMEHUT_RABBITMQ_QUEUE_NAME = 'timehut_queue'
 
 
 def callback(ch, method, properties, body):
-	print(f' [x] Receive {body}')
+	# print(f' [x] Receive {body}')
 	text = json.loads(body)
 
 	if text["type"] == "collection":
