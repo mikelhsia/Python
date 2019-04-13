@@ -1,4 +1,4 @@
-# from selenium import webdriver
+from selenium import webdriver
 from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -12,15 +12,16 @@ import requests
 import json
 import functools
 
-# chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
-# whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
+chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
+whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
 
-chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
-whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
+#chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
+#whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
 
 os.environ["webdriver.chrome.driver"] = chromedriver
 
 # TODO Process pool or Queue to process multitask in the getTimehut main python file
+# TODO Cleaning the info.logging
 
 class timehutSeleniumToolKit:
 
@@ -181,6 +182,7 @@ class timehutSeleniumToolKit:
 
         for request in req_list:
             print(request[0])
+            print(request[1])
 
             try:
                 r = requests.get(url=request[0], headers=request[1], timeout=30)

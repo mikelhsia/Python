@@ -22,6 +22,7 @@ ENABLE_DB_LOGGING = False
 
 
 # TODO Move these codes to consumer
+# TODO Cleaning the info.logging
 # functions
 def timestampToDatetimeString(ts):
 	"""

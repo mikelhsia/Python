@@ -8,7 +8,8 @@ import timehutDataSchema
 import timehutLog
 
 DB_ACCOUNT="root"
-DB_PASSWORD="michael0512"
+#DB_PASSWORD="michael0512"
+DB_PASSWORD="hsia0521"
 DB_HOST="127.0.0.1"
 DB_PORT="3306"
 DB_ENCODING="utf-8"

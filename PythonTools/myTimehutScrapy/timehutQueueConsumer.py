@@ -1,6 +1,7 @@
 import pika
 import time
 import json
+import requests
 
 import timehutManageDB
 import timehutDataSchema
@@ -54,7 +55,7 @@ def parseCollectionBody(response_body):
 
 			# Add to return collection obj list
 			collection_list.append(c_rec)
-			print(c_rec)
+			# print(c_rec)
 
 		elif data['layout'] == 'milestone':
 			continue
@@ -92,7 +93,7 @@ def parseMomentBody(response_body):
 
 		# Add to return collection obj list
 		moment_list.append(m_rec)
-		print(m_rec)
+		# print(m_rec)
 
 	return moment_list
 
@@ -103,12 +104,37 @@ def callback(ch, method, properties, body):
 
 	if text["type"] == "collection":
 		print(f' [x] Receive collection')
-		parseCollectionBody(text["header"])
+		request = text["request"]
+                # 将字符串转换为字典
+		header = eval(json.loads(text["header"]))
+		print(request)
+		print(header)
+		try:
+			r = requests.get(url=request, headers=header, timeout=30)
+			r.raise_for_status()
+		except requests.RequestException as e:
+			print(f'{e}')
+		else:
+			response_body = json.loads(r.text)
+			print(response_body)
+			# timehutLog.logging.info(f"Request fired = {response_body}")
 	else:
 		print(f' [x] Receive moment')
-		parseMomentBody(text["header"])
+		request = text["request"]
+                # 将字符串转换为字典
+		header = eval(json.loads(text["header"]))
+		print(request)
+		print(header)
+		try:
+			r = requests.get(url=request, headers=header, timeout=30)
+			r.raise_for_status()
+		except requests.RequestException as e:
+			print(f'{e}')
+		else:
+			response_body = json.loads(r.text)
+			print(response_body)
+			# timehutLog.logging.info(f"Request fired = {response_body}")
 
-	time.sleep(int(text["request"]))
 	print(f' [x] Done')
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -122,4 +148,14 @@ print(f' [*] Waiting for message. To exit press CTRL+C')
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, on_message_callback=callback)
 
+
+# timehutManageDB.createDB(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_DB_LOGGING)
+# __engine = timehutManageDB.createEngine(PEEKABOO_DB_NAME, ENABLE_DB_LOGGING)
+# __session = timehutManageDB.createSession(__engine)
+# collection_index_list, moment_index_list = timehutManageDB.generateIndexList(__session)
+
 channel.start_consuming()
+
+
+# Needs to be in on_channel_close() event
+# timehutManageDB.closeSession(__session)
