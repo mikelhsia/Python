@@ -174,11 +174,9 @@ def main(baby, days):
 		while __cont_flag:
 			print('start scroll down')
 			__timehut.scrollDownTimehutPage()
-			print('Done scroll down')
 
 			print('start record')
 			__req_list = __timehut.getTimehutRecordedCollectionRequest()
-			print('done record')
 			print(f'start replay: {__req_list}')
 			__res_list, __cont_flag = __timehut.replayTimehutRecordedCollectionRequest(__req_list, __before_day)
 			print(f'done replay, cont_flag = {__cont_flag}')
@@ -186,11 +184,9 @@ def main(baby, days):
 			for __res in __res_list:
 				print('start parsing')
 				__collection_list = parseCollectionBody(__res)
-				print('done parsing')
 
 				print('start update DB')
 				timehutManageDB.updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
-				print('Done update DB')
 
 			# TODO: Replace the old set with the new set? Need to check
 			memory_set = __timehut.getTimehutAlbumURLSet()
@@ -199,25 +195,21 @@ def main(baby, days):
 		# Start dumping all memories after finish updating Collection
 		print('\n-------------------------------\nDone updating collection\nparsing memory set')
 		for memory_link in memory_set:
-			print(f'memory_link: {memory_link}')
+			# print(f'memory_link: {memory_link}')
 			print('start fecthing')
 			__timehut.fetchTimehutContentPage(memory_link)
-			print('done fecthing')
 
 			__req_list = __timehut.getTimehutRecordedMomeryRequest()
 			__timehut.cleanTimehutRecordedRequest()
 
 			print('start replay')
 			__res_list = __timehut.replayTimehutRecordedMemoryRequest(__req_list)
-			print('done replay')
 
 			for memory in __res_list:
 				print('start parsing')
 				moment_list = parseMomentBody(memory)
-				print('done parsing')
 				print('start update DB')
 				timehutManageDB.updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
-				print('done update DB')
 				# print(moment_list)
 
 	__timehut.quitTimehutPage()
@@ -228,7 +220,6 @@ def main(baby, days):
 
 
 # TODO: Refactoring const
-# TODO: Checking RabbitMQ is running or not
 # TODO: Implement RabbitMQ with direct exchange type
 # TODO: TBD
 

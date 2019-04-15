@@ -12,11 +12,11 @@ import requests
 import json
 import functools
 
-chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
-whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
+# chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
+# whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
 
-#chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
-#whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
+chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
+whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
 
 os.environ["webdriver.chrome.driver"] = chromedriver
 

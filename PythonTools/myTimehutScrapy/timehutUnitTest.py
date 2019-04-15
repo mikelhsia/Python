@@ -15,8 +15,10 @@ RABBIT_SERVICE_DEV_URL = 'localhost'
 TIMEHUT_RABBITMQ_QUEUE_NAME = 'timehut_queue'
 
 mock_collection_request = 'http://47.52.234.52/events.json?baby_id=537413380&v=2&width=700&include_rt=true&timestamp=1555119640&sign=abab0033bde56a74ff657191be8e34f8'
-
 mock_collection_header = "{'Host': '47.52.234.52', 'Proxy-Connection': 'keep-alive', 'Accept': 'application/json, text/javascript, */*; q=0.01', 'X-NewRelic-ID': 'VwIPUF9SGwAGVlBRAAk=', 'X-Requested-With': 'XMLHttpRequest', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36', 'Referer': 'http://47.52.234.52/en/home/537413380', 'Accept-Encoding': 'gzip, deflate', 'Accept-Language': 'en-US,en;q=0.9', 'Cookie': 'locale=en; user_session=BAhJIj1qcF81MzY5MjMzNjNfU2dXeV9kMjFJcklTSElHYUVMZGdCVFNQUnZoOHlQT0RmMGR1d2xOUmdKVQY6BkVU--c45ddb3234e7259ee476c918f7826c9fff979cdf'}"
+mock_moment_request = 'http://47.75.157.88/events/691967865671127659?timestamp=1555251647&sign=ca4f1ae30e4e8277f6b0508883f3ad51'
+mock_moment_header = "{'Host': '47.75.157.88', 'Proxy-Connection': 'keep-alive', 'Accept': 'application/json, text/javascript, */*; q=0.01', 'X-NewRelic-ID': 'VwIPUF9SGwAGVlBRAAk=', 'X-Requested-With': 'XMLHttpRequest', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36', 'Referer': 'http://47.75.157.88/album_detail/537413380?id=691967865671127659', 'Accept-Encoding': 'gzip, deflate', 'Accept-Language': 'en-US,en;q=0.9', 'Cookie': 'locale=en; user_session=BAhJIj1qcF81MzY5MjMzNjNfUmtRVlFYNEZVVndXX0hOa1Nsdnh6bHNNSGhJdFZjSF9uZXdCdTYxbVlrbwY6BkVU--2c63befd401b0ac0a47a96727da51beaafbbda13'}"
+
 
 def check_rabbit_exist():
     rabbit_result = ''
@@ -89,7 +91,7 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         channel = connection.channel()
         channel.queue_declare(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, durable=True)
 
-        message = {"type": "moment", "request": f"{json.dumps(mock_collection_request)}", "header": f"{json.dumps(mock_collection_header)}"}
+        message = {"type": "moment", "request": mock_moment_request, "header": json.dumps(mock_moment_header)}
 
         channel.basic_publish(exchange='', routing_key=TIMEHUT_RABBITMQ_QUEUE_NAME,
                               body=json.dumps(message).encode('UTF-8'),

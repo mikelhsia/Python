@@ -7,12 +7,13 @@ import timehutManageDB
 import timehutDataSchema
 from datetime import datetime
 
+# import pdb
+# pdb.set_trace()
+
 RABBIT_SERVICE_DEV_URL = 'localhost'
 TIMEHUT_RABBITMQ_QUEUE_NAME = 'timehut_queue'
 
-# TODO 1. Parse response_body
 # TODO 2. Add Update DB connection
-# TODO 3. Fecth request and headers from the queue instead of fetching result
 
 
 class timehutQueueConsumer(object):
@@ -60,7 +61,7 @@ class timehutQueueConsumer(object):
 
 				# Add to return collection obj list
 				collection_list.append(c_rec)
-				# print(c_rec)
+				print(c_rec)
 
 			elif data['layout'] == 'milestone':
 				continue
@@ -74,8 +75,8 @@ class timehutQueueConsumer(object):
 
 	def parseMomentBody(self, response_body):
 
-		response_body = json.loads(response_body)
 		moment_list = []
+		response_body = json.loads(response_body)
 		data_list = response_body['moments']
 		src_url = ''
 
@@ -98,14 +99,13 @@ class timehutQueueConsumer(object):
 
 			# Add to return collection obj list
 			moment_list.append(m_rec)
-			# print(m_rec)
+			print(m_rec)
 
 		return moment_list
 
-
 	# def onMessageCallback(ch, method, properties, body):
 	def onMessageCallback(self, ch, method, properties, body):
-		print(f' [x] Receive {body}')
+		# print(f' [x] Receive {body}')
 		text = json.loads(body)
 
 		if text["type"] == "collection":
@@ -113,33 +113,27 @@ class timehutQueueConsumer(object):
 			request = text["request"]
 			# 将字符串转换为字典
 			header = eval(json.loads(text["header"]))
-			print(request)
-			print(header)
+
 			try:
 				r = requests.get(url=request, headers=header, timeout=30)
 				r.raise_for_status()
 			except requests.RequestException as e:
 				print(f'{e}')
 			else:
-				response_body = json.loads(r.text)
-				print(response_body)
-				# timehutLog.logging.info(f"Request fired = {response_body}")
+				self.parseCollectionBody(r.text)
 		else:
 			print(f' [x] Receive moment')
 			request = text["request"]
 			# 将字符串转换为字典
 			header = eval(json.loads(text["header"]))
-			print(request)
-			print(header)
+
 			try:
 				r = requests.get(url=request, headers=header, timeout=30)
 				r.raise_for_status()
 			except requests.RequestException as e:
 				print(f'{e}')
 			else:
-				response_body = json.loads(r.text)
-				print(response_body)
-				# timehutLog.logging.info(f"Request fired = {response_body}")
+				self.parseMomentBody(r.text)
 
 		print(f' [x] Done')
 		ch.basic_ack(delivery_tag=method.delivery_tag)
