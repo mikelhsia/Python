@@ -2,7 +2,10 @@ import pika
 import time
 import json
 import requests
+import os
+import sys
 
+import timehutLog
 import timehutManageDB
 import timehutDataSchema
 from datetime import datetime
@@ -12,6 +15,8 @@ from datetime import datetime
 
 RABBIT_SERVICE_DEV_URL = 'localhost'
 TIMEHUT_RABBITMQ_QUEUE_NAME = 'timehut_queue'
+
+RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | awk '{print $2}'"
 
 # TODO 2. Add Update DB connection
 
@@ -163,6 +168,25 @@ class timehutQueueConsumer(object):
 		channel.start_consuming()
 
 
+def check_rabbit_exist():
+	rabbit_result = ''
+	timehutLog.logging.info(f'Checking RabbitMQ ... ')
+	with os.popen(RABBITMQ_PS_CMD, "r") as f:
+		rabbit_result = f.read()
+
+	f.close()
+
+	return False if not rabbit_result else True
+
+
 if __name__ == "__main__":
+
+	if check_rabbit_exist():
+		timehutLog.logging.info(f'RabbitMQ is running ... ')
+	else:
+		sys.stdout.write(f"Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first")
+		timehutLog.logging.error(f'Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first')
+		sys.exit(1)
+
 	queueConsumer = timehutQueueConsumer()
 	queueConsumer.run()
