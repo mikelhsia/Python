@@ -146,6 +146,7 @@ class timehutQueueConsumer(object):
 
 	def onChannelCloseCallback(self):
 		pass
+		print('on connection close')
 		# timehutManageDB.closeSession(__session)
 
 	def onChannelOpenCallback(self):
@@ -153,6 +154,7 @@ class timehutQueueConsumer(object):
 		# __engine = timehutManageDB.createEngine(PEEKABOO_DB_NAME, ENABLE_DB_LOGGING)
 		# __session = timehutManageDB.createSession(__engine)
 		# collection_index_list, moment_index_list = timehutManageDB.generateIndexList(__session)
+		print('on connection open')
 		pass
 
 	def run(self):
@@ -165,7 +167,18 @@ class timehutQueueConsumer(object):
 		channel.basic_qos(prefetch_count=1)
 		channel.basic_consume(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, on_message_callback=self.onMessageCallback)
 
-		channel.start_consuming()
+		self.onChannelOpenCallback()
+		try:
+			channel.start_consuming()
+		except KeyboardInterrupt:
+			channel.stop_consuming()
+			print(f'Keyboard Interrupt')
+		except Exception as e:
+			channel.stop_consuming()
+			print(f'{e}')
+		finally:
+			self.onChannelCloseCallback()
+			connection.close()
 
 
 def check_rabbit_exist():
