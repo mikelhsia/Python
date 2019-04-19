@@ -14,9 +14,13 @@ from datetime import datetime
 # pdb.set_trace()
 
 RABBIT_SERVICE_DEV_URL = 'localhost'
-TIMEHUT_RABBITMQ_QUEUE_NAME = 'timehut_queue'
-
+RABBITMQ_TIMEHUT_QUEUE_NAME = 'timehut_queue'
 RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | awk '{print $2}'"
+
+PEEKABOO_DB_NAME = 'peekaboo'
+ENABLE_DB_LOGGING = False
+
+MANAGE_UPDATE_PLACEHOLDER = 0
 
 # TODO 2. Add Update DB connection
 
@@ -66,7 +70,7 @@ class timehutQueueConsumer(object):
 
 				# Add to return collection obj list
 				collection_list.append(c_rec)
-				print(c_rec)
+				# print(c_rec)
 
 			elif data['layout'] == 'milestone':
 				continue
@@ -104,70 +108,60 @@ class timehutQueueConsumer(object):
 
 			# Add to return collection obj list
 			moment_list.append(m_rec)
-			print(m_rec)
+			# print(m_rec)
 
 		return moment_list
 
-	# def onMessageCallback(ch, method, properties, body):
 	def onMessageCallback(self, ch, method, properties, body):
 		# print(f' [x] Receive {body}')
 		text = json.loads(body)
 
-		if text["type"] == "collection":
-			print(f' [x] Receive collection')
-			request = text["request"]
-			# 将字符串转换为字典
-			header = eval(json.loads(text["header"]))
+		request = text["request"]
+		# 将字符串转换为字典
+		header = eval(json.loads(text["header"]))
 
-			try:
-				r = requests.get(url=request, headers=header, timeout=30)
-				r.raise_for_status()
-			except requests.RequestException as e:
-				print(f'{e}')
-			else:
-				self.parseCollectionBody(r.text)
+		try:
+			r = requests.get(url=request, headers=header, timeout=30)
+			r.raise_for_status()
+		except requests.RequestException as e:
+			print(f'{e}')
 		else:
-			print(f' [x] Receive moment')
-			request = text["request"]
-			# 将字符串转换为字典
-			header = eval(json.loads(text["header"]))
+			if text["type"] == "collection":
+				print(f' [x] Receive collection')
 
-			try:
-				r = requests.get(url=request, headers=header, timeout=30)
-				r.raise_for_status()
-			except requests.RequestException as e:
-				print(f'{e}')
+				collection_list = self.parseCollectionBody(r.text)
+				timehutManageDB.updateDBCollection(collection_list, self.collection_index_list, MANAGE_UPDATE_PLACEHOLDER, self._session)
 			else:
-				self.parseMomentBody(r.text)
+				print(f' [x] Receive moment')
+				moment_list = self.parseMomentBody(r.text)
+				timehutManageDB.updateDBMoment(moment_list, self.moment_index_list, MANAGE_UPDATE_PLACEHOLDER, self._session)
 
 		print(f' [x] Done')
 		ch.basic_ack(delivery_tag=method.delivery_tag)
 
-
 	def onChannelCloseCallback(self):
-		pass
 		print('on connection close')
-		# timehutManageDB.closeSession(__session)
+		timehutManageDB.closeSession(self._session)
 
 	def onChannelOpenCallback(self):
-		# timehutManageDB.createDB(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_DB_LOGGING)
-		# __engine = timehutManageDB.createEngine(PEEKABOO_DB_NAME, ENABLE_DB_LOGGING)
-		# __session = timehutManageDB.createSession(__engine)
-		# collection_index_list, moment_index_list = timehutManageDB.generateIndexList(__session)
 		print('on connection open')
-		pass
+		timehutManageDB.createDB(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_DB_LOGGING)
+		self._engine = timehutManageDB.createEngine(PEEKABOO_DB_NAME, ENABLE_DB_LOGGING)
+		self._session = timehutManageDB.createSession(self._engine)
+		self.collection_index_list, self.moment_index_list = timehutManageDB.generateIndexList(self._session)
 
 	def run(self):
 		connection = pika.BlockingConnection(pika.ConnectionParameters(RABBIT_SERVICE_DEV_URL))
 		channel = connection.channel()
 
-		channel.queue_declare(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, durable=True)
+		self.onChannelOpenCallback()
+
+		channel.queue_declare(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, durable=True)
 		print(f' [*] Waiting for message. To exit press CTRL+C')
 
 		channel.basic_qos(prefetch_count=1)
-		channel.basic_consume(queue=TIMEHUT_RABBITMQ_QUEUE_NAME, on_message_callback=self.onMessageCallback)
+		channel.basic_consume(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, on_message_callback=self.onMessageCallback)
 
-		self.onChannelOpenCallback()
 		try:
 			channel.start_consuming()
 		except KeyboardInterrupt:
@@ -176,9 +170,9 @@ class timehutQueueConsumer(object):
 		except Exception as e:
 			channel.stop_consuming()
 			print(f'{e}')
-		finally:
-			self.onChannelCloseCallback()
-			connection.close()
+
+		self.onChannelCloseCallback()
+		connection.close()
 
 
 def check_rabbit_exist():

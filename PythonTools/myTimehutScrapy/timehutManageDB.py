@@ -117,6 +117,7 @@ def updateDBMoment(data_list, existed_index_list, last_updated_time, session):
 		data_list = [data_list]
 
 	for data in data_list:
+		print(data)
 		if isinstance(data, timehutDataSchema.Moment):
 			if data.id not in existed_index_list:
 				# Insert collection object
