@@ -5,7 +5,6 @@ import os
 from datetime import datetime, timedelta
 
 import timehutDataSchema
-import timehutManageLastUpdate
 import timehutLog
 import timehutSeleniumToolKit
 import timehutManageDB
@@ -141,9 +140,6 @@ def main(baby, days):
 		# Mui Mui Baby ID
 		__baby_id = PEEKABOO_MUIMUI_ID
 
-	last_update_manager = timehutManageLastUpdate.LastUpdateTsManager()
-	last_updated_time = last_update_manager.readLastUpdateTimeStamp(__baby_id)
-
 	timehutManageDB.createDB(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_DB_LOGGING)
 	__engine = timehutManageDB.createEngine(PEEKABOO_DB_NAME, ENABLE_DB_LOGGING)
 	__session = timehutManageDB.createSession(__engine)
@@ -186,7 +182,7 @@ def main(baby, days):
 				__collection_list = parseCollectionBody(__res)
 
 				print('start update DB')
-				timehutManageDB.updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
+				timehutManageDB.updateDBCollection(__collection_list, collection_index_list, __session)
 
 			# TODO: Replace the old set with the new set? Need to check
 			memory_set = __timehut.getTimehutAlbumURLSet()
@@ -209,17 +205,13 @@ def main(baby, days):
 				print('start parsing')
 				moment_list = parseMomentBody(memory)
 				print('start update DB')
-				timehutManageDB.updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
+				timehutManageDB.updateDBMoment(moment_list, moment_index_list, __session)
 				# print(moment_list)
 
 	__timehut.quitTimehutPage()
 	timehutManageDB.closeSession(__session)
 
-	# Found out that actually the time that timehut using is actually UTC-0, therefore minus 8 hours
-	last_update_manager.writeLastUpdateTimeStamp((datetime.now() + timedelta(hours=-8)).timestamp(), __baby_id)
 
-
-# TODO: Refactoring const
 # TODO: Implement RabbitMQ with direct exchange type
 # TODO: TBD
 

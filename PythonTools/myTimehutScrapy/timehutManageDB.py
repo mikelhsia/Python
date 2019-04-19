@@ -78,7 +78,7 @@ def generateIndexList(session):
 	return __collectionIndexList, __momentIndexList
 
 
-def updateDBCollection(data_list, existed_index_list, last_updated_time, session):
+def updateDBCollection(data_list, existed_index_list, session):
 	"""
 
 	:param data_list
@@ -93,12 +93,6 @@ def updateDBCollection(data_list, existed_index_list, last_updated_time, session
 			if data.id not in existed_index_list:
 				# Insert collection object
 				session.add(data)
-			elif data.updated_at > last_updated_time:
-				# Update collection object
-				session.query(timehutDataSchema.Collection)\
-						.filter(timehutDataSchema.Collection.id == data.id)\
-						.update({timehutDataSchema.Collection.updated_at: data.updated_at,
-								timehutDataSchema.Collection.caption: data.caption})
 		else:
 			timehutLog.logging.error(f'[{sys._getframe().f_code.co_name}] Wrong Collection Type')
 			return False
@@ -106,7 +100,7 @@ def updateDBCollection(data_list, existed_index_list, last_updated_time, session
 		session.commit()
 
 
-def updateDBMoment(data_list, existed_index_list, last_updated_time, session):
+def updateDBMoment(data_list, existed_index_list, session):
 	"""
 
 	:param data_list
@@ -121,12 +115,6 @@ def updateDBMoment(data_list, existed_index_list, last_updated_time, session):
 			if data.id not in existed_index_list:
 				# Insert collection object
 				session.add(data)
-			elif data.updated_at > last_updated_time:
-				# Update collection object
-				session.query(timehutDataSchema.Moment)\
-						.filter(timehutDataSchema.Moment.id == data.id)\
-						.update({timehutDataSchema.Moment.updated_at: data.updated_at,
-								timehutDataSchema.Moment.content: data.content})
 		else:
 			timehutLog.logging.error(f'[{sys._getframe().f_code.co_name}] Wrong Moment Type')
 			return False
