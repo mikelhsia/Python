@@ -162,12 +162,6 @@ if __name__ == "__main__":
 		timehutLog.logging.error(f'Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first')
 		sys.exit(1)
 
-	'''
-	lauch_receiver_worker()
-
-	main_logic_with_sending_to_queue()
-	'''
-
 	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
 	days = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
 	main(baby, days)

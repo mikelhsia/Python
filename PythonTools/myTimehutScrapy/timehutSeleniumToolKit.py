@@ -10,7 +10,6 @@ import os
 import re
 import requests
 import json
-import functools
 
 # chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
 # whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
