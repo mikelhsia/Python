@@ -1,5 +1,4 @@
 import pika
-import time
 import json
 import requests
 import os
@@ -19,10 +18,6 @@ RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | aw
 
 PEEKABOO_DB_NAME = 'peekaboo'
 ENABLE_DB_LOGGING = False
-
-MANAGE_UPDATE_PLACEHOLDER = 0
-
-# TODO 2. Add Update DB connection
 
 
 class timehutQueueConsumer(object):
@@ -44,7 +39,6 @@ class timehutQueueConsumer(object):
 			raise e
 
 		return dt.timestamp()
-
 
 	def parseCollectionBody(self, response_body):
 		collection_list = []
@@ -113,12 +107,11 @@ class timehutQueueConsumer(object):
 		return moment_list
 
 	def onMessageCallback(self, ch, method, properties, body):
-		# print(f' [x] Receive {body}')
-		text = json.loads(body)
+		response = json.loads(body)
 
-		request = text["request"]
+		request = response["request"]
 		# 将字符串转换为字典
-		header = eval(json.loads(text["header"]))
+		header = eval(json.loads(response["header"]))
 
 		try:
 			r = requests.get(url=request, headers=header, timeout=30)
@@ -126,15 +119,15 @@ class timehutQueueConsumer(object):
 		except requests.RequestException as e:
 			print(f'{e}')
 		else:
-			if text["type"] == "collection":
+			if response["type"] == "collection":
 				print(f' [x] Receive collection')
 
 				collection_list = self.parseCollectionBody(r.text)
-				timehutManageDB.updateDBCollection(collection_list, self.collection_index_list, MANAGE_UPDATE_PLACEHOLDER, self._session)
+				timehutManageDB.updateDBCollection(collection_list, self.collection_index_list, self._session)
 			else:
 				print(f' [x] Receive moment')
 				moment_list = self.parseMomentBody(r.text)
-				timehutManageDB.updateDBMoment(moment_list, self.moment_index_list, MANAGE_UPDATE_PLACEHOLDER, self._session)
+				timehutManageDB.updateDBMoment(moment_list, self.moment_index_list, self._session)
 
 		print(f' [x] Done')
 		ch.basic_ack(delivery_tag=method.delivery_tag)
