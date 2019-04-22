@@ -7,8 +7,8 @@ import json
 import timehutLog
 import timehutSeleniumToolKit
 
-import pdb
-pdb.set_trace()
+# import pdb
+# pdb.set_trace()
 
 PEEKABOO_ONON_ID = "537413380"
 PEEKABOO_MUIMUI_ID = "537776076"
@@ -79,6 +79,7 @@ def main(baby, days):
 		__before_day = int(days)
 	except Exception as e:
 		__before_day = -200
+		timehutLog.logging.warning(f"before_day format invalid: {type(__before_day)}")
 
 	if baby == '1' or baby == '':
 		__baby_id = PEEKABOO_ONON_ID
@@ -120,7 +121,6 @@ def main(baby, days):
 			# TODO bear in mind how to stop and detect the last request
 			# Send to queue
 			__cont_flag = enqueue_timehut_collection(channel, __req_list)
-			# print(f'done replay, cont_flag = {__cont_flag}')
 
 			memory_set = __timehut.getTimehutAlbumURLSet()
 			__timehut.cleanTimehutRecordedRequest()
@@ -129,7 +129,7 @@ def main(baby, days):
 		print('\n-------------------------------\nDone updating collection, start parsing memory set')
 
 		for memory_link in memory_set:
-			print('start fecthing')
+			print('start fetching')
 			__timehut.fetchTimehutContentPage(memory_link)
 
 			__req_list = __timehut.getTimehutRecordedMomeryRequest()
@@ -156,10 +156,9 @@ def check_rabbit_exist():
 if __name__ == "__main__":
 
 	if check_rabbit_exist():
-		timehutLog.logging.info(f'RabbitMQ is running ... ')
+		sys.stdout.write(f'RabbitMQ is running ... \n')
 	else:
-		sys.stdout.write(f"Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first")
-		timehutLog.logging.error(f'Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first')
+		sys.stderr.write(f"RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
 		sys.exit(1)
 
 	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')

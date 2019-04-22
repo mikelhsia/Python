@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import timehutLog
 
+import sys
 import os
 import re
 import requests
@@ -20,7 +21,6 @@ whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/
 os.environ["webdriver.chrome.driver"] = chromedriver
 
 # TODO Process pool or Queue to process multitask in the getTimehut main python file
-# TODO Cleaning the info.logging
 
 class timehutSeleniumToolKit:
 
@@ -56,13 +56,6 @@ class timehutSeleniumToolKit:
         pw_field.send_keys(password)
         button.click()
 
-        # try:
-        #     WebDriverWait(self.__driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
-        # except BaseException as e:
-        #     print(e)
-        #     return False
-        # else:
-        #     return True
         return self.isContentPage()
 
     def whereami(self, str=''):
@@ -70,10 +63,17 @@ class timehutSeleniumToolKit:
         return self.__driver.save_screenshot(f'{whereamiImagePath}whereami-{str}.png')
 
     def fetchTimehutLoginPage(self, url):
-        return self.__driver.get(url)
+        try:
+            self.__driver.get(url)
+        except ConnectionResetError as e:
+            sys.stderr.write(f'Exception: {e}')
 
     def fetchTimehutContentPage(self, url):
-        self.__driver.get(url)
+        try:
+            self.__driver.get(url)
+        except ConnectionResetError as e:
+            sys.stderr.write(f'Exception: {e}')
+
         return self.isContentPage()
 
     def isContentPage(self):
