@@ -164,7 +164,5 @@ if __name__ == "__main__":
 
 	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
 	days = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
-	try:
-		main(baby, days)
-	except ConnectionResetError as e:
-		print(f'Captured connection reset error')
+
+	main(baby, days)
