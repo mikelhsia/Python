@@ -10,17 +10,19 @@ import timehutSeleniumToolKit
 # import pdb
 # pdb.set_trace()
 
+PEEKABOO_USERNAME = "mikelhsia@hotmail.com"
+PEEKABOO_PASSWORD = "f19811128"
 PEEKABOO_ONON_ID = "537413380"
 PEEKABOO_MUIMUI_ID = "537776076"
 PEEKABOO_DB_NAME= "peekaboo"
 PEEKABOO_LOGIN_PAGE_URL= "https://www.shiguangxiaowu.cn/zh-CN"
 PEEKABOO_HEADLESS_MODE= False
-PEEKABOO_COLLECTION_REQUEST = 'collection'
-PEEKABOO_MOMENT_REQUEST = 'moment'
+PEEKABOO_COLLECTION_REQUEST = "collection"
+PEEKABOO_MOMENT_REQUEST = "moment"
 
 RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | awk '{print $2}'"
-RABBITMQ_SERVICE_DEV_URL = 'localhost'
-RABBITMQ_TIMEHUT_QUEUE_NAME = 'timehut_queue'
+RABBITMQ_SERVICE_DEV_URL = "localhost"
+RABBITMQ_TIMEHUT_QUEUE_NAME = "timehut_queue"
 
 
 # TODO Cleaning the info.logging
@@ -44,8 +46,6 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 			next_flag = False
 			break
 
-		print(f'{type(request[0])}: {request[0]}')
-		print(f'{type(request[1])}: {request[1]}')
 		message = {
 			"type": PEEKABOO_COLLECTION_REQUEST,
 			"request": request[0],
@@ -89,7 +89,7 @@ def main(baby, days):
 	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(PEEKABOO_HEADLESS_MODE)
 	__timehut.fetchTimehutLoginPage(PEEKABOO_LOGIN_PAGE_URL)
 
-	if not __timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
+	if not __timehut.loginTimehut(PEEKABOO_USERNAME, PEEKABOO_PASSWORD):
 		timehutLog.logging.info('Login failed')
 		sys.exit(1)
 	else:
