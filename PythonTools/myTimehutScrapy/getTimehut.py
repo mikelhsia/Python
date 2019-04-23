@@ -103,8 +103,6 @@ def main(baby, days):
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
 		__collection_list = []
-		# TODO Can be removed?
-		memory_set = set()
 		__cont_flag = True
 
 		connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_SERVICE_DEV_URL))
