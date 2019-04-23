@@ -91,19 +91,19 @@ def main(baby, days):
 
 	if not __timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
 		timehutLog.logging.info('Login failed')
-		print('Login failed')
+		sys.exit(1)
 	else:
-		timehutLog.logging.info('Login success')
-		print('Login success')
+		sys.stdout.write('Login success\n')
 
 		if baby == '1' or baby == '':
-			print('Going to Onon')
+			sys.stdout.write('Going to Onon\n')
 		else:
-			print('Going to MuiMui')
+			sys.stdout.write('Going to MuiMui\n')
 			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(PEEKABOO_ONON_ID, PEEKABOO_MUIMUI_ID)
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
 		__collection_list = []
+		# TODO Can be removed?
 		memory_set = set()
 		__cont_flag = True
 
