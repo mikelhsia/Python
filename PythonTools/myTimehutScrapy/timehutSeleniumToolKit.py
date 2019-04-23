@@ -12,11 +12,11 @@ import re
 import requests
 import json
 
-chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
-whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
+# chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
+# whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
 
-# chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
-# whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
+chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
+whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
 
 os.environ["webdriver.chrome.driver"] = chromedriver
 
@@ -43,7 +43,11 @@ class timehutSeleniumToolKit:
         mobile_view_div = self.__driver.find_element_by_class_name('mobile-login')
         is_desktop_view = self.__driver.find_element_by_class_name('login').is_displayed()
 
-        if is_desktop_view:
+        if desktop_view_div is None or mobile_view_div is None:
+            timehutLog.logging.error("Desktop view div or mobile view div is missing in login page")
+            return False
+
+        if is_desktop_view and desktop_view_div is not None:
             user_field = desktop_view_div.find_element_by_name('user[login]')
             pw_field = desktop_view_div.find_element_by_name('user[password]')
             button = desktop_view_div.find_element_by_class_name('btn-primary')
@@ -59,20 +63,23 @@ class timehutSeleniumToolKit:
         return self.isContentPage()
 
     def whereami(self, str=''):
-        # print(f'current url = {self.__driver.current_url}')
         return self.__driver.save_screenshot(f'{whereamiImagePath}whereami-{str}.png')
 
     def fetchTimehutLoginPage(self, url):
         try:
             self.__driver.get(url)
         except ConnectionResetError as e:
-            sys.stderr.write(f'Exception: {e}')
+            sys.stderr.write(f'Exception: {e}\n')
+        except Exception as e:
+            sys.stderr.write(f'{e}\n')
 
     def fetchTimehutContentPage(self, url):
         try:
             self.__driver.get(url)
         except ConnectionResetError as e:
-            sys.stderr.write(f'Exception: {e}')
+            sys.stderr.write(f'Exception: {e}\n')
+        except Exception as e:
+            sys.stderr.write(f'{e}\n')
 
         return self.isContentPage()
 
@@ -103,7 +110,8 @@ class timehutSeleniumToolKit:
         try:
             WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
             wait.until(element_contains_text((By.CLASS_NAME, 'dropload-refresh'), 'more'))
-        except BaseException:
+        except BaseException as e:
+            sys.stderr.write(f'{e}\n')
             return False
         else:
             return True

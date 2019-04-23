@@ -25,8 +25,6 @@ RABBITMQ_SERVICE_DEV_URL = "localhost"
 RABBITMQ_TIMEHUT_QUEUE_NAME = "timehut_queue"
 
 
-# TODO Cleaning the info.logging
-
 def enqueue_timehut_collection(channel, req_list, before_day=-200):
 	next_flag = False
 
@@ -103,20 +101,19 @@ def main(baby, days):
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
 		__collection_list = []
+		memory_set = None
 		__cont_flag = True
 
 		connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_SERVICE_DEV_URL))
 		channel = connection.channel()
 		channel.queue_declare(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, durable=True)
 
+		sys.stdout.write(f'Start scraping the website\n')
 		while __cont_flag:
-			print('start scroll down')
 			__timehut.scrollDownTimehutPage()
 
-			print('start record')
 			__req_list = __timehut.getTimehutRecordedCollectionRequest()
 
-			# TODO bear in mind how to stop and detect the last request
 			# Send to queue
 			__cont_flag = enqueue_timehut_collection(channel, __req_list)
 
