@@ -111,7 +111,7 @@ class timehutSeleniumToolKit:
             WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
             wait.until(element_contains_text((By.CLASS_NAME, 'dropload-refresh'), 'more'))
         except BaseException as e:
-            sys.stderr.write(f'{e}\n')
+            timehutLog.logging.warning(f'{e}\n')
             return False
         else:
             return True
@@ -121,9 +121,7 @@ class timehutSeleniumToolKit:
 
         for request in self.__driver.requests:
             if request.response and 'event' in request.path:
-                # timehutLog.logging.info(request.path)
-                # timehutLog.logging.info(f'Header: {request.headers}')
-                # timehutLog.logging.info(f'Code: {request.response.status_code}')
+                timehutLog.logging.info(f'Path: {request.path}, Header: {request.headers}, Code: {request.response.status_code}')
                 recorded_request_list.append([request.path, request.headers])
 
         return recorded_request_list

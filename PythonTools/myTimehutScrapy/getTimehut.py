@@ -42,6 +42,7 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 			next_flag = True
 		else:
 			next_flag = False
+			sys.stdout.write(f'Collection {request[0]} ...... Out of range\n')
 			break
 
 		message = {
@@ -54,6 +55,8 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 		                      properties=pika.BasicProperties(delivery_mode=2,
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
+
+		sys.stdout.write(f'Collection {request[0]} ...... Enqueued\n')
 
 	return next_flag
 
@@ -70,6 +73,8 @@ def enqueue_timehut_moment(channel, req_list):
 		                      properties=pika.BasicProperties(delivery_mode=2,
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
+
+		sys.stdout.write(f'Moment {request[0]} ...... Enqueued\n')
 
 
 def main(baby, days):
@@ -109,6 +114,7 @@ def main(baby, days):
 		channel.queue_declare(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, durable=True)
 
 		sys.stdout.write(f'Start scraping the website\n')
+
 		while __cont_flag:
 			__timehut.scrollDownTimehutPage()
 
