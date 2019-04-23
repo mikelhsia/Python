@@ -37,12 +37,11 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 		else:
 			before = 3000
 
-		print(f'before: {before}, before_day: {before_day}')
 		if before >= before_day:
 			next_flag = True
 		else:
 			next_flag = False
-			sys.stdout.write(f'Collection {request[0]} ...... Out of range\n')
+			sys.stdout.write(f' [.] Collection {request[0]} ...... Out of range {before} < {before_day}\n')
 			break
 
 		message = {
@@ -56,7 +55,7 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f'Collection {request[0]} ...... Enqueued\n')
+		sys.stdout.write(f' [.] Collection {request[0]} ...... Enqueued\n')
 
 	return next_flag
 
@@ -74,7 +73,7 @@ def enqueue_timehut_moment(channel, req_list):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f'Moment {request[0]} ...... Enqueued\n')
+		sys.stdout.write(f' [.] Moment {request[0]} ...... Enqueued\n')
 
 
 def main(baby, days):
@@ -93,15 +92,15 @@ def main(baby, days):
 	__timehut.fetchTimehutLoginPage(PEEKABOO_LOGIN_PAGE_URL)
 
 	if not __timehut.loginTimehut(PEEKABOO_USERNAME, PEEKABOO_PASSWORD):
-		timehutLog.logging.info('Login failed')
+		timehutLog.logging.info(' [x] Login failed')
 		sys.exit(1)
 	else:
-		sys.stdout.write('Login success\n')
+		sys.stdout.write(' [.] Login success\n')
 
 		if baby == '1' or baby == '':
-			sys.stdout.write('Going to Onon\n')
+			sys.stdout.write(' [.] Going to Onon\n')
 		else:
-			sys.stdout.write('Going to MuiMui\n')
+			sys.stdout.write(' [.] Going to MuiMui\n')
 			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(PEEKABOO_ONON_ID, PEEKABOO_MUIMUI_ID)
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
@@ -113,7 +112,7 @@ def main(baby, days):
 		channel = connection.channel()
 		channel.queue_declare(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, durable=True)
 
-		sys.stdout.write(f'Start scraping the website\n')
+		sys.stdout.write(f' [.] Start scraping the website\n')
 
 		while __cont_flag:
 			__timehut.scrollDownTimehutPage()
@@ -121,16 +120,17 @@ def main(baby, days):
 			__req_list = __timehut.getTimehutRecordedCollectionRequest()
 
 			# Send to queue
-			__cont_flag = enqueue_timehut_collection(channel, __req_list)
+			__cont_flag = enqueue_timehut_collection(channel, __req_list, __before_day)
 
 			memory_set = __timehut.getTimehutAlbumURLSet()
 			__timehut.cleanTimehutRecordedRequest()
 
 		# Start dumping all memories after finish updating Collection
-		print('\n-------------------------------\nDone updating collection, start parsing memory set')
+		sys.stdout.write("""\n-------------------------------\n
+		Done updating collection, start parsing memory set\n
+		-------------------------------\n""")
 
 		for memory_link in memory_set:
-			print('start fetching')
 			__timehut.fetchTimehutContentPage(memory_link)
 
 			__req_list = __timehut.getTimehutRecordedMomeryRequest()
@@ -157,11 +157,14 @@ def check_rabbit_exist():
 if __name__ == "__main__":
 
 	if check_rabbit_exist():
-		sys.stdout.write(f'RabbitMQ is running ... \n')
+		sys.stdout.write(f' [.] RabbitMQ is running ... \n')
 	else:
-		sys.stderr.write(f"RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
+		sys.stderr.write(f" [x] RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
 		sys.exit(1)
 
 	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
 	days = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
-	main(baby, days)
+	try:
+		main(baby, days)
+	except ConnectionResetError as e:
+		print(f'Captured connection reset error')

@@ -26,6 +26,7 @@ class timehutSeleniumToolKit:
 
     def __init__(self, headlessFlag):
         __slots__ = ['__driver', 'albumSet']
+        sys.stdout.write(' [.] Start initializing Selenium\n')
 
         # An empty set that used for storing unique album list
         self.albumSet = set()
@@ -69,17 +70,17 @@ class timehutSeleniumToolKit:
         try:
             self.__driver.get(url)
         except ConnectionResetError as e:
-            sys.stderr.write(f'Exception: {e}\n')
+            sys.stderr.write(f' [x] Exception: {e}\n')
         except Exception as e:
-            sys.stderr.write(f'{e}\n')
+            sys.stderr.write(f' [x] {e}\n')
 
     def fetchTimehutContentPage(self, url):
         try:
             self.__driver.get(url)
         except ConnectionResetError as e:
-            sys.stderr.write(f'Exception: {e}\n')
+            sys.stderr.write(f' [x] Exception: {e}\n')
         except Exception as e:
-            sys.stderr.write(f'{e}\n')
+            sys.stderr.write(f' [x] {e}\n')
 
         return self.isContentPage()
 
