@@ -28,7 +28,10 @@ RABBITMQ_TIMEHUT_QUEUE_NAME = "timehut_queue"
 def enqueue_timehut_collection(channel, req_list, before_day=-200):
 	next_flag = False
 
+	l = len(req_list)
+	i = 0
 	for request in req_list:
+		i += 1
 		regex = r'.*&before\=(\d*).*'
 		result = re.match(regex, request[0])
 
@@ -55,13 +58,17 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f' [*] Enqueued - collection ... \n{request[0]}\n')
+		sys.stdout.write(f' [*] Enqueued - collection ... {i}/{l} \n{request[0]}\n')
 
 	return next_flag
 
 
 def enqueue_timehut_moment(channel, req_list):
+
+	l = len(req_list)
+	i = 0
 	for request in req_list:
+		i += 1
 		message = {
 			"type": PEEKABOO_MOMENT_REQUEST,
 			"request": request[0],
@@ -73,7 +80,7 @@ def enqueue_timehut_moment(channel, req_list):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f' [*] Enqueued - moment ... {request[0]}\n')
+		sys.stdout.write(f' [*] Enqueued - moment ... ({i}/{l})\n{request[0]}\n')
 
 
 def main(baby, days):
