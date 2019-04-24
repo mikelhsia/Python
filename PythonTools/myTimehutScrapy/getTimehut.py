@@ -41,7 +41,7 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 			next_flag = True
 		else:
 			next_flag = False
-			sys.stdout.write(f' [.] Collection {request[0]} ...... Out of range {before} < {before_day}\n')
+                        sys.stdout.write(f' [.] Out of range - collection: {before} < {before_day} ... \n{request[0]}\n')
 			break
 
 		message = {
@@ -55,7 +55,7 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f' [.] Collection {request[0]} ...... Enqueued\n')
+		sys.stdout.write(f' [.] Enqueued - collection ... \n{request[0]}\n')
 
 	return next_flag
 
@@ -73,7 +73,7 @@ def enqueue_timehut_moment(channel, req_list):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f' [.] Moment {request[0]} ...... Enqueued\n')
+		sys.stdout.write(f' [.] Enqueued - moment ... {request[0]}\n')
 
 
 def main(baby, days):
@@ -126,9 +126,7 @@ def main(baby, days):
 			__timehut.cleanTimehutRecordedRequest()
 
 		# Start dumping all memories after finish updating Collection
-		sys.stdout.write("""\n-------------------------------\n
-		Done updating collection, start parsing memory set\n
-		-------------------------------\n""")
+		sys.stdout.write("\n-------------------------------\nDone updating collection, start parsing memory set\n-------------------------------\n")
 
 		for memory_link in memory_set:
 			__timehut.fetchTimehutContentPage(memory_link)

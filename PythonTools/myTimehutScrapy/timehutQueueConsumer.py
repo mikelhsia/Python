@@ -17,6 +17,7 @@ RABBITMQ_TIMEHUT_QUEUE_NAME = 'timehut_queue'
 RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | awk '{print $2}'"
 
 PEEKABOO_DB_NAME = 'peekaboo'
+
 ENABLE_DB_LOGGING = False
 
 
@@ -182,10 +183,9 @@ def check_rabbit_exist():
 if __name__ == "__main__":
 
 	if check_rabbit_exist():
-		timehutLog.logging.info(f'RabbitMQ is running ... ')
+		sys.stdout.write(f' [.] RabbitMQ is running ... \n')
 	else:
-		sys.stdout.write(f"Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first")
-		timehutLog.logging.error(f'Error: RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first')
+		sys.stderr.write(f" [x] RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
 		sys.exit(1)
 
 	queueConsumer = timehutQueueConsumer()

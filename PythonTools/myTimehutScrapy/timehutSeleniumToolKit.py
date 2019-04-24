@@ -122,43 +122,10 @@ class timehutSeleniumToolKit:
 
         for request in self.__driver.requests:
             if request.response and 'event' in request.path:
-                timehutLog.logging.info(f'Path: {request.path}, Header: {request.headers}, Code: {request.response.status_code}')
                 recorded_request_list.append([request.path, request.headers])
+                timehutLog.logging.info(f'Path: {request.path}, Header: {request.headers}, Code: {request.response.status_code}')
 
         return recorded_request_list
-
-    def replayTimehutRecordedCollectionRequest(self, req_list, before_day=-200):
-
-        res_list = []
-        next_flag = False
-
-        for request in req_list:
-            regex = r'.*&before\=(\d*).*'
-            result = re.match(regex, request[0])
-
-            if result is not None:
-                before = int(result.group(1))
-            else:
-                before = 3000
-
-            print(f'before: {before}, before_day: {before_day}')
-            if before >= before_day:
-                next_flag = True
-            else:
-                next_flag = False
-                break
-
-            try:
-                r = requests.get(url=request[0], headers=request[1], timeout=30)
-                r.raise_for_status()
-            except requests.RequestException as e:
-                timehutLog.logging.error(e)
-            else:
-                response_body = json.loads(r.text)
-                res_list.append(response_body)
-                # timehutLog.logging.info(f"Request fired = {response_body}")
-
-        return res_list, next_flag
 
     def cleanTimehutRecordedRequest(self):
         del self.__driver.requests
@@ -176,30 +143,10 @@ class timehutSeleniumToolKit:
 
         for request in self.__driver.requests:
             if request.response and 'events/' in request.path:
-                # timehutLog.logging.info(request.path)
-                # timehutLog.logging.info(f'Header: {request.headers}')
-                # timehutLog.logging.info(f'Code: {request.response.status_code}')
                 recorded_request_list.append([request.path, request.headers])
+                timehutLog.logging.info(f'Path: {request.path}, Header: {request.headers}, Code: {request.response.status_code}')
 
         return recorded_request_list
-
-    def replayTimehutRecordedMemoryRequest(self, req_list):
-        res_list = []
-
-        for request in req_list:
-
-            try:
-                r = requests.get(url=request[0], headers=request[1], timeout=30)
-                r.raise_for_status()
-            except requests.RequestException as e:
-                timehutLog.logging.error(e)
-            else:
-                response_body = json.loads(r.text)
-                res_list.append(response_body)
-                # timehutLog.logging.info(f"Request fired = {response_body}")
-                # print(f"Request fired = {response_body}")
-
-        return res_list
 
     # TODO: Use 'partial' instead of this?
     def quitTimehutPage(self):
