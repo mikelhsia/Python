@@ -26,7 +26,7 @@ class timehutSeleniumToolKit:
 
     def __init__(self, headlessFlag):
         __slots__ = ['__driver', 'albumSet']
-        sys.stdout.write(' [.] Start initializing Selenium\n')
+        sys.stdout.write(' [*] Start initializing Selenium\n')
 
         # An empty set that used for storing unique album list
         self.albumSet = set()

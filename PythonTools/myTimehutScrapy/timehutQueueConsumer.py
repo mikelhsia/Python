@@ -121,24 +121,24 @@ class timehutQueueConsumer(object):
 			print(f'{e}')
 		else:
 			if response["type"] == "collection":
-				print(f' [x] Receive collection')
+				print(f' [*] Receive collection')
 
 				collection_list = self.parseCollectionBody(r.text)
 				timehutManageDB.updateDBCollection(collection_list, self.collection_index_list, self._session)
 			else:
-				print(f' [x] Receive moment')
+				print(f' [*] Receive moment')
 				moment_list = self.parseMomentBody(r.text)
 				timehutManageDB.updateDBMoment(moment_list, self.moment_index_list, self._session)
 
-		print(f' [x] Done')
+		print(f' [*] Done')
 		ch.basic_ack(delivery_tag=method.delivery_tag)
 
 	def onChannelCloseCallback(self):
-		print('on connection close')
+		# print('on connection close')
 		timehutManageDB.closeSession(self._session)
 
 	def onChannelOpenCallback(self):
-		print('on connection open')
+		# print('on connection open')
 		timehutManageDB.createDB(PEEKABOO_DB_NAME, timehutDataSchema.base, ENABLE_DB_LOGGING)
 		self._engine = timehutManageDB.createEngine(PEEKABOO_DB_NAME, ENABLE_DB_LOGGING)
 		self._session = timehutManageDB.createSession(self._engine)
@@ -151,7 +151,7 @@ class timehutQueueConsumer(object):
 		self.onChannelOpenCallback()
 
 		channel.queue_declare(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, durable=True)
-		print(f' [*] Waiting for message. To exit press CTRL+C')
+		sys.stdout.write(f' [*] Waiting for message. To exit press CTRL+C\n')
 
 		channel.basic_qos(prefetch_count=1)
 		channel.basic_consume(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, on_message_callback=self.onMessageCallback)
@@ -160,10 +160,10 @@ class timehutQueueConsumer(object):
 			channel.start_consuming()
 		except KeyboardInterrupt:
 			channel.stop_consuming()
-			print(f'Keyboard Interrupt')
+			sys.stdout.write(f'Keyboard Interrupt\n')
 		except Exception as e:
 			channel.stop_consuming()
-			print(f'{e}')
+			timehutLog.logging.error(f'{e}')
 
 		self.onChannelCloseCallback()
 		connection.close()
@@ -183,7 +183,7 @@ def check_rabbit_exist():
 if __name__ == "__main__":
 
 	if check_rabbit_exist():
-		sys.stdout.write(f' [.] RabbitMQ is running ... \n')
+		sys.stdout.write(f' [*] RabbitMQ is running ... \n')
 	else:
 		sys.stderr.write(f" [x] RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
 		sys.exit(1)

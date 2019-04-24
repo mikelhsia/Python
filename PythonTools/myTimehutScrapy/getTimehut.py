@@ -41,7 +41,7 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 			next_flag = True
 		else:
 			next_flag = False
-                        sys.stdout.write(f' [.] Out of range - collection: {before} < {before_day} ... \n{request[0]}\n')
+                        sys.stdout.write(f' [*] Out of range - collection: {before} < {before_day} ... \n{request[0]}\n')
 			break
 
 		message = {
@@ -55,7 +55,7 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f' [.] Enqueued - collection ... \n{request[0]}\n')
+		sys.stdout.write(f' [*] Enqueued - collection ... \n{request[0]}\n')
 
 	return next_flag
 
@@ -73,7 +73,7 @@ def enqueue_timehut_moment(channel, req_list):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f' [.] Enqueued - moment ... {request[0]}\n')
+		sys.stdout.write(f' [*] Enqueued - moment ... {request[0]}\n')
 
 
 def main(baby, days):
@@ -95,12 +95,12 @@ def main(baby, days):
 		timehutLog.logging.info(' [x] Login failed')
 		sys.exit(1)
 	else:
-		sys.stdout.write(' [.] Login success\n')
+		sys.stdout.write(' [*] Login success\n')
 
 		if baby == '1' or baby == '':
-			sys.stdout.write(' [.] Going to Onon\n')
+			sys.stdout.write(' [*] Going to Onon\n')
 		else:
-			sys.stdout.write(' [.] Going to MuiMui\n')
+			sys.stdout.write(' [*] Going to MuiMui\n')
 			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(PEEKABOO_ONON_ID, PEEKABOO_MUIMUI_ID)
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
@@ -112,7 +112,7 @@ def main(baby, days):
 		channel = connection.channel()
 		channel.queue_declare(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, durable=True)
 
-		sys.stdout.write(f' [.] Start scraping the website\n')
+		sys.stdout.write(f' [*] Start scraping the website\n')
 
 		while __cont_flag:
 			__timehut.scrollDownTimehutPage()
@@ -155,7 +155,7 @@ def check_rabbit_exist():
 if __name__ == "__main__":
 
 	if check_rabbit_exist():
-		sys.stdout.write(f' [.] RabbitMQ is running ... \n')
+		sys.stdout.write(f' [*] RabbitMQ is running ... \n')
 	else:
 		sys.stderr.write(f" [x] RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
 		sys.exit(1)
