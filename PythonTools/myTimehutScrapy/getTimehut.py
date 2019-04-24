@@ -41,7 +41,7 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 			next_flag = True
 		else:
 			next_flag = False
-                        sys.stdout.write(f' [*] Out of range - collection: {before} < {before_day} ... \n{request[0]}\n')
+			sys.stdout.write(f' [*] Out of range - collection: {before} < {before_day} ... \n{request[0]}\n')
 			break
 
 		message = {
