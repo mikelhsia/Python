@@ -75,6 +75,7 @@ class timehutSeleniumToolKit:
             sys.stderr.write(f' [x] {e}\n')
 
     def fetchTimehutContentPage(self, url):
+        # TODO 每次停留20秒有点太久了
         try:
             self.__driver.get(url)
         except ConnectionResetError as e:

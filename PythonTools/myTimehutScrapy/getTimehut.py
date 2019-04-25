@@ -28,10 +28,7 @@ RABBITMQ_TIMEHUT_QUEUE_NAME = "timehut_queue"
 def enqueue_timehut_collection(channel, req_list, before_day=-200):
 	next_flag = False
 
-	l = len(req_list)
-	i = 0
 	for request in req_list:
-		i += 1
 		regex = r'.*&before\=(\d*).*'
 		result = re.match(regex, request[0])
 
@@ -58,17 +55,16 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f' [*] Enqueued - collection ... {i}/{l} \n{request[0]}\n')
+		sys.stdout.write(f' [*] Enqueued - collection ... \n{request[0]}\n')
 
+	# TODO 停在before = 537 了???
+	print(f'next_flag = {next_flag}')
 	return next_flag
 
 
 def enqueue_timehut_moment(channel, req_list):
 
-	l = len(req_list)
-	i = 0
 	for request in req_list:
-		i += 1
 		message = {
 			"type": PEEKABOO_MOMENT_REQUEST,
 			"request": request[0],
@@ -80,7 +76,7 @@ def enqueue_timehut_moment(channel, req_list):
 		                                                      content_type='application/json',
 		                                                      content_encoding='UTF-8'))
 
-		sys.stdout.write(f' [*] Enqueued - moment ... ({i}/{l})\n{request[0]}\n')
+		sys.stdout.write(f' [*] Enqueued - moment ... \n{request[0]}\n')
 
 
 def main(baby, days):
@@ -135,6 +131,9 @@ def main(baby, days):
 		# Start dumping all memories after finish updating Collection
 		sys.stdout.write("\n-------------------------------\nDone updating collection, start parsing memory set\n-------------------------------\n")
 
+
+		i = 0
+		l = len(memory_set)
 		for memory_link in memory_set:
 			__timehut.fetchTimehutContentPage(memory_link)
 
@@ -143,6 +142,10 @@ def main(baby, days):
 
 			# Send to queue
 			enqueue_timehut_moment(channel, __req_list)
+			# TODO Could use progress bar
+			print(f'{i}/{l}')
+
+			# TODO 每次 enqueue 完 都有"Message:"字样
 
 	__timehut.quitTimehutPage()
 

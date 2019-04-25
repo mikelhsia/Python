@@ -21,6 +21,7 @@ PEEKABOO_DB_NAME = 'peekaboo'
 ENABLE_DB_LOGGING = False
 
 
+# TODO better console message while parsing
 class timehutQueueConsumer(object):
 	def __init__(self):
 		pass
