@@ -3,13 +3,16 @@ import os
 import re
 import pika
 import json
+import math
 
 import timehutLog
 import timehutSeleniumToolKit
 
-# import pdb
-# pdb.set_trace()
+if os.getenv("TIMEHUT_DEBUG") is not None:
+	import pdb
+	pdb.set_trace()
 
+# Constant list
 PEEKABOO_USERNAME = "mikelhsia@hotmail.com"
 PEEKABOO_PASSWORD = "f19811128"
 PEEKABOO_ONON_ID = "537413380"
@@ -140,9 +143,8 @@ def main(baby, days):
 			__timehut.cleanTimehutRecordedRequest()
 
 			# Send to queue
+			sys.stdout.write(f'{i}/{l}')
 			enqueue_timehut_moment(channel, __req_list)
-			# TODO Could use progress bar
-			print(f'{i}/{l}')
 
 			# TODO 每次 enqueue 完 都有"Message:"字样
 

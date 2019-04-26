@@ -9,8 +9,9 @@ import timehutManageDB
 import timehutDataSchema
 from datetime import datetime
 
-# import pdb
-# pdb.set_trace()
+if os.getenv("TIMEHUT_DEBUG") is not None:
+	import pdb
+	pdb.set_trace()
 
 RABBIT_SERVICE_DEV_URL = 'localhost'
 RABBITMQ_TIMEHUT_QUEUE_NAME = 'timehut_queue'
