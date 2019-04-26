@@ -98,17 +98,6 @@ def parseMomentBody(response_body):
 
     return moment_list
 
-def fetchMemory(memory_link, timehut):
-    print(f'Memory Link: {memory_link}')
-    # TODO Create selenium wire driver and login
-    # TODO Is there a way to skip the login step?
-
-    # Fetch the album detail
-    timehut.fetchTimehutContentPage(memory_link)
-
-    # TODO quit and delete selenium driver
-
-    return 123
 
 class MyTest(unittest.TestCase):  # 继承unittest.TestCase
     @classmethod
