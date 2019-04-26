@@ -108,7 +108,7 @@ def main(baby, days):
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
 		__collection_list = []
-		memory_set = None
+		moment_set = None
 		__cont_flag = True
 
 		connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_SERVICE_DEV_URL))
@@ -125,17 +125,16 @@ def main(baby, days):
 			# Send to queue
 			__cont_flag = enqueue_timehut_collection(channel, __req_list, __before_day)
 
-			memory_set = __timehut.getTimehutAlbumURLSet()
+			moment_set = __timehut.getTimehutAlbumURLSet()
 			__timehut.cleanTimehutRecordedRequest()
 
 		# Start dumping all memories after finish updating Collection
-		sys.stdout.write("\n-------------------------------\nDone updating collection, start parsing memory set\n-------------------------------\n")
-
+		sys.stdout.write("\n-------------------------------\nDone updating collection, start parsing moment_set\n-------------------------------\n")
 
 		i = 0
-		l = len(memory_set)
-		for memory_link in memory_set:
-			__timehut.fetchTimehutContentPage(memory_link)
+		l = len(moment_set)
+		for moment_link in moment_set:
+			__timehut.fetchTimehutContentPage(moment_link)
 
 			__req_list = __timehut.getTimehutRecordedMomeryRequest()
 			__timehut.cleanTimehutRecordedRequest()
