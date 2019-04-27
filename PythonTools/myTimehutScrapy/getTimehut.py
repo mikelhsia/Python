@@ -17,9 +17,9 @@ PEEKABOO_USERNAME = "mikelhsia@hotmail.com"
 PEEKABOO_PASSWORD = "f19811128"
 PEEKABOO_ONON_ID = "537413380"
 PEEKABOO_MUIMUI_ID = "537776076"
-PEEKABOO_DB_NAME= "peekaboo"
-PEEKABOO_LOGIN_PAGE_URL= "https://www.shiguangxiaowu.cn/zh-CN"
-PEEKABOO_HEADLESS_MODE= False
+PEEKABOO_DB_NAME = "peekaboo"
+PEEKABOO_LOGIN_PAGE_URL = "https://www.shiguangxiaowu.cn/zh-CN"
+PEEKABOO_HEADLESS_MODE = True
 PEEKABOO_COLLECTION_REQUEST = "collection"
 PEEKABOO_MOMENT_REQUEST = "moment"
 
@@ -29,10 +29,10 @@ RABBITMQ_TIMEHUT_QUEUE_NAME = "timehut_queue"
 
 
 def enqueue_timehut_collection(channel, req_list, before_day=-200):
-	next_flag = False
+	next_flag = None
 
 	for request in req_list:
-		regex = r'.*&before\=(\d*).*'
+		regex = r'.*&before\=(-?\d*).*'
 		result = re.match(regex, request[0])
 
 		if result is not None:
@@ -61,6 +61,8 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 		sys.stdout.write(f' [*] Enqueued - collection ... \n{request[0]}\n')
 
 	# TODO 停在before = 537 了???
+	# TODO ERR_SPDY_PROTOCOL_ERROR, 浏览器卡住了
+	# TODO ,以后不看 before，以后直接看右边的时间bar
 	print(f'next_flag = {next_flag}')
 	return next_flag
 
@@ -136,7 +138,10 @@ def main(baby, days):
 
 		i = 0
 		l = len(moment_set)
+
 		for moment_link in moment_set:
+			i += 1
+
 			__timehut.fetchTimehutContentPage(moment_link)
 
 			__req_list = __timehut.getTimehutRecordedMomeryRequest()

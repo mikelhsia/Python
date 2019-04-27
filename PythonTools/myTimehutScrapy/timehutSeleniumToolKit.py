@@ -8,9 +8,6 @@ import timehutLog
 
 import sys
 import os
-import re
-import requests
-import json
 
 # chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
 # whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
@@ -102,7 +99,7 @@ class timehutSeleniumToolKit:
         :return: Boolean for checking whether the scroll is successful or not
         '''
         WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
-        js = 'document.getElementsByClassName("dropload-down")[0].scrollIntoView(true);'
+        js = 'document.getElementsByClassName("dropload-down")[0].scrollIntoView(false);'
         wait = WebDriverWait(self.__driver, 10)
 
         # Execute the scrollIntoView
