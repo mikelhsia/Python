@@ -5,8 +5,9 @@ import sys
 import json
 import os
 
-# import pdb
-# pdb.set_trace()
+if os.getenv("TIMEHUT_DEBUG") is not None:
+    import pdb
+    pdb.set_trace()
 
 RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | awk '{print $2}'"
 RABBIT_SERVICE_DEV_URL = 'localhost'
@@ -26,6 +27,7 @@ def check_rabbit_exist():
     f.close()
 
     return False if not rabbit_result else True
+
 
 class MyTest(unittest.TestCase):  # 继承unittest.TestCase
     @classmethod

@@ -9,11 +9,11 @@ import timehutLog
 import sys
 import os
 
-# chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
-# whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
+chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
+whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
 
-chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
-whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
+# chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
+# whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
 
 os.environ["webdriver.chrome.driver"] = chromedriver
 
@@ -145,6 +145,25 @@ class timehutSeleniumToolKit:
                 timehutLog.logging.info(f'Path: {request.path}, Header: {request.headers}, Code: {request.response.status_code}')
 
         return recorded_request_list
+
+    def getTimehutCatalog(self):
+        catalog = self.__driver.find_elements_by_class_name("current-month")
+        catalogText = [item.find_element_by_tag_name("span").get_attribute('innerHTML') for item in catalog]
+        catalogDataMonth = [item.get_attribute('data-month') for item in catalog]
+
+        return dict(map(lambda x, y: [x, y], catalogDataMonth, catalogText))
+
+    def selectTimehutCatalog(self, index):
+        try:
+            index = int(index)
+        except Exception as e:
+            index = 0
+            sys.stderr.write(f'{e}')
+
+        print(f'month-record-{index}')
+        js = f'document.getElementsByClassName("month-record-{index}")[0].click();'
+        self.__driver.execute_script(js)
+
 
     # TODO: Use 'partial' instead of this?
     def quitTimehutPage(self):
