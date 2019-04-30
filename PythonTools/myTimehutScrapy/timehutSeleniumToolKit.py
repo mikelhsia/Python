@@ -9,11 +9,14 @@ import timehutLog
 import sys
 import os
 
-# chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
-# whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
-
-chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
-whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
+if os.getenv("USER") == "michael":
+    chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
+    whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
+elif os.getenv("USER") == "puppylpy":
+    chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
+    whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
+else:
+    raise EnvironmentError("Unvalidated User or PC")
 
 os.environ["webdriver.chrome.driver"] = chromedriver
 
