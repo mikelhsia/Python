@@ -88,11 +88,12 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
     def test_d_run(self):
         print("### Testing behavior of fetching album catalog")
         timehutCatalog = self.timehut.getTimehutCatalog()
-        print(timehutCatalog)
+        # print(timehutCatalog)
 
         self.timehut.selectTimehutCatalog(10)
         time.sleep(5)
-        self.assertEqual(True, self.timehut.whereami('10th-month'))  # 测试用例
+        self.timehut.whereami('10th-month')
+        self.assertEqual(True, isinstance(timehutCatalog, dict))  # 测试用例
 
 
 if __name__ == '__main__':

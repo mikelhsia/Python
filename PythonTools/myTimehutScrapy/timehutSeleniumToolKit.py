@@ -9,16 +9,11 @@ import timehutLog
 import sys
 import os
 
-if os.getenv("USER") == "michael":
-    chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
-    whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
-elif os.getenv("USER") == "puppylpy":
-    chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
-    whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
-else:
-    raise EnvironmentError("Unvalidated User or PC")
+STKIT_CHROMEDRIVER_FILE_NAME = 'chromedriver'
+STKIT_CHROMEDRIVER_PATH = os.path.abspath(STKIT_CHROMEDRIVER_FILE_NAME)
+STKIT_WHEREAMI_IMAGE_PATH = os.path.join(os.path.abspath(''), '')
 
-os.environ["webdriver.chrome.driver"] = chromedriver
+os.environ["webdriver.chrome.driver"] = STKIT_CHROMEDRIVER_PATH
 
 # TODO Process pool or Queue to process multitask in the getTimehut main python file
 
@@ -34,9 +29,9 @@ class timehutSeleniumToolKit:
         if headlessFlag:
             option = webdriver.ChromeOptions()
             option.add_argument('--headless')
-            self.__driver = webdriver.Chrome(executable_path=chromedriver, options=option)
+            self.__driver = webdriver.Chrome(executable_path=STKIT_CHROMEDRIVER_PATH, options=option)
         else:
-            self.__driver = webdriver.Chrome(executable_path=chromedriver)
+            self.__driver = webdriver.Chrome(executable_path=STKIT_CHROMEDRIVER_PATH)
 
     def loginTimehut(self, username, password):
         WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "login")))
@@ -64,7 +59,7 @@ class timehutSeleniumToolKit:
         return self.isContentPage()
 
     def whereami(self, str=''):
-        return self.__driver.save_screenshot(f'{whereamiImagePath}whereami-{str}.png')
+        return self.__driver.save_screenshot(f'{STKIT_WHEREAMI_IMAGE_PATH}whereami-{str}.png')
 
     def fetchTimehutLoginPage(self, url):
         try:
