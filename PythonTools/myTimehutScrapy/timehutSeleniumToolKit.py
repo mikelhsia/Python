@@ -113,6 +113,26 @@ class timehutSeleniumToolKit:
         else:
             return True
 
+    def scrollDownTimehutPage2(self):
+        # TODO Need further testing
+        WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
+        wait = WebDriverWait(self.__driver, 10)
+
+        listLengthJS = 'document.getElementsByClassName("main-list-item").length'
+        scrollDownJS = f'document.getElementsByClassName("main-list-item")[{listLengthJS}-1].scrollIntoView(false);'
+
+        # Execute the scrollIntoView
+        self.__driver.execute_script(scrollDownJS)
+
+        # Wait for the dropload-down element is loaded
+        try:
+            WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
+            wait.until(element_contains_text((By.CLASS_NAME, 'dropload-refresh'), 'more'))
+        except BaseException as e:
+            timehutLog.logging.warning(f'{e}\n')
+            return False
+        else:
+            return True
     def getTimehutRecordedCollectionRequest(self):
         recorded_request_list = []
 

@@ -59,11 +59,11 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
     def test_a_run(self):
         print('\n### Testing behavior of scrolling down to trigger ajax call to get more content')
         test_result = 0
-        test_target = 0
+        test_target = 3
 
         # Testing Scrolling down to trigger another ajax
         for i in range(0, test_target):
-            self.timehut.scrollDownTimehutPage()
+            self.timehut.scrollDownTimehutPage2()
             if self.timehut.whereami(i):
                 test_result += 1
             progressBar(test_result, test_target)
@@ -88,11 +88,14 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
     def test_d_run(self):
         print("### Testing behavior of fetching album catalog")
         timehutCatalog = self.timehut.getTimehutCatalog()
-        # print(timehutCatalog)
 
-        self.timehut.selectTimehutCatalog(10)
+        for k in timehutCatalog:
+            print(f'{k}: {timehutCatalog[k]}')
+
+        start = input(f'Select a date you would like to start with: \n')
+        self.timehut.selectTimehutCatalog(int(start))
         time.sleep(5)
-        self.timehut.whereami('10th-month')
+        self.timehut.whereami(f'{int(start)}-month')
         self.assertEqual(True, isinstance(timehutCatalog, dict))  # 测试用例
 
 
@@ -101,8 +104,10 @@ if __name__ == '__main__':
 
     # unittest.main() # 使用main()直接运行时，将按case的名称顺序执行
     suite = unittest.TestSuite()
-    # suite.addTest(MyTest('test_a_run'))  # 将需要执行的case添加到Test Suite中，没有添加的不会被执行
+
+    # 将需要执行的case添加到Test Suite中，没有添加的不会被执行
+    suite.addTest(MyTest('test_a_run'))
     # suite.addTest(MyTest('test_b_run'))
     # suite.addTest(MyTest('test_c_run'))
-    suite.addTest(MyTest('test_d_run'))
+    # suite.addTest(MyTest('test_d_run'))
     unittest.TextTestRunner().run(suite)  # 将根据case添加的先MyTest后顺序执行

@@ -3,7 +3,6 @@ import os
 import re
 import pika
 import json
-import math
 
 import timehutLog
 import timehutSeleniumToolKit
@@ -28,7 +27,18 @@ RABBITMQ_SERVICE_DEV_URL = "localhost"
 RABBITMQ_TIMEHUT_QUEUE_NAME = "timehut_queue"
 
 
-def enqueue_timehut_collection(channel, req_list, before_day=-200):
+def check_rabbit_exist():
+	rabbit_result = ''
+	timehutLog.logging.info(f'Checking RabbitMQ ... ')
+	with os.popen(RABBITMQ_PS_CMD, "r") as f:
+		rabbit_result = f.read()
+
+	f.close()
+
+	return False if not rabbit_result else True
+
+
+def enqueue_timehut_collection(channel, req_list, until=-200):
 	next_flag = None
 
 	for request in req_list:
@@ -36,15 +46,15 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 		result = re.match(regex, request[0])
 
 		if result is not None:
-			before = int(result.group(1))
+			current = int(result.group(1))
 		else:
-			before = 3000
+			current = 3000
 
-		if before >= before_day:
+		if current >= until:
 			next_flag = True
 		else:
 			next_flag = False
-			sys.stdout.write(f' [*] Out of range - collection: {before} < {before_day} ... \n{request[0]}\n')
+			sys.stdout.write(f' [*] Out of range - collection: {current} < {until} ... \n{request[0]}\n')
 			break
 
 		message = {
@@ -63,7 +73,6 @@ def enqueue_timehut_collection(channel, req_list, before_day=-200):
 	# TODO 停在before = 537 了???
 	# TODO ERR_SPDY_PROTOCOL_ERROR, 浏览器卡住了
 	# TODO ,以后不看 before，以后直接看右边的时间bar
-	print(f'next_flag = {next_flag}')
 	return next_flag
 
 
@@ -84,12 +93,9 @@ def enqueue_timehut_moment(channel, req_list):
 		sys.stdout.write(f' [*] Enqueued - moment ... \n{request[0]}\n')
 
 
-def main(baby, days):
-	try:
-		__before_day = int(days)
-	except Exception as e:
-		__before_day = -200
-		timehutLog.logging.warning(f"before_day format invalid: {type(__before_day)}")
+def main():
+
+	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
 
 	if baby == '1' or baby == '':
 		__baby_id = PEEKABOO_ONON_ID
@@ -112,59 +118,67 @@ def main(baby, days):
 			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(PEEKABOO_ONON_ID, PEEKABOO_MUIMUI_ID)
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
-		__collection_list = []
-		moment_set = None
-		__cont_flag = True
+	__catalog = __timehut.getTimehutCatalog()
+	for k in __catalog:
+		print(f'{k}: {__catalog[k]}')
 
-		connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_SERVICE_DEV_URL))
-		channel = connection.channel()
-		channel.queue_declare(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, durable=True)
+	start = input(f'Select a date you would like to start with: \n')
 
-		sys.stdout.write(f' [*] Start scraping the website\n')
+	try:
+		__timehut.selectTimehutCatalog(start)
+	except Exception as e:
+		timehutLog.logging.error(e)
 
-		while __cont_flag:
-			__timehut.scrollDownTimehutPage()
+	until = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
 
-			__req_list = __timehut.getTimehutRecordedCollectionRequest()
+	try:
+		__until = int(until)
+	except Exception as e:
+		__until = -200
+		timehutLog.logging.warning(f"before_day format invalid: {type(__until)}")
 
-			# Send to queue
-			__cont_flag = enqueue_timehut_collection(channel, __req_list, __before_day)
+	__collection_list = []
+	moment_set = None
+	__cont_flag = True
 
-			moment_set = __timehut.getTimehutAlbumURLSet()
-			__timehut.cleanTimehutRecordedRequest()
+	connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_SERVICE_DEV_URL))
+	channel = connection.channel()
+	channel.queue_declare(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, durable=True)
 
-		# Start dumping all memories after finish updating Collection
-		sys.stdout.write("\n-------------------------------\nDone updating collection, start parsing moment_set\n-------------------------------\n")
+	sys.stdout.write(f' [*] Start scraping the website\n')
 
-		i = 0
-		l = len(moment_set)
+	while __cont_flag:
+		__timehut.scrollDownTimehutPage()
 
-		for moment_link in moment_set:
-			i += 1
+		__req_list = __timehut.getTimehutRecordedCollectionRequest()
 
-			__timehut.fetchTimehutContentPage(moment_link)
+		# Send to queue
+		__cont_flag = enqueue_timehut_collection(channel, __req_list, __until)
 
-			__req_list = __timehut.getTimehutRecordedMomeryRequest()
-			__timehut.cleanTimehutRecordedRequest()
+		moment_set = __timehut.getTimehutAlbumURLSet()
+		__timehut.cleanTimehutRecordedRequest()
 
-			# Send to queue
-			sys.stdout.write(f'{i}/{l}')
-			enqueue_timehut_moment(channel, __req_list)
+	# Start dumping all memories after finish updating Collection
+	sys.stdout.write("\n-------------------------------\nDone updating collection, start parsing moment_set\n-------------------------------\n")
 
-			# TODO 每次 enqueue 完 都有"Message:"字样
+	i = 0
+	l = len(moment_set)
+
+	for moment_link in moment_set:
+		i += 1
+
+		__timehut.fetchTimehutContentPage(moment_link)
+
+		__req_list = __timehut.getTimehutRecordedMomeryRequest()
+		__timehut.cleanTimehutRecordedRequest()
+
+		# Send to queue
+		sys.stdout.write(f'{i}/{l}')
+		enqueue_timehut_moment(channel, __req_list)
+
+		# TODO 每次 enqueue 完 都有"Message:"字样
 
 	__timehut.quitTimehutPage()
-
-
-def check_rabbit_exist():
-	rabbit_result = ''
-	timehutLog.logging.info(f'Checking RabbitMQ ... ')
-	with os.popen(RABBITMQ_PS_CMD, "r") as f:
-		rabbit_result = f.read()
-
-	f.close()
-
-	return False if not rabbit_result else True
 
 
 # Basic interactive interface
@@ -176,7 +190,4 @@ if __name__ == "__main__":
 		sys.stderr.write(f" [x] RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
 		sys.exit(1)
 
-	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
-	days = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
-
-	main(baby, days)
+	main()
