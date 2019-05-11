@@ -70,9 +70,6 @@ def enqueue_timehut_collection(channel, req_list, until=-200):
 
 		sys.stdout.write(f' [*] Enqueued - collection ... \n{request[0]}\n')
 
-	# TODO 停在before = 537 了???
-	# TODO ERR_SPDY_PROTOCOL_ERROR, 浏览器卡住了
-	# TODO ,以后不看 before，以后直接看右边的时间bar
 	return next_flag
 
 
@@ -94,7 +91,7 @@ def enqueue_timehut_moment(channel, req_list):
 
 
 def main():
-
+	# TODO: Using `tkinter` to implement the GUI interface
 	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
 
 	if baby == '1' or baby == '':
@@ -118,16 +115,17 @@ def main():
 			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(PEEKABOO_ONON_ID, PEEKABOO_MUIMUI_ID)
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
-	__catalog = __timehut.getTimehutCatalog()
-	for k in __catalog:
-		print(f'{k}: {__catalog[k]}')
-
-	start = input(f'Select a date you would like to start with: \n')
-
-	try:
-		__timehut.selectTimehutCatalog(start)
-	except Exception as e:
-		timehutLog.logging.error(e)
+	### TODO Not yet fully tested
+	# __catalog = __timehut.getTimehutCatalog()
+	# for k in __catalog:
+	# 	print(f'{k}: {__catalog[k]}')
+	#
+	# start = input(f'Select a date you would like to start with: \n')
+	#
+	# try:
+	# 	__timehut.selectTimehutCatalog(start)
+	# except Exception as e:
+	# 	timehutLog.logging.error(e)
 
 	until = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
 
@@ -149,6 +147,7 @@ def main():
 
 	while __cont_flag:
 		__timehut.scrollDownTimehutPage()
+		# __timehut.scrollDownTimehutPage2()
 
 		__req_list = __timehut.getTimehutRecordedCollectionRequest()
 

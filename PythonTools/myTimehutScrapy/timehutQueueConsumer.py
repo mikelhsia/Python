@@ -13,7 +13,7 @@ if os.getenv("TIMEHUT_DEBUG") is not None:
 	import pdb
 	pdb.set_trace()
 
-RABBIT_SERVICE_DEV_URL = 'localhost'
+RABBITMQ_SERVICE_DEV_URL = 'localhost'
 RABBITMQ_TIMEHUT_QUEUE_NAME = 'timehut_queue'
 RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | awk '{print $2}'"
 
@@ -147,7 +147,7 @@ class timehutQueueConsumer(object):
 		self.collection_index_list, self.moment_index_list = timehutManageDB.generateIndexList(self._session)
 
 	def run(self):
-		connection = pika.BlockingConnection(pika.ConnectionParameters(RABBIT_SERVICE_DEV_URL))
+		connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_SERVICE_DEV_URL))
 		channel = connection.channel()
 
 		self.onChannelOpenCallback()

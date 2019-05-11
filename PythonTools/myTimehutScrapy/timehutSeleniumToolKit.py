@@ -15,8 +15,8 @@ STKIT_WHEREAMI_IMAGE_PATH = os.path.join(os.path.abspath(''), '')
 
 os.environ["webdriver.chrome.driver"] = STKIT_CHROMEDRIVER_PATH
 
-# TODO Process pool or Queue to process multitask in the getTimehut main python file
 
+# TODO Use threads for multithreading, and using lock to prevent DB double update
 class timehutSeleniumToolKit:
 
     def __init__(self, headlessFlag):
@@ -70,7 +70,6 @@ class timehutSeleniumToolKit:
             sys.stderr.write(f' [x] {e}\n')
 
     def fetchTimehutContentPage(self, url):
-        # TODO 每次停留20秒有点太久了
         try:
             self.__driver.get(url)
         except ConnectionResetError as e:
@@ -78,6 +77,8 @@ class timehutSeleniumToolKit:
         except Exception as e:
             sys.stderr.write(f' [x] {e}\n')
 
+        # TODO 每次停留20秒有点太久了
+        # TODO Could be remove?
         return self.isContentPage()
 
     def isContentPage(self):
@@ -108,31 +109,31 @@ class timehutSeleniumToolKit:
             WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
             wait.until(element_contains_text((By.CLASS_NAME, 'dropload-refresh'), 'more'))
         except BaseException as e:
-            timehutLog.logging.warning(f'{e}\n')
+            # timehutLog.logging.warning(f'{e}\n')
             return False
         else:
             return True
 
     def scrollDownTimehutPage2(self):
         # TODO Need further testing
-        WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
         wait = WebDriverWait(self.__driver, 10)
 
-        listLengthJS = 'document.getElementsByClassName("main-list-item").length'
-        scrollDownJS = f'document.getElementsByClassName("main-list-item")[{listLengthJS}-1].scrollIntoView(false);'
+        listLength = len(self.__driver.find_elements_by_class_name('main-list-item'))
 
         # Execute the scrollIntoView
+        scrollDownJS = f'document.getElementsByClassName("main-list-item")[{listLength}-1].scrollIntoView(false)'
         self.__driver.execute_script(scrollDownJS)
+        print('start waiting')
+        self.__driver.implicitly_wait(20)
 
-        # Wait for the dropload-down element is loaded
         try:
-            WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
-            wait.until(element_contains_text((By.CLASS_NAME, 'dropload-refresh'), 'more'))
+            wait.until(on_length_change((By.CLASS_NAME, 'main-list-item'), listLength))
         except BaseException as e:
-            timehutLog.logging.warning(f'{e}\n')
+            timehutLog.logging.error(f'{e}\n')
             return False
         else:
             return True
+
     def getTimehutRecordedCollectionRequest(self):
         recorded_request_list = []
 
@@ -140,6 +141,7 @@ class timehutSeleniumToolKit:
             if request.response and 'event' in request.path:
                 recorded_request_list.append([request.path, request.headers])
                 timehutLog.logging.info(f'Path: {request.path}, Header: {request.headers}, Code: {request.response.status_code}')
+                timehutLog.logging.error(f'Response body: {request.response.body.decode("UTF-8", "strict")}')
 
         return recorded_request_list
 
@@ -178,12 +180,9 @@ class timehutSeleniumToolKit:
             index = 0
             sys.stderr.write(f'{e}')
 
-        print(f'month-record-{index}')
         js = f'document.getElementsByClassName("month-record-{index}")[0].click();'
         self.__driver.execute_script(js)
 
-
-    # TODO: Use 'partial' instead of this?
     def quitTimehutPage(self):
         self.__driver.quit()
 
@@ -207,9 +206,29 @@ class element_contains_text(object):
     def __call__(self, driver):
         # Finding the referenced element
         element = driver.find_element(*self.locator)
+        print('called element')
 
         if self.string in element.get_attribute('innerHTML'):
             return element
+        else:
+            return False
+
+
+class on_length_change(object):
+    '''
+    It's a extended expected_condition from Selenium default EC
+    This is used to capture the condition of whether some element contains certain strings in their innerHTML
+    Make sure the element has certain text
+    '''
+    def __init__(self, locator, string):
+        self.locator = locator
+        self.num = int(string)
+
+    def __call__(self, driver):
+        lengthNow = len(driver.find_elements(*self.locator))
+
+        if self.num < lengthNow:
+            return True
         else:
             return False
 

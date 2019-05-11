@@ -1,7 +1,5 @@
 import timehutSeleniumToolKit as tstk
-import timehutDataSchema
 
-from datetime import datetime
 import unittest
 import sys
 import math
@@ -50,10 +48,10 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
         self.timehut.fetchTimehutContentPage(timehutUrl)
 
         if not self.timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
-            print('Login failed')
+            print(' [*] Login failed')
             return False
 
-        print('Login success')
+        print(' [x] Login success')
         # print('Done setting up for the test')
 
     def test_a_run(self):
@@ -94,8 +92,9 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase
 
         start = input(f'Select a date you would like to start with: \n')
         self.timehut.selectTimehutCatalog(int(start))
-        time.sleep(5)
-        self.timehut.whereami(f'{int(start)}-month')
+        self.timehut.scrollDownTimehutPage2()
+
+        print(self.timehut.getTimehutRecordedCollectionRequest())
         self.assertEqual(True, isinstance(timehutCatalog, dict))  # 测试用例
 
 
@@ -106,8 +105,8 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     # 将需要执行的case添加到Test Suite中，没有添加的不会被执行
-    suite.addTest(MyTest('test_a_run'))
+    # suite.addTest(MyTest('test_a_run'))
     # suite.addTest(MyTest('test_b_run'))
     # suite.addTest(MyTest('test_c_run'))
-    # suite.addTest(MyTest('test_d_run'))
+    suite.addTest(MyTest('test_d_run'))
     unittest.TextTestRunner().run(suite)  # 将根据case添加的先MyTest后顺序执行

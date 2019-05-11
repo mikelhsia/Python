@@ -1,4 +1,5 @@
 import sys
+import os
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -7,11 +8,19 @@ from sqlalchemy.exc import InternalError
 import timehutDataSchema
 import timehutLog
 
-DB_ACCOUNT="root"
-DB_PASSWORD="michael0512"
-DB_HOST="127.0.0.1"
-DB_PORT="3306"
-DB_ENCODING="utf-8"
+if os.getenv('USER') == 'michael':
+	DB_ACCOUNT = "root"
+	DB_PASSWORD = "hsia0521"
+	DB_HOST = "127.0.0.1"
+	DB_PORT = "3306"
+	DB_ENCODING = "utf-8"
+else:
+	DB_ACCOUNT = "root"
+	DB_PASSWORD = "michael0512"
+	DB_HOST = "127.0.0.1"
+	DB_PORT = "3306"
+	DB_ENCODING = "utf-8"
+
 
 def createDB(dbName, base, loggingFlag):
 	engine = create_engine(f'mysql+pymysql://{DB_ACCOUNT}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}',
@@ -19,19 +28,19 @@ def createDB(dbName, base, loggingFlag):
 
 	try:
 		engine.execute(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-		timehutLog.logging.info(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8_general_ci;")
+		# timehutLog.logging.info(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8_general_ci;")
 
 		engine.execute(f"USE {dbName}")
-		timehutLog.logging.info(f"USE {dbName}")
+		# timehutLog.logging.info(f"USE {dbName}")
 
 		ans = input(f"Do you want to drop the previous saved table (y/N)")
 
 		if ans == 'y' or ans == 'Y':
 			engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
-			timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
+			# timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
 
 			engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-			timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
+			# timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
 
 	except InternalError as e:
 		base.metadata.create_all(engine)
