@@ -1,0 +1,45 @@
+{
+  "name": "peekaboo_moment",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "required": true
+    },
+    "event_id": {
+      "type": "string"
+    },
+    "baby_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "number"
+    },
+    "updated_at": {
+      "type": "number"
+    },
+    "content_type": {
+      "type": "number"
+    },
+    "content": {
+      "type": "string"
+    },
+    "src_url": {
+      "type": "string"
+    },
+    "months": {
+      "type": "number"
+    },
+    "days": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
