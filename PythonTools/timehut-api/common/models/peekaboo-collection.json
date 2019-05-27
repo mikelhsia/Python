@@ -1,0 +1,39 @@
+{
+  "name": "peekaboo_collection",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "required": true
+    },
+    "baby_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "number"
+    },
+    "updated_at": {
+      "type": "number"
+    },
+    "months": {
+      "type": "number"
+    },
+    "days": {
+      "type": "number"
+    },
+    "content_type": {
+      "type": "number"
+    },
+    "caption": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
