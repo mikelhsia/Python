@@ -1,412 +1,192 @@
-import requests
-import json
 import sys
-from datetime import datetime, timedelta
+import os
+import re
+import pika
+import json
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from sqlalchemy.exc import InternalError
-
-import timehutDataSchema
-import timehutManageLastUpdate
 import timehutLog
 import timehutSeleniumToolKit
 
-# functions
-def timestampToDatetimeString(ts):
-	"""
-	Convert timestamp into string with datetime format
-	:param ts: timestamp
-	:return: datetime string
-	"""
-	if isinstance(ts, (int, float, str)):
-		try:
-			ts = int(ts)
-		except ValueError:
-			raise ValueError
+if os.getenv("TIMEHUT_DEBUG") is not None:
+	import pdb
+	pdb.set_trace()
 
-		if len(str(ts)) == 13:
-			ts = int(ts / 1000)
-		if len(str(ts)) != 10:
-			raise ValueError
-	else:
-		raise ValueError
+# Constant list
+PEEKABOO_USERNAME = "mikelhsia@hotmail.com"
+PEEKABOO_PASSWORD = "f19811128"
+PEEKABOO_ONON_ID = "537413380"
+PEEKABOO_MUIMUI_ID = "537776076"
+PEEKABOO_DB_NAME = "peekaboo"
+PEEKABOO_LOGIN_PAGE_URL = "https://www.shiguangxiaowu.cn/zh-CN"
+PEEKABOO_HEADLESS_MODE = True
+PEEKABOO_COLLECTION_REQUEST = "collection"
+PEEKABOO_MOMENT_REQUEST = "moment"
 
-	return datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M%:%S")
+RABBITMQ_PS_CMD = "ps -ef | grep rabbitmq-server | grep sbin | grep -v grep | awk '{print $2}'"
+RABBITMQ_SERVICE_DEV_URL = "localhost"
+RABBITMQ_TIMEHUT_QUEUE_NAME = "timehut_queue"
 
 
-def DatetimeStringToTimeStamp(string):
-	"""
-	Convert datetime format into timestamp 
-	:param ts: string
-	:return: timestamp
-	"""
-	string = string.split('+')[0]
-	string = string.split('Z')[0]
-	try:
-		dt = datetime.strptime(string, "%Y-%m-%dT%H:%M:%S.%f")
-	except Exception as e:
-		print(e)
-		raise e
+def check_rabbit_exist():
+	rabbit_result = ''
+	timehutLog.logging.info(f'Checking RabbitMQ ... ')
+	with os.popen(RABBITMQ_PS_CMD, "r") as f:
+		rabbit_result = f.read()
 
-	return dt.timestamp()
+	f.close()
+
+	return False if not rabbit_result else True
 
 
-def getCollectionRequest(baby_id, before_day):
-	"""
-	Get collection information through GET request by before day, getting limited collection (around 20)
-	:param baby_id: baby ID
-	:param before_day: the days of the collection and moment
-	:return: Response body of collection information
-	"""
-	headers = {
-		'Accept': 'application/json, text/javascript, */*; q=0.01',
-		'Cookie': 'locale=en;user_session=BAhJIj1qcF81MzY5MjMzNjNfM0JyZDJlNV9LbkJ1OGtqdkRqSHM4UmZyVk1CVUk4a3BrY1JRME9ZVzc1dwY6BkVU--fcb138d8ae1fcb3290cbbd7c4b35101f61d8b40e',
-	}
+def enqueue_timehut_collection(channel, req_list, until=-200):
+	next_flag = None
 
-	try:
-		r = requests.get(url=f'http://peekaboomoments.com/events.json?baby_id={baby_id}&before={before_day}&v=2&width=700&include_rt=true', headers=headers, timeout=30)
-		r.raise_for_status()
-	except requests.RequestException as e:
-		timehutLog.logging.error(e)
-	else:
-		response_body = json.loads(r.text)
-		timehutLog.logging.info(f"Request fired = {response_body['next']}")
-		return response_body['next'], response_body
+	for request in req_list:
+		regex = r'.*&before\=(-?\d*).*'
+		result = re.match(regex, request[0])
 
-def getMomentRequest(collection_id):
-	"""
-	Get moment information through GET request by single collection id
-	:param collection_id: collection id
-	:return: Response body of moments that belong to the same collection
-	"""
-	headers = {
-		'Accept': 'application/json, text/javascript, */*; q=0.01',
-		'Cookie': 'locale=en;user_session=BAhJIj1qcF81MzY5MjMzNjNfM0JyZDJlNV9LbkJ1OGtqdkRqSHM4UmZyVk1CVUk4a3BrY1JRME9ZVzc1dwY6BkVU--fcb138d8ae1fcb3290cbbd7c4b35101f61d8b40e',
-		'X-Requested-With': 'XMLHttpRequest'
-	}
-
-	try:
-		r = requests.get(url=f'http://peekaboomoments.com/events/{collection_id}', headers=headers, timeout=30)
-		r.raise_for_status()
-	except requests.RequestException as e:
-		timehutLog.logging.error(e)
-	else:
-		response_body = json.loads(r.text)
-		return response_body
-
-def parseCollectionBody(response_body):
-	collection_list = []
-
-	data_list = response_body['list']
-
-	for data in data_list:
-
-		if data['layout'] == 'collection' or \
-			data['layout'] == 'picture' or \
-			data['layout'] == 'video' or \
-			data['layout'] == 'text':
-
-			c_rec = timehutDataSchema.Collection(id=data['id_str'],
-			                                   baby_id=data['baby_id'],
-			                                   created_at=data['taken_at_gmt'],
-			                                   updated_at=data['updated_at_in_ts'],
-			                                   months=data['months'],
-			                                   days=data['days'],
-			                                   content_type=timehutDataSchema.CollectionEnum[data['layout']].value,
-			                                   caption=data['caption'])
-
-			# Add to return collection obj list
-			collection_list.append(c_rec)
-			# print(c_rec)
-
-		elif data['layout'] == 'milestone':
-			continue
-
+		if result is not None:
+			current = int(result.group(1))
 		else:
-			print(data)
-			raise TypeError
+			current = 3000
 
-	return collection_list
-
-
-def parseMomentBody(response_body):
-	moment_list = []
-	data_list = response_body['moments']
-	src_url = ''
-
-	for data in data_list:
-		if data['type'] == 'picture':
-			src_url = data['picture']
-		elif data['type'] == 'video':
-			src_url = data['video_path']
-
-		m_rec = timehutDataSchema.Moment(id=data['id_str'],
-		                                 event_id=data['event_id_str'],
-		                                 baby_id=data['baby_id'],
-		                                 created_at=data['taken_at_gmt'],
-		                                 updated_at=DatetimeStringToTimeStamp(data['updated_at']),
-		                                 content_type=timehutDataSchema.MomentEnum[data['type']].value,
-		                                 content=data['content'],
-		                                 src_url=src_url,
-		                                 months=data['months'],
-		                                 days=data['days'])
-
-		# Add to return collection obj list
-		moment_list.append(m_rec)
-		# print(m_rec)
-
-	return moment_list
-
-
-def createDB(dbName, base, loggingFlag):
-	engine = create_engine('mysql+pymysql://root:hsia0521@127.0.0.1:3306',
-	                       encoding='utf-8', echo=loggingFlag)
-
-	try:
-		engine.execute(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-		timehutLog.logging.info(f"CREATE DATABASE IF NOT EXISTS {dbName} DEFAULT CHARSET utf8mb4 COLLATE utf8_general_ci;")
-
-		engine.execute(f"USE {dbName}")
-		timehutLog.logging.info(f"USE {dbName}")
-
-		ans = input(f"Do you want to drop the previous saved table (y/N)")
-
-		if ans == 'y' or ans == 'Y':
-			engine.execute(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
-			timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Moment.__tablename__}")
-
-			engine.execute(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-			timehutLog.logging.info(f"DROP TABLE {timehutDataSchema.Collection.__tablename__}")
-
-	except InternalError as e:
-		base.metadata.create_all(engine)
-
-		engine.execute(f"ALTER DATABASE {dbName} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;")
-		engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-		engine.execute(f"ALTER TABLE {timehutDataSchema.Collection.__tablename__} MODIFY caption TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-		engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-		engine.execute(f"ALTER TABLE {timehutDataSchema.Moment.__tablename__} MODIFY content TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-
-
-
-	engine.dispose()
-
-
-def createEngine(dbName, base, loggingFlag):
-
-	createDB(dbName, base, loggingFlag)
-
-	engine = create_engine(f'mysql+pymysql://root:hsia0521@127.0.0.1:3306/{dbName}?charset=utf8mb4',
-	                       encoding='utf-8', echo=loggingFlag)
-
-	return engine
-
-
-def generateIndexList(engine):
-	DBSession = sessionmaker(bind=engine)
-	__session = DBSession()
-
-	__collectionIndexList = []
-	__momentIndexList = []
-
-	for row in __session.query(timehutDataSchema.Collection):
-		__collectionIndexList.append(row.id)
-
-	for row in __session.query(timehutDataSchema.Moment):
-		__momentIndexList.append(row.id)
-
-	return __collectionIndexList, __momentIndexList
-
-
-def updateDBCollection(data_list, existed_index_list, last_updated_time, session):
-	"""
-
-	:param data_list
-	:return: 
-	"""
-	if not isinstance(data_list, list):
-		# If it's an single object, then put it in the list to simplify the following logic
-		data_list = [data_list]
-
-	for data in data_list:
-		if isinstance(data, timehutDataSchema.Collection):
-			if data.id not in existed_index_list:
-				# Insert collection object
-				session.add(data)
-			elif data.updated_at > last_updated_time:
-				# Update collection object
-				session.query(timehutDataSchema.Collection)\
-						.filter(timehutDataSchema.Collection.id == data.id)\
-						.update({timehutDataSchema.Collection.updated_at: data.updated_at,
-								timehutDataSchema.Collection.caption: data.caption})
+		if current >= until:
+			next_flag = True
 		else:
-			timehutLog.logging.error(f'[{sys._getframe().f_code.co_name}] Wrong Collection Type')
-			return False
-	else:
-		session.commit()
-
-
-def updateDBMoment(data_list, existed_index_list, last_updated_time, session):
-	"""
-
-	:param data_list
-	:return: 
-	"""
-	if not isinstance(data_list, list):
-		# If it's an single object, then put it in the list to simplify the following logic
-		data_list = [data_list]
-
-	for data in data_list:
-		if isinstance(data, timehutDataSchema.Moment):
-			if data.id not in existed_index_list:
-				# Insert collection object
-				session.add(data)
-			elif data.updated_at > last_updated_time:
-				# Update collection object
-				session.query(timehutDataSchema.Moment)\
-						.filter(timehutDataSchema.Moment.id == data.id)\
-						.update({timehutDataSchema.Moment.updated_at: data.updated_at,
-								timehutDataSchema.Moment.content: data.content})
-		else:
-			timehutLog.logging.error(f'[{sys._getframe().f_code.co_name}] Wrong Moment Type')
-			return False
-	else:
-		session.commit()
-
-
-def main(baby, days):
-	# main function()
-	try:
-		__before_day = int(days)
-	except Exception as e:
-		__before_day = -200
-		# __before_day = 3000
-
-	if baby == '1' or baby == '':
-		__baby_id = 537413380
-	else:
-		# Mui Mui Baby ID
-		__baby_id = 537776076
-
-	last_update_manager = timehutManageLastUpdate.LastUpdateTsManager()
-	last_updated_time = last_update_manager.readLastUpdateTimeStamp(__baby_id)
-
-	__dbName = "peekaboo"
-	__logging = False
-	__engine = createEngine(__dbName, timehutDataSchema.base, __logging)
-
-	collection_index_list, moment_index_list = generateIndexList(__engine)
-
-	DBSession = sessionmaker(bind=__engine)
-	__session = DBSession()
-
-	'''
-	###
-	# These are the old codes that are not valid anymore, as timehut applied token to their APIs
-	###
-	while (True):
-		# Getting original response body and next_index to decide what's the next request to submit
-		__next_index, __response_body = getCollectionRequest(__baby_id, __before_day)
-
-		collection_list = parseCollectionBody(__response_body)
-		updateDBCollection(collection_list, collection_index_list, last_updated_time, __session)
-
-		for collection in collection_list:
-			__response_body = getMomentRequest(collection.id)
-			moment_list = parseMomentBody(__response_body)
-			updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
-
-		if (__next_index is None):
+			next_flag = False
+			sys.stdout.write(f' [*] Out of range - collection: {current} < {until} ... \n{request[0]}\n')
 			break
 
-		__before_day = __next_index + 1
-	'''
-	__isHeadless = False
-	__timehutUrl = "https://www.shiguangxiaowu.cn/zh-CN"
+		message = {
+			"type": PEEKABOO_COLLECTION_REQUEST,
+			"request": request[0],
+			"header": json.dumps(request[1].__str__().replace("'", "\""))}
 
-	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(True, __isHeadless)
+		channel.basic_publish(exchange="", routing_key=RABBITMQ_TIMEHUT_QUEUE_NAME,
+		                      body=json.dumps(message).encode('UTF-8'),
+		                      properties=pika.BasicProperties(delivery_mode=2,
+		                                                      content_type='application/json',
+		                                                      content_encoding='UTF-8'))
 
-	__timehut.fetchTimehutLoginPage(__timehutUrl)
+		sys.stdout.write(f' [*] Enqueued - collection ... \n{request[0]}\n')
 
-	if not __timehut.loginTimehut('mikelhsia@hotmail.com', 'f19811128'):
-		timehutLog.logging.info('Login failed')
-		print('Login failed')
+	return next_flag
+
+
+def enqueue_timehut_moment(channel, req_list):
+
+	for request in req_list:
+		message = {
+			"type": PEEKABOO_MOMENT_REQUEST,
+			"request": request[0],
+			"header": json.dumps(request[1].__str__().replace("'", "\""))}
+
+		channel.basic_publish(exchange="", routing_key=RABBITMQ_TIMEHUT_QUEUE_NAME,
+		                      body=json.dumps(message).encode('UTF-8'),
+		                      properties=pika.BasicProperties(delivery_mode=2,
+		                                                      content_type='application/json',
+		                                                      content_encoding='UTF-8'))
+
+		sys.stdout.write(f' [*] Enqueued - moment ... \n{request[0]}\n')
+
+
+def main():
+	# TODO: Using `tkinter` to implement the GUI interface
+	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
+
+	if baby == '1' or baby == '':
+		__baby_id = PEEKABOO_ONON_ID
 	else:
-		timehutLog.logging.info('Login success')
-		print('Login success')
+		__baby_id = PEEKABOO_MUIMUI_ID
+
+	__timehut = timehutSeleniumToolKit.timehutSeleniumToolKit(PEEKABOO_HEADLESS_MODE)
+	__timehut.fetchTimehutLoginPage(PEEKABOO_LOGIN_PAGE_URL)
+
+	if not __timehut.loginTimehut(PEEKABOO_USERNAME, PEEKABOO_PASSWORD):
+		timehutLog.logging.info(' [x] Login failed')
+		sys.exit(1)
+	else:
+		sys.stdout.write(' [*] Login success\n')
 
 		if baby == '1' or baby == '':
-			print('Going to Onon')
+			sys.stdout.write(' [*] Going to Onon\n')
 		else:
-			print('Going to MuiMui')
-			mui_mui_homepage = 'http://47.75.157.88/en/home/537776076'
+			sys.stdout.write(' [*] Going to MuiMui\n')
+			mui_mui_homepage = __timehut.getTimehutPageUrl().replace(PEEKABOO_ONON_ID, PEEKABOO_MUIMUI_ID)
 			__timehut.fetchTimehutContentPage(mui_mui_homepage)
 
-		__collection_list = []
-		memory_set = set()
-		__cont_flag = True
+	### TODO Not yet fully tested
+	# __catalog = __timehut.getTimehutCatalog()
+	# for k in __catalog:
+	# 	print(f'{k}: {__catalog[k]}')
+	#
+	# start = input(f'Select a date you would like to start with: \n')
+	#
+	# try:
+	# 	__timehut.selectTimehutCatalog(start)
+	# except Exception as e:
+	# 	timehutLog.logging.error(e)
 
-		# TODO Using Queue instead of using while loop
-		while __cont_flag:
-			print('start scroll down')
-			__timehut.scrollDownTimehutPage()
-			print('Done scroll down')
+	until = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
 
-			print('start record')
-			__req_list = __timehut.getTimehutRecordedCollectionRequest()
-			print('done record')
-			print(f'start replay: {__req_list}')
-			__res_list, __cont_flag = __timehut.replayTimehutRecordedCollectionRequest(__req_list, __before_day)
-			print(f'done replay, cont_flag = {__cont_flag}')
+	try:
+		__until = int(until)
+	except Exception as e:
+		__until = -200
+		timehutLog.logging.warning(f"before_day format invalid: {type(__until)}")
 
-			for __res in __res_list:
-				print('start parsing')
-				__collection_list = parseCollectionBody(__res)
-				print('done parsing')
+	__collection_list = []
+	moment_set = None
+	__cont_flag = True
 
-				print('start update DB')
-				updateDBCollection(__collection_list, collection_index_list, last_updated_time, __session)
-				print('Done update DB')
+	connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_SERVICE_DEV_URL))
+	channel = connection.channel()
+	channel.queue_declare(queue=RABBITMQ_TIMEHUT_QUEUE_NAME, durable=True)
 
-			memory_set = __timehut.getTimehutAlbumURLSet()
-			__timehut.cleanTimehutRecordedRequest()
+	sys.stdout.write(f' [*] Start scraping the website\n')
 
+	while __cont_flag:
+		__timehut.scrollDownTimehutPage()
+		# __timehut.scrollDownTimehutPage2()
 
-		# Start dumping all memories after finish updating Collection
-		print('\n-------------------------------\nDone updating collection\nparsing memory set')
-		for memory_link in memory_set:
-			print(f'memory_link: {memory_link}')
-			print('start fecthing')
-			__timehut.fetchTimehutContentPage(memory_link)
-			print('done fecthing')
+		__req_list = __timehut.getTimehutRecordedCollectionRequest()
 
-			__req_list = __timehut.getTimehutRecordedMomeryRequest()
-			__timehut.cleanTimehutRecordedRequest()
+		# Send to queue
+		__cont_flag = enqueue_timehut_collection(channel, __req_list, __until)
 
-			print('start replay')
-			__res_list = __timehut.replayTimehutRecordedMemoryRequest(__req_list)
-			print('done replay')
+		moment_set = __timehut.getTimehutAlbumURLSet()
+		__timehut.cleanTimehutRecordedRequest()
 
-			for memory in __res_list:
-				print('start parsing')
-				moment_list = parseMomentBody(memory)
-				print('done parsing')
-				print('start update DB')
-				updateDBMoment(moment_list, moment_index_list, last_updated_time, __session)
-				print('done update DB')
-				# print(moment_list)
+	# Start dumping all memories after finish updating Collection
+	sys.stdout.write("\n-------------------------------\nDone updating collection, start parsing moment_set\n-------------------------------\n")
+
+	i = 0
+	l = len(moment_set)
+
+	for moment_link in moment_set:
+		i += 1
+
+		__timehut.fetchTimehutContentPage(moment_link)
+
+		__req_list = __timehut.getTimehutRecordedMomeryRequest()
+		__timehut.cleanTimehutRecordedRequest()
+
+		# Send to queue
+		sys.stdout.write(f'{i}/{l}')
+		enqueue_timehut_moment(channel, __req_list)
+
+		# TODO 每次 enqueue 完 都有"Message:"字样
 
 	__timehut.quitTimehutPage()
-	__session.close()
-
-	# Found out that actually the time that timehut using is actually UTC-0, therefore minus 8 hours
-	last_update_manager.writeLastUpdateTimeStamp((datetime.now() + timedelta(hours=-8)).timestamp(), __baby_id)
 
 
 # Basic interactive interface
 if __name__ == "__main__":
-	baby = input(f'Do you want to get data for \n1) Anson or \n2) Angie\n')
-	days = input(f'What days you would like to stop at: \n -200 (default) ~ XXXXX:\n')
-	main(baby, days)
+
+	if check_rabbit_exist():
+		sys.stdout.write(f' [*] RabbitMQ is running ... \n')
+	else:
+		sys.stderr.write(f" [x] RabbitMQ is not running. Please run `sudo rabbit-mq` on the server first\n")
+		sys.exit(1)
+
+	main()

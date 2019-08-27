@@ -1,4 +1,4 @@
-# from selenium import webdriver
+from selenium import webdriver
 from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -6,35 +6,32 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import timehutLog
 
+import sys
 import os
-import re
-import requests
-import json
-import functools
 
-chromedriver = '/Users/michael/Python/PythonTools/myTimehutScrapy/chromedriver'
-# chromedriver = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/chromedriver'
-os.environ["webdriver.chrome.driver"] = chromedriver
-whereamiImagePath = '/Users/michael/Python/PythonTools/myTimehutScrapy/'
-# whereamiImagePath = '/Users/puppylpy/Desktop/Python/PythonTools/myTimehutScrapy/'
+STKIT_CHROMEDRIVER_FILE_NAME = 'chromedriver'
+STKIT_CHROMEDRIVER_PATH = os.path.abspath(STKIT_CHROMEDRIVER_FILE_NAME)
+STKIT_WHEREAMI_IMAGE_PATH = os.path.join(os.path.abspath(''), '')
 
-# TODO Process pool or Queue to process multitask in the getTimehut main python file
+os.environ["webdriver.chrome.driver"] = STKIT_CHROMEDRIVER_PATH
 
+
+# TODO Use threads for multithreading, and using lock to prevent DB double update
 class timehutSeleniumToolKit:
 
-    def __init__(self, babyBoy, headlessFlag):
-        __slots__ = ['__driver', 'albumSet', 'baby_id']
+    def __init__(self, headlessFlag):
+        __slots__ = ['__driver', 'albumSet']
+        sys.stdout.write(' [*] Start initializing Selenium\n')
 
         # An empty set that used for storing unique album list
         self.albumSet = set()
-        self.baby_id = '537776076' if not babyBoy else '537413380'
 
         if headlessFlag:
             option = webdriver.ChromeOptions()
             option.add_argument('--headless')
-            self.__driver = webdriver.Chrome(executable_path=chromedriver, options=option)
+            self.__driver = webdriver.Chrome(executable_path=STKIT_CHROMEDRIVER_PATH, options=option)
         else:
-            self.__driver = webdriver.Chrome(executable_path=chromedriver)
+            self.__driver = webdriver.Chrome(executable_path=STKIT_CHROMEDRIVER_PATH)
 
     def loginTimehut(self, username, password):
         WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "login")))
@@ -42,7 +39,11 @@ class timehutSeleniumToolKit:
         mobile_view_div = self.__driver.find_element_by_class_name('mobile-login')
         is_desktop_view = self.__driver.find_element_by_class_name('login').is_displayed()
 
-        if is_desktop_view:
+        if desktop_view_div is None or mobile_view_div is None:
+            timehutLog.logging.error("Desktop view div or mobile view div is missing in login page")
+            return False
+
+        if is_desktop_view and desktop_view_div is not None:
             user_field = desktop_view_div.find_element_by_name('user[login]')
             pw_field = desktop_view_div.find_element_by_name('user[password]')
             button = desktop_view_div.find_element_by_class_name('btn-primary')
@@ -55,24 +56,29 @@ class timehutSeleniumToolKit:
         pw_field.send_keys(password)
         button.click()
 
-        # try:
-        #     WebDriverWait(self.__driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
-        # except BaseException as e:
-        #     print(e)
-        #     return False
-        # else:
-        #     return True
         return self.isContentPage()
 
     def whereami(self, str=''):
-        # print(f'current url = {self.__driver.current_url}')
-        return self.__driver.save_screenshot(f'{whereamiImagePath}whereami-{str}.png')
+        return self.__driver.save_screenshot(f'{STKIT_WHEREAMI_IMAGE_PATH}whereami-{str}.png')
 
     def fetchTimehutLoginPage(self, url):
-        return self.__driver.get(url)
+        try:
+            self.__driver.get(url)
+        except ConnectionResetError as e:
+            sys.stderr.write(f' [x] Exception: {e}\n')
+        except Exception as e:
+            sys.stderr.write(f' [x] {e}\n')
 
     def fetchTimehutContentPage(self, url):
-        self.__driver.get(url)
+        try:
+            self.__driver.get(url)
+        except ConnectionResetError as e:
+            sys.stderr.write(f' [x] Exception: {e}\n')
+        except Exception as e:
+            sys.stderr.write(f' [x] {e}\n')
+
+        # TODO 每次停留20秒有点太久了
+        # TODO Could be remove?
         return self.isContentPage()
 
     def isContentPage(self):
@@ -92,7 +98,7 @@ class timehutSeleniumToolKit:
         :return: Boolean for checking whether the scroll is successful or not
         '''
         WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
-        js = 'document.getElementsByClassName("dropload-down")[0].scrollIntoView(true);'
+        js = 'document.getElementsByClassName("dropload-down")[0].scrollIntoView(false);'
         wait = WebDriverWait(self.__driver, 10)
 
         # Execute the scrollIntoView
@@ -102,7 +108,28 @@ class timehutSeleniumToolKit:
         try:
             WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dropload-down")))
             wait.until(element_contains_text((By.CLASS_NAME, 'dropload-refresh'), 'more'))
-        except BaseException:
+        except BaseException as e:
+            # timehutLog.logging.warning(f'{e}\n')
+            return False
+        else:
+            return True
+
+    def scrollDownTimehutPage2(self):
+        # TODO Need further testing
+        wait = WebDriverWait(self.__driver, 10)
+
+        listLength = len(self.__driver.find_elements_by_class_name('main-list-item'))
+
+        # Execute the scrollIntoView
+        scrollDownJS = f'document.getElementsByClassName("main-list-item")[{listLength}-1].scrollIntoView(false)'
+        self.__driver.execute_script(scrollDownJS)
+        print('start waiting')
+        self.__driver.implicitly_wait(20)
+
+        try:
+            wait.until(on_length_change((By.CLASS_NAME, 'main-list-item'), listLength))
+        except BaseException as e:
+            timehutLog.logging.error(f'{e}\n')
             return False
         else:
             return True
@@ -112,123 +139,14 @@ class timehutSeleniumToolKit:
 
         for request in self.__driver.requests:
             if request.response and 'event' in request.path:
-                # timehutLog.logging.info(request.path)
-                # timehutLog.logging.info(f'Header: {request.headers}')
-                # timehutLog.logging.info(f'Code: {request.response.status_code}')
                 recorded_request_list.append([request.path, request.headers])
+                timehutLog.logging.info(f'Path: {request.path}, Header: {request.headers}, Code: {request.response.status_code}')
+                timehutLog.logging.error(f'Response body: {request.response.body.decode("UTF-8", "strict")}')
 
         return recorded_request_list
 
-    def replayTimehutRecordedCollectionRequest(self, req_list, before_day=-200):
-
-        res_list = []
-        next_flag = False
-
-        for request in req_list:
-            regex = r'.*&before\=(\d*).*'
-            result = re.match(regex, request[0])
-
-            if result is not None:
-                before = int(result.group(1))
-            else:
-                before = 3000
-
-            print(f'before: {before}, before_day: {before_day}')
-            if before >= before_day:
-                next_flag = True
-            else:
-                next_flag = False
-                break
-
-            try:
-                r = requests.get(url=request[0], headers=request[1], timeout=30)
-                r.raise_for_status()
-            except requests.RequestException as e:
-                timehutLog.logging.error(e)
-            else:
-                response_body = json.loads(r.text)
-                res_list.append(response_body)
-                # timehutLog.logging.info(f"Request fired = {response_body}")
-
-        return res_list, next_flag
-
     def cleanTimehutRecordedRequest(self):
         del self.__driver.requests
-
-    def getTimehutCollection(self):
-        '''
-        id = Column(String(32), primary_key=True)
-        baby_id = Column(String(32))
-        created_at = Column(Integer)
-        updated_at = Column(Integer)
-        months = Column(Integer)
-        days = Column(Integer)
-        content_type = Column(SmallInteger)
-        caption = Column(Text)
-        :return: collection_list
-        '''
-        album_elements = self.__driver.find_elements_by_class_name('main-list-item')
-        collection_list = list()
-
-        for element in album_elements:
-            if len(element.find_elements_by_class_name('swiper-container')) > 0:
-                # This is a collection
-                date_str = element.find_element_by_tag_name('i').get_attribute('innerText')
-                regex = r'(\d*)Y\-(\d*)M\-(\d*).*'
-                result = re.match(regex, date_str)
-                y = result.group(1)
-                m = result.group(2)
-                d = result.group(3)
-
-                cid = element.find_element_by_class_name('swiper-slide').get_attribute('data-param')
-                baby_id = self.baby_id
-                created_at = ''
-                updated_at = ''
-                months = (int(y) * 12) + int(m)
-                days = int(d)
-                content_type = 1
-                caption = element.find_element_by_class_name('swiper-describe').find_element_by_tag_name('span').get_attribute('innerText')
-                # print(f'id = {cid}\n '
-                #       f'baby id = {baby_id}\n '
-                #       f'months = {months}\n '
-                #       f'days = {days} \n '
-                #       f'caption = {caption}\n'
-                #       f'===================\n')
-
-                collection_list.append([cid, baby_id, created_at, updated_at, months, days, content_type, caption])
-            elif len(element.find_elements_by_class_name('text')) > 0:
-                # This is a text
-                date_str = element.find_element_by_tag_name('i').get_attribute('innerText')
-                regex = r'(\d*)Y\-(\d*)M\-(\d*).*'
-                result = re.match(regex, date_str)
-                y = result.group(1)
-                m = result.group(2)
-                d = result.group(3)
-
-                cid = element.find_element_by_class_name('text-bottom').get_attribute('data-id')
-                baby_id = self.baby_id
-                created_at = ''
-                updated_at = ''
-                months = (int(y) * 12) + int(m)
-                days = int(d)
-                content_type = 2
-                caption = element.find_element_by_class_name('text-content').get_attribute('innerText')
-                # print(f'id = {cid}\n '
-                #       f'baby id = {baby_id}\n '
-                #       f'months = {months}\n '
-                #       f'days = {days} \n '
-                #       f'caption = {caption}\n'
-                #       f'===================\n')
-
-                collection_list.append([cid, baby_id, created_at, updated_at, months, days, content_type, caption])
-            elif len(element.find_elements_by_class_name('milestone')) > 0:
-                # This is a milestone
-                pass
-            else:
-                # There is something else
-                print('[Important]: Missing a type!!')
-        else:
-            return collection_list
 
     def getTimehutAlbumURLSet(self):
         album_elements = self.__driver.find_elements_by_class_name('swiper-detail-enter')
@@ -243,35 +161,33 @@ class timehutSeleniumToolKit:
 
         for request in self.__driver.requests:
             if request.response and 'events/' in request.path:
-                # timehutLog.logging.info(request.path)
-                # timehutLog.logging.info(f'Header: {request.headers}')
-                # timehutLog.logging.info(f'Code: {request.response.status_code}')
                 recorded_request_list.append([request.path, request.headers])
+                timehutLog.logging.info(f'Path: {request.path}, Header: {request.headers}, Code: {request.response.status_code}')
 
         return recorded_request_list
 
-    def replayTimehutRecordedMemoryRequest(self, req_list):
-        res_list = []
+    def getTimehutCatalog(self):
+        catalog = self.__driver.find_elements_by_class_name("current-month")
+        catalogText = [item.find_element_by_tag_name("span").get_attribute('innerHTML') for item in catalog]
+        catalogDataMonth = [item.get_attribute('data-month') for item in catalog]
 
-        for request in req_list:
-            print(request[0])
+        return dict(map(lambda x, y: [x, y], catalogDataMonth, catalogText))
 
-            try:
-                r = requests.get(url=request[0], headers=request[1], timeout=30)
-                r.raise_for_status()
-            except requests.RequestException as e:
-                timehutLog.logging.error(e)
-            else:
-                response_body = json.loads(r.text)
-                res_list.append(response_body)
-                # timehutLog.logging.info(f"Request fired = {response_body}")
-                # print(f"Request fired = {response_body}")
+    def selectTimehutCatalog(self, index):
+        try:
+            index = int(index)
+        except Exception as e:
+            index = 0
+            sys.stderr.write(f'{e}')
 
-        return res_list
+        js = f'document.getElementsByClassName("month-record-{index}")[0].click();'
+        self.__driver.execute_script(js)
 
-    # TODO: Use 'partial' instead of this?
     def quitTimehutPage(self):
         self.__driver.quit()
+
+    def getTimehutPageUrl(self):
+        return self.__driver.current_url
 
     def cheatTimehut(self):
         return self.__driver
@@ -290,9 +206,29 @@ class element_contains_text(object):
     def __call__(self, driver):
         # Finding the referenced element
         element = driver.find_element(*self.locator)
+        print('called element')
 
         if self.string in element.get_attribute('innerHTML'):
             return element
+        else:
+            return False
+
+
+class on_length_change(object):
+    '''
+    It's a extended expected_condition from Selenium default EC
+    This is used to capture the condition of whether some element contains certain strings in their innerHTML
+    Make sure the element has certain text
+    '''
+    def __init__(self, locator, string):
+        self.locator = locator
+        self.num = int(string)
+
+    def __call__(self, driver):
+        lengthNow = len(driver.find_elements(*self.locator))
+
+        if self.num < lengthNow:
+            return True
         else:
             return False
 
