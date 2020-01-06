@@ -1,7 +1,9 @@
 [[source]]
+name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
-name = "pypi"
+
+[dev-packages]
 
 [packages]
 django = "*"
@@ -15,7 +17,5 @@ django-parler = "*"
 django-localflavor = "*"
 redis = "*"
 
-[dev-packages]
-
 [requires]
-python_version = "3.6"
+python_version = "3.7"

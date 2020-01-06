@@ -1,0 +1,10 @@
+.gitignore
+*.pyc
+/.idea
+/__pycache__/*
+*.swp
+*.log
+PythonTools/myTimehutBlog/.idea
+
+.vscode
+/.vscode/*
