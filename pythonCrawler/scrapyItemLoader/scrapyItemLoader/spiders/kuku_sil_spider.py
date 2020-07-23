@@ -67,6 +67,7 @@ class SilSpiderSpider(scrapy.Spider):
 		spider.logger.info('Spider closed signal received, and webdriver PhantomJS is closed')
 
 	def parse(self, response):
+		print(f'parse - Depth: {response.meta["depth"]}')
 		# Notes regarding Xpath:
 		#  - Disable Firefox Javascript while inspecting the DOM looking for XPaths to be used in Scrapy
 		#  - Never use full XPath paths, use relative and clever ones based on attributes (such as id, class,
@@ -101,7 +102,6 @@ class SilSpiderSpider(scrapy.Spider):
 		# print(f'Xpath = {_xpathStr}')
 		# print(f'Num of current = {len(_currentChap)}')
 		# print("Current = ", _currentChap)
-		# print("Current = ", _currentChap)
 		# print("*****************")
 
 		#################################################################################
@@ -115,10 +115,14 @@ class SilSpiderSpider(scrapy.Spider):
 		#################################################################################
 		for c in tqdm(_currentChap):
 			# self.logger.debug("[DEBUG] itemUrl = %s", itemUrl)
-			itemUrl = u"http://comic2.kukudm.com%s" % _currentChap[0]
+			# print(f"=================")
+			# print(f"[DEBUG] itemUrl = {c}")
+			itemUrl = u"http://comic2.kukudm.com%s" % c
 			yield Request(url=itemUrl, callback=self.parse_item, dont_filter=True)
 
 	def parse_item(self, response):
+
+		# print(f'Parse_item - Depth: {response.meta["depth"]}')
 		item = KukuComicItem()
 
 		driver.get(response.url)
@@ -147,14 +151,11 @@ class SilSpiderSpider(scrapy.Spider):
 		# self.logger.debug("[DEBUG] Dst folder = %s", item['imgDst'])
 
 		############################################################
-		# 第一页的漫画只有一个list item，所以这个是nextlink
-		# response.xpath("/html/body/table[2]/tr/td/a[1]/@href").extract()
-		# 但是第二页之后的页面有两个link，所以第二个才是nextlink；有可能包含最后一页的链接
-		# response.xpath("/html/body/table[2]/tr/td/a[2]/@href").extract()
 		# 最后一页是这个链接: '/exit/exit.htm'
 		############################################################
 		try:
 			next_link = response.xpath("//a[last()]/@href").extract()[0]
+			print(f"[DEBUG] Next Link = {next_link}")
 			if '/exit/exit.htm' not in next_link:
 				# Meaning this is not the last page
 				yield Request(url=urljoin(response.url, next_link), callback=self.parse_item, dont_filter=True)
