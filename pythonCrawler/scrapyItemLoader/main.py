@@ -20,7 +20,7 @@ if spider == '1':
 	numChap = input("How many chapters you want to download: (-2 meaning download 2 chap before X) ")
 	exec_str = "scrapy crawl sil_spider -a manga=%s -a targetChap=%s -a numChap=%s" % (manga, targetChap, numChap)
 elif spider == '2':
-	print("""http://comic.kukudm.com/\n*****************************""")
+	print("""http://comic2.kukudm.com/\n*****************************""")
 	manga = input("食戟之靈 - 1694\t七原罪 - 1733\t魔笛 - 982\n"
 						"猎人 - 146\t东京RE - 1393\n"
 						"进击的巨人 - 941\t英雄学院 - 2049\n"
