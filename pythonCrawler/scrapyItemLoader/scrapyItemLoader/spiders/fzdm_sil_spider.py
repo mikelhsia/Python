@@ -98,8 +98,7 @@ class SilSpiderSpider(scrapy.Spider):
 				              dont_filter=True)
 				# 注：可以修改settings.py 中的配置文件，以此来指定“递归”的层数，如： DEPTH_LIMIT = 1
 		except:
-			# self.log("4. [URL Parsing]: Nothing to be poped")
-			pass
+			self.log("4. [URL Parsing]: Nothing to be poped")
 
 	def parse_detail(self, response):
 		""" This function parses a sample response. Some contracts are mingled with this docstring.

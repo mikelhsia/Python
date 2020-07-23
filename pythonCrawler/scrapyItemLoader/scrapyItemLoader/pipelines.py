@@ -8,6 +8,10 @@
 import os
 import urllib
 from scrapy.utils.trackref import get_oldest
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class ScrapyitemloaderPipeline(object):
 
@@ -49,11 +53,11 @@ class ScrapyitemloaderPipeline(object):
 		try:
 			os.mkdir(os.path.split(item['imgDst'])[0])
 		except:
-			# self.logger.info("[INFO]: folder is already exist!")
-			pass
+			# self.logger.debug("[INFO]: folder is already exist!")
+			logger.debug("[INFO]: folder is already exist!")
 
 		r = get_oldest('HtmlResponse')
-		print(get_oldest(r.url))
+		# print(get_oldest(r.url))
 
 		urllib.request.urlretrieve(item['imgSrc'], item['imgDst'])
 		return item

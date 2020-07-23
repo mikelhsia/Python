@@ -41,7 +41,7 @@ class ScrapyitemloaderSpiderMiddleware(object):
 
         # Should return either None or an iterable of Response, dict
         # or Item objects.
-        pass
+        return None
 
     def process_start_requests(self, start_requests, spider):
         # Called with the start requests of the spider, and works

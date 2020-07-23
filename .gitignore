@@ -8,3 +8,4 @@ PythonTools/myTimehutBlog/.idea
 
 .vscode
 /.vscode/*
+.DS_Store

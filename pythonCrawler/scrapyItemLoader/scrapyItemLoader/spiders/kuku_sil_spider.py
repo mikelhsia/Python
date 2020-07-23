@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import scrapy
-# This is for python
-# import urlparse
-# This is for python3
 from urllib.parse import urljoin
 import os
 import urllib
+from tqdm import tqdm
 
 # Selenium getting ajax url
 from selenium import webdriver
@@ -19,10 +17,11 @@ from scrapyItemLoader.items import KukuComicItem
 
 
 driver = ""
+CHROMEDRIVER_PATH = "../chromedriver"
 
 class SilSpiderSpider(scrapy.Spider):
 	name = 'kuku_sil_spider'
-	allowed_domains = ['comic.kukudm.com']
+	allowed_domains = ['comic2.kukudm.com']
 	start_urls = []
 
 	# serverList
@@ -40,8 +39,7 @@ class SilSpiderSpider(scrapy.Spider):
 		self._manga = manga
 		self._targetChap = targetChap
 		self._numChap = numChap
-		# self.log("[%s, %s, %s]" % (manga, targetChap, numChap))
-		self.start_urls = ["http://comic.kukudm.com/comiclist/%s/index.htm" % self._manga]
+		self.start_urls = ["http://comic2.kukudm.com/comiclist/%s/index.htm" % self._manga]
 
 	# Implementation of signals interception in spider
 	@classmethod
@@ -54,8 +52,10 @@ class SilSpiderSpider(scrapy.Spider):
 	def spider_opened(self, spider):
 		# Selenium chrome web driver
 		global driver
-		driver = webdriver.PhantomJS(executable_path="/Users/puppylpy/Desktop/Python/pythonCrawler/phantomjs")
-
+		# driver = webdriver.PhantomJS(executable_path="/Users/puppylpy/Python/pythonCrawler/phantomjs")
+		option = webdriver.ChromeOptions()
+		option.add_argument('--headless')
+		driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=option)
 		spider.logger.info('Spider opened signal received, and webdriver PhantomJS is opened')
 
 	def spider_closed(self, spider):
@@ -67,34 +67,55 @@ class SilSpiderSpider(scrapy.Spider):
 		spider.logger.info('Spider closed signal received, and webdriver PhantomJS is closed')
 
 	def parse(self, response):
-		for num in range(0, int(self._numChap)):
-			# Notes regarding Xpath:
-			#  - Disable Firefox Javascript while inspecting the DOM looking for XPaths to be used in Scrapy
-			#  - Never use full XPath paths, use relative and clever ones based on attributes (such as id, class,
-			# width, etc) or any identifying features like contains(@href, 'image').
-			#  - Never include <tbody> elements in your XPath expressions unless you really know what you’re doing
+		# Notes regarding Xpath:
+		#  - Disable Firefox Javascript while inspecting the DOM looking for XPaths to be used in Scrapy
+		#  - Never use full XPath paths, use relative and clever ones based on attributes (such as id, class,
+		# width, etc) or any identifying features like contains(@href, 'image').
+		#  - Never include <tbody> elements in your XPath expressions unless you really know what you’re doing
 
-			# Use the text to find the right chapter
-			# _xpathStr = "//a[contains(text(), \' %s%s\') and @target]/@href" % (str(int(self._targetChap)+num), u'\u8bdd')
-			_xpathStr = "//a[contains(text(), %s) and @target]/@href" % (str(int(self._targetChap)+num))
-			# self.logger.debug("[DEBUG] xpath = %s", _xpathStr)
-			_currentChap = response.xpath(_xpathStr).extract()
-			if not _currentChap:
-				print(_currentChap)
-				self.logger.info("[INFO] No further comic")
-				break
-			itemUrl = u"http://comic.kukudm.com%s" % _currentChap[0]
+		if not self._numChap:
+			numChap = 1
+		else:
+			numChap = int(self._numChap)
 
+		if not self._targetChap:
+			targetChap = 1
+		else:
+			targetChap = int(self._targetChap) - 1
+
+		# Use the text to find the right chapter
+		_xpathStr = f"//dd/a[1]/@href"
+		# self.logger.debug("[DEBUG] xpath = %s", _xpathStr)
+		_currentChap = response.xpath(_xpathStr).extract()
+
+		if not _currentChap:
+			# print(_currentChap)
+			self.logger.info("[INFO] No further comic")
+			return
+
+		_currentChap = _currentChap[targetChap:targetChap + numChap]
+
+		# print("*****************")
+		# print(f"URL: {response.url}")
+		# print(f"Response: {response.body}")
+		# print(f'Xpath = {_xpathStr}')
+		# print(f'Num of current = {len(_currentChap)}')
+		# print("Current = ", _currentChap)
+		# print("Current = ", _currentChap)
+		# print("*****************")
+
+		#################################################################################
+		# The return of parse function link to pipeline - process_request() function which
+		# - If None
+		#       Do nothing
+		# - If Response
+		#       Put the response to scheduler and parse it again
+		# - If Item
+		#       parse the item
+		#################################################################################
+		for c in tqdm(_currentChap):
 			# self.logger.debug("[DEBUG] itemUrl = %s", itemUrl)
-			#################################################################################
-			# The return of parse function link to pipeline - process_request() function which
-			# - If None
-			#       Do nothing
-			# - If Response
-			#       Put the response to scheduler and parse it again
-			# - If Item
-			#       parse the item
-			#################################################################################
+			itemUrl = u"http://comic2.kukudm.com%s" % _currentChap[0]
 			yield Request(url=itemUrl, callback=self.parse_item, dont_filter=True)
 
 	def parse_item(self, response):
@@ -109,15 +130,13 @@ class SilSpiderSpider(scrapy.Spider):
 		# 500 milliseconds until it returns successfully. A successful return is for ExpectedCondition type is Boolean return true or not null return value for all other ExpectedCondition types.
 		try:
 			element = WebDriverWait(driver, 5).until(
-				# WebExpectedCond.presence_of_element_located((WebCommonBy.ID, "myDynamicElement"))
-				WebExpectedCond.presence_of_element_located((WebCommonBy.XPATH, "/html/body/table[2]/tbody/tr/td/img"))
+				WebExpectedCond.presence_of_element_located((WebCommonBy.XPATH, "/html/body/table[2]/tbody/tr/td/a[1]/img"))
 			)
 		except:
 			self.logger.ERROR("[ERROR] Source = {}".format("PhantomJS not getting the element"))
 		finally:
 			img_url = element.get_attribute("src")
 
-		# img_url = driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td/img").get_attribute("src")
 		self.logger.debug("[DEBUG] Source = {}".format(img_url))
 
 		item['imgSrc'] = img_url
@@ -135,23 +154,15 @@ class SilSpiderSpider(scrapy.Spider):
 		# 最后一页是这个链接: '/exit/exit.htm'
 		############################################################
 		try:
-			next_link = response.xpath("/html/body/table[2]/tr/td/a[2]/@href").extract()
+			next_link = response.xpath("//a[last()]/@href").extract()[0]
 			if '/exit/exit.htm' not in next_link:
 				# Meaning this is not the last page
-				if not next_link:
-					# Meaning this is the first page, so using the first link xpath instead of the second one
-					next_link = response.xpath("/html/body/table[2]/tr/td/a[1]/@href").extract()[0]
-				else:
-					next_link = next_link[0]
-					pass
 				yield Request(url=urljoin(response.url, next_link), callback=self.parse_item, dont_filter=True)
 			else:
 				self.logger.debug("Hit /exit.htm")
-				pass
 
 		except Exception as e:
 			self.logger.error("Something went wrong: {}".format(e))
-			pass
 
 		yield item
 
