@@ -1,3 +1,6 @@
+# DEPRECATED
+## Reason
+The https://www.worksheetfun.com is not free of charge now. Accessing all resources need to upgrade to their paid plan.
 ## Description
 ### Purpose
 This is the tool to crawl the pdf files from https://www.worksheetfun.com
