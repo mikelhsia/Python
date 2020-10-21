@@ -5,6 +5,7 @@
 *.swp
 *.log
 PythonTools/myTimehutBlog/.idea
+.ipynb_checkpoints
 
 .vscode
 /.vscode/*
